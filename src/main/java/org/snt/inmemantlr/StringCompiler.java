@@ -75,7 +75,6 @@ public class StringCompiler {
         Writer out = new PrintWriter(System.out);
 
         List<String> optionList = new ArrayList<String>();
-        optionList.addAll(Arrays.asList("-source", "6"));
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager, dianosticListener, optionList, classes, compilationUnits);
 
