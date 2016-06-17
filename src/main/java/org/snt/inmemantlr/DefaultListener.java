@@ -36,29 +36,45 @@ public class DefaultListener implements ParseTreeListener {
 	private Stack<Comparator> compstack = new Stack<Comparator>();
 	private Stack<String> context = new Stack<String>();
 
+	private static DefaultListener listener = null;
 
 	public DefaultListener() {
+		this.parser = null;
+		this.rmap = null;
+	}
 
+	public String getRuleByKey(int key) {
+
+		for(Map.Entry<String, Integer> e : this.rmap.entrySet()) {
+			if (e.getValue() == key)
+				return e.getKey();
+		}
+		return null;
+	}
+
+	protected void setParser(Parser p) {
+		this.parser = p;
+		this.rmap = this.parser.getRuleIndexMap();
 	}
 
 
-	public void visitTerminal(TerminalNode node) {
-		// TODO Auto-generated method stub
+	@Override
+	public void visitTerminal(TerminalNode terminalNode) {
 
 	}
 
-	public void visitErrorNode(ErrorNode node) {
-		// TODO Auto-generated method stub
+	@Override
+	public void visitErrorNode(ErrorNode errorNode) {
 
 	}
 
-	public void enterEveryRule(ParserRuleContext ctx) {
-		// access rule with this.getRuleByKey(ctx.getRuleIndex());
+	@Override
+	public void enterEveryRule(ParserRuleContext parserRuleContext) {
 
 	}
 
-	public void exitEveryRule(ParserRuleContext ctx) {
-		// access rule with this.getRuleByKey(ctx.getRuleIndex());
-	}
+	@Override
+	public void exitEveryRule(ParserRuleContext parserRuleContext) {
 
+	}
 }

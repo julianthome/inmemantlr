@@ -42,7 +42,7 @@ public class GenericParser {
 	private boolean parsed;
 	private StringCodeGenPipeline gen;
 	private ParserRuleContext data;
-	private ParseTreeListener listener;
+	private DefaultListener listener;
 
 	public GenericParser(String grammarFile, String name) {
 		this.antlr = new Tool();
@@ -59,6 +59,7 @@ public class GenericParser {
 		compiled = StringCompiler.compile(gen);
 		return compiled;
 	}
+
 
 	public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
 		if(listener == null) {
@@ -77,6 +78,9 @@ public class GenericParser {
 		tokens.fill();
 
 		Parser parser = StringCompiler.instanciateParser(tokens, cname);
+
+		// make parser information available to listener
+		this.listener.setParser(parser);
 
 		parser.addErrorListener(new DiagnosticErrorListener());
 		parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
@@ -100,6 +104,9 @@ public class GenericParser {
 		}
 		this.parsed = true;
 
+		System.out.println(data.toStringTree(parser));
+		System.out.println(data.toInfoString(parser));
+
 		ParseTreeWalker walker = new ParseTreeWalker();
 
 		walker.walk(this.listener, data);
@@ -111,7 +118,7 @@ public class GenericParser {
 		return this.listener;
 	}
 
-	public void setListener(ParseTreeListener listener) {
+	public void setListener(DefaultListener listener) {
 		this.listener = listener;
 	}
 
