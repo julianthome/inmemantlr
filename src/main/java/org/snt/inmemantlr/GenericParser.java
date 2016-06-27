@@ -66,7 +66,7 @@ public class GenericParser {
 			throw new IllegalWorkflowException("Listener is not set");
 		}
 		if(!compiled) {
-			throw new IllegalWorkflowException("Parser not yet compiled yet");
+			throw new IllegalWorkflowException("Parser not yet compiled");
 		}
 
 		ANTLRInputStream input = new ANTLRInputStream(toParse);
