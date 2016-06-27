@@ -31,7 +31,7 @@ import java.util.*;
 
 public class DefaultListener implements ParseTreeListener {
 
-	private Parser parser;
+	protected Parser parser;
 	private Map<String,Integer> rmap;
 	private Stack<Comparator> compstack = new Stack<Comparator>();
 	private Stack<String> context = new Stack<String>();

@@ -18,84 +18,54 @@
 */
 
 
-package org.snt.inmemantlr;
+package org.snt.helix;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.snt.inmemantlr.DefaultTreeListener;
+import org.snt.inmemantlr.GenericParser;
 import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.NodeFilter;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.*;
 
 
-public class TestGenericParser {
+public class TestTreeGeneration {
 
     @Test
     public void testParser() {
 
-        GenericParser gp = new GenericParser("src/test/java/org/snt/inmemantlr/Java.g4", "Java");
+        GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
         gp.compile();
 
         byte[] bytes = null;
         try {
-            RandomAccessFile f = new RandomAccessFile("src/test/java/org/snt/inmemantlr/HelloWorld.java", "r");
+            RandomAccessFile f = new RandomAccessFile("src/test/ressources/HelloWorld.java", "r");
             bytes = new byte[(int)f.length()];
             f.read(bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        assertTrue(bytes != null);
+        DefaultTreeListener dlist = new DefaultTreeListener(new NodeFilter());
+
+        gp.setListener(dlist);
+        gp.compile();
 
         String s = new String(bytes);
 
-        assertTrue(s.length() > 0);
-
-
-        /**
-         * Incorrect workflows
-         */
-
-        boolean thrown = false;
-        try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            thrown = true;
-        }
-
-        gp.compile();
-
-        thrown = false;
-
         ParserRuleContext ctx = null;
-
         try {
             ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            thrown = true;
-        }
+        } catch (IllegalWorkflowException e) {}
 
-        assertTrue(thrown);
 
-        thrown = false;
+        Ast ast = dlist.getAst();
 
-        /**
-         * Correct workflow
-         */
-        gp.setListener(new DefaultListener());
-        gp.compile();
+        assert(ast != null);
 
-        try {
-            ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            thrown = true;
-        }
-
-        assertFalse(thrown);
-        assertTrue(ctx != null && ctx.getChildCount() == 3);
+        System.out.println(ast.toDot());
 
     }
 
