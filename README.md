@@ -72,7 +72,7 @@ Ast ast = dlist.getAst();
 System.out.println(ast.toDot());
 ```
 
-<img src="https://github.com/julianthome/inmemantlr/tree/master/images/ast.svg" alt="Example AST" width="400px" align="middle">
+<img src="https://github.com/julianthome/inmemantlr/tree/master/images/ast.png" alt="Example AST" width="400px" align="middle">
 
 
 # License
