@@ -49,8 +49,12 @@ public class Ast {
 
         sb.append("graph {\n");
 
+        sb.append("\tnode [fontname=Helvetica,fontsize=11];\n");
+        sb.append("\tedge [fontname=Helvetica,fontsize=10];\n");
+
         for(AstNode rn : this.nodes) {
-            sb.append("\tn" + rn.getId() + " [label=\"(" +rn.getId() +")\\n"  + rn.getLabel() + "\\n" + rn.getType().toString() + "\"];\n");
+            sb.append("\tn" + rn.getId() + " [label=\"(" +rn.getId() +")\\n"  +
+                    rn.getLabel() + "\\n" + rn.getType().toString() + "\"];\n");
         }
 
         for(AstNode rn : this.nodes) {

@@ -41,6 +41,9 @@ public class StringCompiler {
 
     private static SpecialClassLoader cl = new SpecialClassLoader();
 
+    private static Lexer lexer = null;
+    private static Parser parser = null;
+
     public static boolean compile(StringCodeGenPipeline scgp) {
 
         JavaCompiler javac = new EclipseCompiler();
@@ -94,6 +97,9 @@ public class StringCompiler {
 
     public static Lexer instanciateLexer(CharStream input, String cname) {
 
+        if(lexer != null)
+            return lexer;
+
         String name = cname + "Lexer";
 
         Lexer ret = null;
@@ -107,16 +113,19 @@ public class StringCompiler {
 
         try {
             //System.out.println(cstr[0].toGenericString());
-            ret = (Lexer) cstr[0].newInstance(input);
+            lexer = (Lexer) cstr[0].newInstance(input);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;
         }
 
-        return ret;
+        return lexer;
     }
 
     public static Parser instanciateParser(CommonTokenStream tstream, String cname) {
+
+        if(parser != null)
+            return parser;
 
         String name = cname + "Parser";
 
@@ -129,13 +138,13 @@ public class StringCompiler {
         assert (cstr.length == 1);
 
         try {
-            ret = (Parser) cstr[0].newInstance(tstream);
+            parser = (Parser) cstr[0].newInstance(tstream);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;
         }
 
-        return ret;
+        return parser;
     }
 
 }
