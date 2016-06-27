@@ -1,7 +1,7 @@
 /*
 * Inmemantlr - In memory compiler for Antlr 4
 *
-* Copyright 2007, Julian Thomé <julian.thome@uni.lu>
+* Copyright 2016, Julian Thomé <julian.thome@uni.lu>
 *
 * Licensed under the EUPL, Version 1.1 or – as soon they will be approved by
 * the European Commission - subsequent versions of the EUPL (the "Licence");
