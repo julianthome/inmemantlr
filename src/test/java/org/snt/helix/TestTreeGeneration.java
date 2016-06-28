@@ -29,6 +29,7 @@ import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.NodeFilter;
 
 import java.io.*;
+import java.util.Set;
 
 
 public class TestTreeGeneration {
@@ -66,6 +67,12 @@ public class TestTreeGeneration {
         assert(ast != null);
 
         System.out.println(ast.toDot());
+
+        Set<Ast> asts = ast.getSubtrees("methodDeclaration");
+
+        for(Ast a : asts) {
+            System.out.println(a.toDot());
+        }
 
     }
 

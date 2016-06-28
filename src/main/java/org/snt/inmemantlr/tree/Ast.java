@@ -21,17 +21,24 @@ package org.snt.inmemantlr.tree;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Ast {
 
     private AstNode root = null;
-
     private Set<AstNode> nodes = null;
 
     public Ast() {
         this.nodes = new HashSet<AstNode>();
         this.root = new AstNode(null,"root","root");
         this.nodes.add(this.root);
+    }
+
+
+    public Ast(AstNode root) {
+        this.nodes = new HashSet<AstNode>();
+        this.root = root;
+        this.nodes.add(root);
     }
 
     public AstNode getRoot() {
@@ -46,15 +53,8 @@ public class Ast {
 
 
     public Set<AstNode> getLeafs() {
-
-        Set<AstNode> leafs = new HashSet<AstNode>();
-        for(AstNode rn : this.nodes) {
-            if(!rn.hasChildren()){
-                leafs.add(rn);
-            }
-        }
-
-        return leafs;
+        return this.nodes.stream().filter(n -> !n.hasChildren()).
+                collect(Collectors.toSet());
     }
 
 
@@ -71,22 +71,35 @@ public class Ast {
         sb.append("\tnode [fontname=Helvetica,fontsize=11];\n");
         sb.append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
-        for(AstNode rn : this.nodes) {
-            sb.append("\tn" + rn.getId() + " [label=\"(" +rn.getId() +")\\n"  +
-                    rn.getLabel() + "\\n" + rn.getType().toString() + "\"];\n");
-        }
+        this.nodes.forEach(
+                n -> sb.append("\tn" + n.getId() + " [label=\"(" +n.getId() +")\\n"  +
+                        n.getLabel() + "\\n" + n.getType().toString() + "\"];\n"));
 
-        for(AstNode rn : this.nodes) {
-            for(AstNode c : rn.getChildren()) {
-                sb.append("\tn" + rn.getId() + " -- n" + c.getId() + ";\n");
-            }
-        }
+        this.nodes.forEach( n -> n.getChildren().forEach( c-> sb.append("\tn" +
+                c.getParent().getId() + " -- n" + c.getId() + ";\n")));
 
         sb.append("}\n");
 
         return sb.toString();
     }
 
+
+    public Set<Ast> getSubtrees(final String identifier) {
+
+        Set<Ast> ret = new HashSet<Ast>();
+
+        this.nodes.stream().filter(n -> n.getType().equals(identifier)).forEach(
+                n-> {
+                    Ast a = new Ast(n);
+                    a.nodes.addAll(n.doGetSubtreeChildren());
+                    ret.add(a);
+                }
+        );
+
+
+        return ret;
+
+    }
 
 
 

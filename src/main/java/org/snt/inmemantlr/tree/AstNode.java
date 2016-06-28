@@ -78,6 +78,16 @@ public class AstNode {
         return EscapeUtils.escapeSpecialCharacters(this.label);
     }
 
+    protected List<AstNode> doGetSubtreeChildren() {
+        List<AstNode> nodes = new Vector<AstNode>();
+        getSubteeChildren(this, nodes);
+        return nodes;
+    }
+
+    private void getSubteeChildren(AstNode n, List<AstNode> children) {
+        if(n.hasChildren()) n.children.forEach(c -> {children.add(c); getSubteeChildren(c, children);});
+    }
+
     @Override
     public int hashCode() {
         return this.id;
