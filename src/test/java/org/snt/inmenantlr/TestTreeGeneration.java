@@ -18,7 +18,7 @@
 */
 
 
-package org.snt.helix;
+package org.snt.inmenantlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.snt.inmemantlr.DefaultTreeListener;
@@ -26,13 +26,10 @@ import org.snt.inmemantlr.GenericParser;
 import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.NodeFilter;
 
 import java.io.*;
 import java.util.Set;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 

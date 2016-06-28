@@ -17,7 +17,7 @@
 * limitations under the Licence.
 */
 
-package org.snt.helix;
+package org.snt.inmenantlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.snt.inmemantlr.DefaultListener;
@@ -25,7 +25,6 @@ import org.snt.inmemantlr.GenericParser;
 import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
