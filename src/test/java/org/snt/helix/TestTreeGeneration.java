@@ -26,10 +26,14 @@ import org.snt.inmemantlr.GenericParser;
 import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.AstNode;
 import org.snt.inmemantlr.tree.NodeFilter;
 
 import java.io.*;
 import java.util.Set;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 
 public class TestTreeGeneration {
@@ -49,7 +53,7 @@ public class TestTreeGeneration {
             e.printStackTrace();
         }
 
-        DefaultTreeListener dlist = new DefaultTreeListener(new NodeFilter());
+        DefaultTreeListener dlist = new DefaultTreeListener();
 
         gp.setListener(dlist);
         gp.compile();
@@ -64,15 +68,46 @@ public class TestTreeGeneration {
 
         Ast ast = dlist.getAst();
 
-        assert(ast != null);
+        assertTrue(ast != null);
 
+        // print tree in dot format
         System.out.println(ast.toDot());
 
-        Set<Ast> asts = ast.getSubtrees("methodDeclaration");
+        // get all expression subtrees
+        Set<Ast> asts = ast.getSubtrees(n -> n.getRule().equals("expression"));
+
+        assert(asts.size() == 5);
 
         for(Ast a : asts) {
             System.out.println(a.toDot());
+            assertTrue(ast.hasSubtree(a));
         }
+
+        int sizeBefore = ast.getNodes().size();
+
+        Ast first = asts.iterator().next();
+
+        ast.removeSubtree(first);
+
+        assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
+
+        // print changed tree
+
+        System.out.println(ast.toDot());
+
+        Ast replacement = new Ast("test", "test");
+
+        Set<Ast> asts2 = ast.getSubtrees(n -> n.getId() == 2);
+
+        assertTrue(asts2.size() == 1);
+
+        Ast old = asts2.iterator().next();
+
+        Ast oldCp = new Ast(asts2.iterator().next());
+
+        assertTrue(old.equals(oldCp));
+
+        assertTrue(ast.replaceSubtree(old, replacement));
 
     }
 

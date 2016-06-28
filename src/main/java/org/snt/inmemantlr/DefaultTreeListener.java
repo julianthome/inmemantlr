@@ -28,6 +28,7 @@ import org.snt.inmemantlr.tree.NodeFilter;
 
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 public class DefaultTreeListener extends DefaultListener {
 
@@ -37,14 +38,21 @@ public class DefaultTreeListener extends DefaultListener {
 
     private Ast ast = null;
     private AstNode nodeptr = null;
-    private NodeFilter filter = null;
+    private Predicate<String> filter = null;
 
 
-    public DefaultTreeListener(NodeFilter ntype) {
+    public DefaultTreeListener() {
         this.sctx.add("S");
-        this.ast = new Ast();
+        this.ast = new Ast("root", "root");
         this.nodeptr = this.ast.getRoot();
-        this.filter = ntype;
+        this.filter = x -> !x.isEmpty();
+    }
+
+    public DefaultTreeListener(Predicate<String> filter) {
+        this.sctx.add("S");
+        this.ast = new Ast("root", "root");
+        this.nodeptr = this.ast.getRoot();
+        this.filter = filter;
     }
 
 
@@ -62,7 +70,7 @@ public class DefaultTreeListener extends DefaultListener {
     public void enterEveryRule(ParserRuleContext ctx) {
         String rule = this.getRuleByKey(ctx.getRuleIndex());
 
-        if(this.filter.isEmpty() || this.filter.hasType(rule)){
+        if(this.filter.test(rule)){
             AstNode n = ast.newNode(nodeptr, rule, ctx.getText());
             nodeptr.addChild(n);
             nodeptr = n;
@@ -72,7 +80,7 @@ public class DefaultTreeListener extends DefaultListener {
     @Override
     public void exitEveryRule(ParserRuleContext ctx) {
         String rule = this.getRuleByKey(ctx.getRuleIndex());
-        if(this.filter.isEmpty() || this.filter.hasType(rule)){
+        if(this.filter.test(rule)){
             this.nodeptr = this.nodeptr.getParent();
         }
     }

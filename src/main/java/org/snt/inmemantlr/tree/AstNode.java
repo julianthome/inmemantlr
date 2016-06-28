@@ -19,28 +19,52 @@
 
 package org.snt.inmemantlr.tree;
 
-
 import org.snt.inmemantlr.utils.EscapeUtils;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class AstNode {
 
     private String label;
     private String ntype;
     private AstNode parent;
+    private Ast tree;
+    private int id;
 
     private static int idx = 0;
-    private int id = idx ++;
 
-    private List<AstNode> children;
+    private LinkedList<AstNode> children;
 
-    protected AstNode(AstNode parent, String nt, String label) {
-        this.children = new Vector<AstNode>();
+
+    private AstNode(Ast tree) {
+        this.tree = tree;
+        this.children = new LinkedList<AstNode>();
+    }
+
+    protected AstNode(Ast tree, AstNode parent, String nt, String label) {
+        this(tree);
         this.ntype = nt;
         this.label = label;
         this.parent = parent;
+        this.id = idx ++;
+    }
+
+    /**
+     * Deep copy constructor
+     * @param tree
+     * @param nod
+     */
+    protected AstNode(Ast tree, AstNode nod) {
+        this(tree);
+        this.id = nod.id;
+        this.ntype = nod.ntype;
+        this.label = nod.label;
+        for(AstNode c : nod.children) {
+            AstNode cnod = new AstNode(tree,c);
+            this.tree.nodes.add(cnod);
+            this.children.add(cnod);
+        }
     }
 
     public AstNode getLastChild(){
@@ -48,6 +72,10 @@ public class AstNode {
             this.children.get(this.children.size()-1);
         }
         return null;
+    }
+
+    public boolean hasParent() {
+        return this.parent != null;
     }
 
     public AstNode getParent() {
@@ -66,26 +94,31 @@ public class AstNode {
         this.children.add(n);
     }
 
+    public void delChild(AstNode n) {
+        this.children.remove(n);
+    }
+
+    public void replaceChild(AstNode oldNode, AstNode newNode) {
+        if(this.children.contains(oldNode)) {
+            this.children.set(this.children.indexOf(oldNode), newNode);
+            newNode.parent = this;
+        }
+    }
+
     public int getId() {
         return this.id;
     }
 
-    public String getType() {
+    public String getRule() {
         return this.ntype;
     }
 
-    public String getLabel() {
+    public String getEscapedLabel() {
         return EscapeUtils.escapeSpecialCharacters(this.label);
     }
 
-    protected List<AstNode> doGetSubtreeChildren() {
-        List<AstNode> nodes = new Vector<AstNode>();
-        getSubteeChildren(this, nodes);
-        return nodes;
-    }
-
-    private void getSubteeChildren(AstNode n, List<AstNode> children) {
-        if(n.hasChildren()) n.children.forEach(c -> {children.add(c); getSubteeChildren(c, children);});
+    public String getLabel() {
+        return this.label;
     }
 
     @Override
@@ -95,7 +128,7 @@ public class AstNode {
 
     @Override
     public String toString() {
-        return this.ntype.toString() + " " + this.label;
+        return this.id + " " + this.ntype.toString() + " " + this.label;
     }
 
     @Override
@@ -103,14 +136,16 @@ public class AstNode {
         if(!(o instanceof AstNode))
             return false;
 
-        return ((AstNode)o).id == this.id;
+        AstNode n = (AstNode)o;
+
+        return n.id == this.id &&
+                n.ntype.equals(this.ntype) &&
+                n.label.equals(this.label) && this.children.equals(n.children);
 
     }
-
 
     public boolean isLeaf() {
         return this.children.size() == 0;
     }
-
 
 }
