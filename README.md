@@ -33,12 +33,10 @@ GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
 String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
 
 // this listener will create an AST from the java file
-DefaultTreeListener dlist = new DefaultTreeListener(new NodeFilter());
+DefaultTreeListener dlist = new DefaultTreeListener();
 
 gp.setListener(dlist);
 gp.compile();
-
-String s = new String(bytes);
 
 ParserRuleContext ctx = null;
 try {
