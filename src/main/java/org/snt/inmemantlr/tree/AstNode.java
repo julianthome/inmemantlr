@@ -21,8 +21,8 @@ package org.snt.inmemantlr.tree;
 
 import org.snt.inmemantlr.utils.EscapeUtils;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 public class AstNode {
 
@@ -34,12 +34,12 @@ public class AstNode {
 
     private static int idx = 0;
 
-    private LinkedList<AstNode> children;
+    private List<AstNode> children;
 
 
     private AstNode(Ast tree) {
         this.tree = tree;
-        this.children = new LinkedList<AstNode>();
+        this.children = new Vector<AstNode>();
     }
 
     protected AstNode(Ast tree, AstNode parent, String nt, String label) {
@@ -62,6 +62,7 @@ public class AstNode {
         this.label = nod.label;
         for(AstNode c : nod.children) {
             AstNode cnod = new AstNode(tree,c);
+            cnod.parent = this;
             this.tree.nodes.add(cnod);
             this.children.add(cnod);
         }
@@ -69,7 +70,14 @@ public class AstNode {
 
     public AstNode getLastChild(){
         if(this.children.size() > 0) {
-            this.children.get(this.children.size()-1);
+            return this.children.get(this.children.size()-1);
+        }
+        return null;
+    }
+
+    public AstNode getFirstChild(){
+        if(!this.children.isEmpty()) {
+            return this.children.get(0);
         }
         return null;
     }

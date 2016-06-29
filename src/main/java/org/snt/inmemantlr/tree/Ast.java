@@ -126,6 +126,22 @@ public class Ast {
         return false;
     }
 
+    public Set<Ast> getDominatingSubtrees(Predicate<AstNode> p) {
+        Set<AstNode> selected = new HashSet<>();
+        searchDominatingNodes(this.root,selected,p);
+        System.out.println(selected);
+        return getSubtrees(n -> selected.contains(n));
+    }
+
+    private void searchDominatingNodes(AstNode n, Set<AstNode> selected, Predicate<AstNode> p) {
+        if(p.test(n)) {
+            selected.add(n);
+        } else {
+            for (AstNode an : n.getChildren()) {
+                searchDominatingNodes(an, selected,p);
+            }
+        }
+    }
 
     public Set<Ast> getSubtrees(Predicate<AstNode> p) {
 
@@ -149,6 +165,7 @@ public class Ast {
         Set<Ast> subtrees = getSubtrees(n -> n.getId() == subtree.getRoot().getId());
         return subtrees.stream().filter(s -> subtree.equals(s)).findFirst().get();
     }
+
 
     @Override
     public int hashCode() {

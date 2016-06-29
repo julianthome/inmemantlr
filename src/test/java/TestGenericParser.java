@@ -17,50 +17,42 @@
 * limitations under the Licence.
 */
 
-package org.snt.inmenantlr;
-
+import junit.framework.Assert;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.GenericParser;
-import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.File;
 
 
 public class TestGenericParser {
 
+    static File grammar = null;
+    static File sfile = null;
+
+    @Before
+    public void init() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        grammar = new File(classLoader.getResource("Java.g4").getFile());
+        sfile = new File(classLoader.getResource("HelloWorld.java").getFile());
+    }
+
     @Test
     public void testParser() {
 
-
-        GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
+        GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
         gp.compile();
+        String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        byte[] bytes = null;
-        try {
-            RandomAccessFile f = new RandomAccessFile("src/test/ressources/HelloWorld.java", "r");
-            bytes = new byte[(int)f.length()];
-            f.read(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        assertTrue(bytes != null);
-
-        String s = new String(bytes);
-
-        assertTrue(s.length() > 0);
-
+        Assert.assertTrue(s != null && s.length() > 0);
 
         /**
          * Incorrect workflows
          */
-
         boolean thrown = false;
         try {
             gp.parse(s);
@@ -80,7 +72,7 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertTrue(thrown);
+        Assert.assertTrue(thrown);
 
         thrown = false;
 
@@ -96,9 +88,7 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertFalse(thrown);
-        assertTrue(ctx != null);
-
+        Assert.assertFalse(thrown);
     }
 
 }

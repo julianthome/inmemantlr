@@ -96,8 +96,10 @@ public class StringCompiler {
 
     public static Lexer instanciateLexer(CharStream input, String cname) {
 
-        if(lexer != null)
+        if(lexer != null) {
+            lexer.reset();
             return lexer;
+        }
 
         String name = cname + "Lexer";
 
@@ -123,8 +125,10 @@ public class StringCompiler {
 
     public static Parser instanciateParser(CommonTokenStream tstream, String cname) {
 
-        if(parser != null)
+        if(parser != null) {
+            parser.reset();
             return parser;
+        }
 
         String name = cname + "Parser";
 

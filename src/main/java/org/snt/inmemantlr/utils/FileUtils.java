@@ -17,37 +17,23 @@
 * limitations under the Licence.
 */
 
-package org.snt.inmemantlr.tree;
+package org.snt.inmemantlr.utils;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
-import java.util.HashSet;
-import java.util.Set;
 
-public class NodeFilter {
+public class FileUtils {
 
-    private Set<String> typset = null;
-
-    public NodeFilter(String [] filter){
-        typset = new HashSet<String>();
-        typset.addAll(Arrays.asList(filter));
-    }
-
-    public NodeFilter(){
-        typset = new HashSet<String>();
-    }
-
-    public String addType(String s) {
-        this.typset.add(s);
-        return s;
-    }
-
-    public boolean hasType(String s) {
-        return this.typset.contains(s);
-    }
-
-    public boolean isEmpty() {
-        return this.typset.size() == 0;
+    public static String loadFileContent(String path) {
+        byte[] bytes = null;
+        try {
+            RandomAccessFile f = new RandomAccessFile(path, "r");
+            bytes = new byte[(int)f.length()];
+            f.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new String(bytes);
     }
 }
-

@@ -24,7 +24,6 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.NodeFilter;
 
 import java.util.Set;
 import java.util.Stack;
@@ -69,7 +68,6 @@ public class DefaultTreeListener extends DefaultListener {
     @Override
     public void enterEveryRule(ParserRuleContext ctx) {
         String rule = this.getRuleByKey(ctx.getRuleIndex());
-
         if(this.filter.test(rule)){
             AstNode n = ast.newNode(nodeptr, rule, ctx.getText());
             nodeptr.addChild(n);

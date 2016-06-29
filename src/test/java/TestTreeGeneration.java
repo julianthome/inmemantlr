@@ -17,63 +17,62 @@
 * limitations under the Licence.
 */
 
-
-package org.snt.inmenantlr;
-
+import junit.framework.Assert;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
-import org.junit.Test;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.*;
+import java.io.File;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertTrue;
-
-
 public class TestTreeGeneration {
+
+    static File grammar = null;
+    static File sfile = null;
+
+    @Before
+    public void init() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        grammar = new File(classLoader.getResource("Java.g4").getFile());
+        sfile = new File(classLoader.getResource("HelloWorld.java").getFile());
+    }
 
     @Test
     public void testGeneration() {
 
-        GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
+        GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
         gp.compile();
+        String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        byte[] bytes = null;
-        try {
-            RandomAccessFile f = new RandomAccessFile("src/test/ressources/HelloWorld.java", "r");
-            bytes = new byte[(int)f.length()];
-            f.read(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Assert.assertTrue(s != null && s.length() > 0);
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
         gp.setListener(dlist);
-        gp.compile();
-
-        String s = new String(bytes);
 
         ParserRuleContext ctx = null;
         try {
             ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {}
+        } catch (IllegalWorkflowException e) {
+            Assert.assertTrue(false);
+        }
 
+        Ast ast = dlist.getAst();
 
-        /**Ast ast = dlist.getAst();
+        Assert.assertTrue(ast != null);
 
-        assertTrue(ast != null);
-
-        // get all expression subtrees
         Set<Ast> asts = ast.getSubtrees(n -> n.getRule().equals("expression"));
 
         assert(asts.size() == 5);
 
+
         for(Ast a : asts) {
-            assertTrue(ast.hasSubtree(a));
+            Assert.assertTrue(ast.hasSubtree(a));
         }
 
         int sizeBefore = ast.getNodes().size();
@@ -82,24 +81,24 @@ public class TestTreeGeneration {
 
         ast.removeSubtree(first);
 
-        assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
+        Assert.assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
 
         // print changed tree
-
         Ast replacement = new Ast("test", "test");
 
         Set<Ast> asts2 = ast.getSubtrees(n -> n.getId() == 2);
 
-        assertTrue(asts2.size() == 1);
+        Assert.assertTrue(asts2.size() == 1);
 
         Ast old = asts2.iterator().next();
 
         Ast oldCp = new Ast(asts2.iterator().next());
 
-        assertTrue(old.equals(oldCp));
+        Assert.assertTrue(old.equals(oldCp));
 
-        assertTrue(ast.replaceSubtree(old, replacement));**/
-
+        Assert.assertTrue(ast.replaceSubtree(old, replacement));
     }
+
+
 
 }
