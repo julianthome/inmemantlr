@@ -84,7 +84,7 @@ public class TestTreeGeneration {
         System.out.println(ast.toDot());
 
         Assert.assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
-        
+
 
     }
 
