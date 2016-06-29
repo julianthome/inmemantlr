@@ -12,25 +12,14 @@ The following code snippet shows an example how to use inmemantlr. The descripti
 ``` java
 // 1. load grammar
 GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
-gp.compile();
-// 2. load file (HelloWorld.java) to parse
-byte[] bytes = null;
-try {
-  RandomAccessFile f = new RandomAccessFile("src/test/ressources/HelloWorld.java", "r");
-  bytes = new byte[(int)f.length()];
-  f.read(bytes);
-} catch (IOException e) {
-  e.printStackTrace();
-}
-
-// 3. create a string
-String s = new String(bytes);
-// 4. set listener for checking parse tree elements. Here you could use any ParseTreeListener implementation.
+// 2. load file content into string
+String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
+// 3. set listener for checking parse tree elements. Here you could use any ParseTreeListener implementation.
 gp.setListener(new DefaultListener());
-// 5. compile lexer and parser in-memory
+// 4. compile lexer and parser in-memory
 gp.compile();
 try {
-  // 6. parse the string that represents the content of HelloWorld.java
+  // 5. parse the string that represents the content of HelloWorld.java
   ctx = gp.parse(s);
 } catch (IllegalWorkflowException e) {
 // ...
@@ -41,16 +30,7 @@ If you want to get the AST from a parsed file, the following snippet could be of
 
 ``` java
 GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
-gp.compile();
-
-byte[] bytes = null;
-try {
-  RandomAccessFile f = new RandomAccessFile("src/test/ressources/HelloWorld.java", "r");
-  bytes = new byte[(int)f.length()];
-  f.read(bytes);
-} catch (IOException e) {
-  e.printStackTrace();
-}
+String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
 
 // this listener will create an AST from the java file
 DefaultTreeListener dlist = new DefaultTreeListener(new NodeFilter());
