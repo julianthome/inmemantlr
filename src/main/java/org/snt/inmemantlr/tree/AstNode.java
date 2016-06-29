@@ -32,13 +32,12 @@ public class AstNode {
     private Ast tree;
     private int id;
 
-    private static int idx = 0;
-
     private List<AstNode> children;
 
 
     private AstNode(Ast tree) {
         this.tree = tree;
+        this.id = ++this.tree.cnt;
         this.children = new Vector<AstNode>();
     }
 
@@ -47,7 +46,6 @@ public class AstNode {
         this.ntype = nt;
         this.label = label;
         this.parent = parent;
-        this.id = idx ++;
     }
 
     /**
@@ -146,8 +144,7 @@ public class AstNode {
 
         AstNode n = (AstNode)o;
 
-        return n.id == this.id &&
-                n.ntype.equals(this.ntype) &&
+        return n.ntype.equals(this.ntype) &&
                 n.label.equals(this.label) && this.children.equals(n.children);
 
     }

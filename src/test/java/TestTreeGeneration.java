@@ -70,7 +70,6 @@ public class TestTreeGeneration {
 
         assert(asts.size() == 5);
 
-
         for(Ast a : asts) {
             Assert.assertTrue(ast.hasSubtree(a));
         }

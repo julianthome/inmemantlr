@@ -28,6 +28,7 @@ public class Ast {
 
     private AstNode root = null;
     Set<AstNode> nodes = null;
+    int cnt = 0;
 
     private Ast() {
         this.nodes = new HashSet<AstNode>();

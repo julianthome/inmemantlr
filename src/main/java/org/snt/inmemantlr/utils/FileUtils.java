@@ -25,7 +25,7 @@ import java.io.RandomAccessFile;
 
 public class FileUtils {
 
-    public static String loadFileContent(String path) {
+    public static synchronized String loadFileContent(String path) {
         byte[] bytes = null;
         try {
             RandomAccessFile f = new RandomAccessFile(path, "r");

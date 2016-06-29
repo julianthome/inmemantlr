@@ -22,8 +22,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
+import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.StringCodeGenPipeline;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.AstNode;
+import org.snt.inmemantlr.tree.AstProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
@@ -42,7 +47,7 @@ public class TestAstProcessor {
     }
 
     @Test
-    public void testParser() {
+    public void testProcessor() {
 
         GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
         gp.compile();
@@ -50,45 +55,43 @@ public class TestAstProcessor {
 
         Assert.assertTrue(s != null && s.length() > 0);
 
-        /**
-         * Incorrect workflows
-         */
-        boolean thrown = false;
-        try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            thrown = true;
-        }
+        DefaultTreeListener dlist = new DefaultTreeListener();
 
-        gp.compile();
-
-        thrown = false;
+        gp.setListener(dlist);
 
         ParserRuleContext ctx = null;
-
         try {
             ctx = gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            thrown = true;
+            Assert.assertTrue(false);
         }
 
-        Assert.assertTrue(thrown);
+        Ast ast = dlist.getAst();
 
-        thrown = false;
 
-        /**
-         * Correct workflow
-         */
-        gp.setListener(new DefaultListener());
-        gp.compile();
+        // Process the tree botton up
+        AstProcessor<String,String> processor = new AstProcessor<String, String>(ast) {
 
-        try {
-            ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            thrown = true;
-        }
+            int cnt = 0;
 
-        Assert.assertFalse(thrown);
+            @Override
+            public String getConstraints() {
+                return String.valueOf(cnt);
+            }
+            @Override
+            protected void initialize() {
+                for(AstNode n : this.ast.getNodes()) {
+                    this.smap.put(n, "");
+                }
+            }
+            @Override
+            protected void process(AstNode n) {
+                cnt ++;
+            }
+        };
+
+        processor.process();
+        processor.getConstraints().equals(String.valueOf(ast.getNodes()));
     }
 
 }
