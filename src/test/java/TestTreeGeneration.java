@@ -78,24 +78,14 @@ public class TestTreeGeneration {
 
         Ast first = asts.iterator().next();
 
+
         ast.removeSubtree(first);
 
+        System.out.println(ast.toDot());
+
         Assert.assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
+        
 
-        // print changed tree
-        Ast replacement = new Ast("test", "test");
-
-        Set<Ast> asts2 = ast.getSubtrees(n -> n.getId() == 2);
-
-        Assert.assertTrue(asts2.size() == 1);
-
-        Ast old = asts2.iterator().next();
-
-        Ast oldCp = new Ast(asts2.iterator().next());
-
-        Assert.assertTrue(old.equals(oldCp));
-
-        Assert.assertTrue(ast.replaceSubtree(old, replacement));
     }
 
 

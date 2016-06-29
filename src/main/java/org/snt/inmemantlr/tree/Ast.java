@@ -20,18 +20,19 @@
 package org.snt.inmemantlr.tree;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Ast {
 
     private AstNode root = null;
-    Set<AstNode> nodes = null;
-    int cnt = 0;
+    List<AstNode> nodes = null;
 
     private Ast() {
-        this.nodes = new HashSet<AstNode>();
+        this.nodes = new Vector<AstNode>();
     }
 
     public Ast(String nt, String label) {
@@ -72,7 +73,7 @@ public class Ast {
     }
 
 
-    public Set<AstNode> getNodes() {
+    public List<AstNode> getNodes() {
         return this.nodes;
     }
 
@@ -102,7 +103,7 @@ public class Ast {
 
         Ast newTreeCp = new Ast(newTree);
         if (this.hasSubtree(oldTree)) {
-            this.nodes.stream().filter(n -> n.getId() == oldTree.getRoot().getId()).forEach(
+            this.nodes.stream().filter(n -> oldTree.getRoot().equals(n)).forEach(
                     n -> {
                         n.getParent().replaceChild(oldTree.getRoot(),newTreeCp.getRoot());
                     }
@@ -117,7 +118,7 @@ public class Ast {
 
     public boolean removeSubtree(Ast subtree) {
         if (this.hasSubtree(subtree)) {
-            this.nodes.stream().filter(n -> n.getId() == subtree.getRoot().getId()).forEach(
+            this.nodes.stream().filter(n -> subtree.getRoot().equals(n)).forEach(
                   n -> {
                       n.getParent().delChild(n);
                   }
@@ -163,7 +164,7 @@ public class Ast {
     }
 
     public Ast getSubtree(Ast subtree) {
-        Set<Ast> subtrees = getSubtrees(n -> n.getId() == subtree.getRoot().getId());
+        Set<Ast> subtrees = getSubtrees(n -> n.equals(subtree.getRoot()));
         return subtrees.stream().filter(s -> subtree.equals(s)).findFirst().get();
     }
 

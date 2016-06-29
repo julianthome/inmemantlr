@@ -33,11 +33,11 @@ public class AstNode {
     private int id;
 
     private List<AstNode> children;
-
+    private static int cnt = 0;
 
     private AstNode(Ast tree) {
         this.tree = tree;
-        this.id = ++this.tree.cnt;
+        this.id = cnt++;
         this.children = new Vector<AstNode>();
     }
 
