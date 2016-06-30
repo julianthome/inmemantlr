@@ -1,14 +1,11 @@
 package org.snt.inmemantlr.tree;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 
 public abstract class AstProcessor<R,T> {
 
     protected Ast ast = null;
-
 
     private Map<AstNode, Integer> nmap;
     protected Map<AstNode, T> smap;
@@ -31,20 +28,20 @@ public abstract class AstProcessor<R,T> {
 
         //logger.info(debug());
         for (AstNode l : ast.getLeafs()) {
-            active.addFirst(l);
+            active.add(l);
         }
 
         while (!active.isEmpty()) {
-            AstNode rn = active.pollFirst();
+            AstNode rn = active.poll();
 
             process(rn);
 
             AstNode parent = rn.getParent();
 
             if(parent != null) {
-                nmap.replace(parent, nmap.get(parent) - 1);
+                nmap.replace(parent, nmap.get(parent) - 1);;
                 if (nmap.get(parent) == 0) {
-                    active.addLast(parent);
+                    active.add(parent);
                 }
             }
 
@@ -68,6 +65,12 @@ public abstract class AstProcessor<R,T> {
         }
 
         return sb.toString();
+    }
+
+    public void simpleProp(AstNode n) {
+        if(n.getChildren().size() == 1) {
+            this.smap.put(n, this.smap.get(n.getFirstChild()));
+        }
     }
 
     public abstract R getConstraints();

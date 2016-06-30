@@ -80,6 +80,10 @@ public class AstNode {
         return null;
     }
 
+    public void setParent(AstNode par) {
+        this.parent = par;
+    }
+
     public boolean hasParent() {
         return this.parent != null;
     }
@@ -144,7 +148,7 @@ public class AstNode {
 
         AstNode n = (AstNode)o;
 
-        return n.ntype.equals(this.ntype) &&
+        return n.getId() == this.getId() && n.ntype.equals(this.ntype) &&
                 n.label.equals(this.label) && this.children.equals(n.children);
 
     }

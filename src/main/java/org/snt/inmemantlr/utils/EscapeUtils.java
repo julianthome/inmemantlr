@@ -30,6 +30,9 @@ public class EscapeUtils {
 
 
     public static String escapeSpecialCharacters(String s) {
+        if(s == null)
+            return "";
+
         StringBuilder out = new StringBuilder();
         char pred = ' ';
         for (char c : s.toCharArray()) {

@@ -101,16 +101,14 @@ public class Ast {
 
     public boolean replaceSubtree(Ast oldTree, Ast newTree) {
 
-        Ast newTreeCp = new Ast(newTree);
         if (this.hasSubtree(oldTree)) {
             this.nodes.stream().filter(n -> oldTree.getRoot().equals(n)).forEach(
                     n -> {
-                        n.getParent().replaceChild(oldTree.getRoot(),newTreeCp.getRoot());
+                        n.getParent().replaceChild(oldTree.getRoot(),newTree.getRoot());
                     }
             );
             this.nodes.addAll(newTree.nodes);
             return this.nodes.removeAll(oldTree.nodes);
-
         }
         return false;
     }
