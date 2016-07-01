@@ -66,6 +66,11 @@ public class AstNode {
         }
     }
 
+    public AstNode getChild(int i) {
+        assert(0 <= i && i < this.children.size());
+        return this.children.get(i);
+    }
+
     public AstNode getLastChild(){
         if(this.children.size() > 0) {
             return this.children.get(this.children.size()-1);

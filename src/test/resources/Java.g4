@@ -27,7 +27,7 @@
 */
 
 /** A Java 1.7 grammar for ANTLR v4 derived from ANTLR v3 Java grammar.
- *  Uses ANTLR v4's left-recursive expression notation.
+ *  Uses ANTLR v4's first-recursive expression notation.
  *  It parses ECJ, Netbeans, JDK etc...
  *
  *  Sam Harwell cleaned this up significantly and updated to 1.7!
@@ -520,7 +520,7 @@ expression
     |   expression '&&' expression
     |   expression '||' expression
     |   expression '?' expression ':' expression
-    |   <assoc=right> expression
+    |   <assoc=third> expression
         (   '='
         |   '+='
         |   '-='

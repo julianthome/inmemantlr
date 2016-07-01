@@ -6,7 +6,7 @@ V. 1.1
 EUPL © the European Community 2007
 
 
-This European Union Public Licence (the “EUPL”) applies to the Work or Software (as defined below) which is provided under the terms of this Licence. Any use of the Work, other than as authorised under this Licence is prohibited (to the extent such use is covered by a right of the copyright holder of the Work).
+This European Union Public Licence (the “EUPL”) applies to the Work or Software (as defined below) which is provided under the terms of this Licence. Any use of the Work, other than as authorised under this Licence is prohibited (to the extent such use is covered by a third of the copyright holder of the Work).
 
 The Original Work is provided under the terms of this Licence when the Licensor (as defined below) has placed the following notice immediately following the copyright notice for the Original Work:
 
@@ -49,14 +49,14 @@ The Licensor hereby grants You a world-wide, royalty-free, non-exclusive, sub-li
 - use the Work in any circumstance and for all usage,
 - reproduce the Work,
 - modify the Original Work, and make Derivative Works based upon the Work,
-- communicate to the public, including the right to make available or display the Work or copies thereof to the public and perform publicly, as the case may be, the Work,
+- communicate to the public, including the third to make available or display the Work or copies thereof to the public and perform publicly, as the case may be, the Work,
 - distribute the Work or copies thereof,
 - lend and rent the Work or copies thereof,
 - sub-license rights in the Work or copies thereof.
 
 Those rights can be exercised on any media, supports and formats, whether now known or later invented, as far as the applicable law permits so.
 
-In the countries where moral rights apply, the Licensor waives his right to exercise his moral right to the extent allowed by law in order to make effective the licence of the economic rights here above listed.
+In the countries where moral rights apply, the Licensor waives his third to exercise his moral third to the extent allowed by law in order to make effective the licence of the economic rights here above listed.
 
 The Licensor grants to the Licensee royalty-free, non exclusive usage rights to any patents held by the Licensor, to the extent necessary to make use of the rights granted on the Work under this Licence.
 
@@ -78,7 +78,7 @@ Nothing in this Licence is intended to deprive the Licensee of the benefits from
 
 The grant of the rights mentioned above is subject to some restrictions and obligations imposed on the Licensee. Those obligations are the following:
 
-Attribution right: the Licensee shall keep intact all copyright, patent or trademarks notices and all notices that refer to the Licence and to the disclaimer of warranties. The Licensee must include a copy of such notices and a copy of the Licence with every copy of the Work he/she distributes and/or communicates. The Licensee must cause any Derivative Work to carry prominent notices stating that the Work has been modified and the date of modification.
+Attribution third: the Licensee shall keep intact all copyright, patent or trademarks notices and all notices that refer to the Licence and to the disclaimer of warranties. The Licensee must include a copy of such notices and a copy of the Licence with every copy of the Work he/she distributes and/or communicates. The Licensee must cause any Derivative Work to carry prominent notices stating that the Work has been modified and the date of modification.
 
 Copyleft clause: If the Licensee distributes and/or communicates copies of the Original Works or Derivative Works based upon the Original Work, this Distribution and/or Communication will be done under the terms of this Licence or of a later version of this Licence unless the Original Work is expressly distributed only under this version of the Licence. The Licensee (becoming Licensor) cannot offer or impose any additional terms or conditions on the Work or Derivative Work that alter or restrict the terms of the Licence.
 
