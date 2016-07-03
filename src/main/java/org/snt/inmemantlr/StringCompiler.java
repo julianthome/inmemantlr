@@ -34,14 +34,16 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StringCompiler {
 
     private static SpecialClassLoader cl = new SpecialClassLoader();
 
-    private static Lexer lexer = null;
-    private static Parser parser = null;
+    private static Map<String, Lexer> lexer = new HashMap<>();
+    private static Map<String, Parser> parser = new HashMap<>();
 
     public static boolean compile(StringCodeGenPipeline scgp) {
 
@@ -96,12 +98,15 @@ public class StringCompiler {
 
     public static Lexer instanciateLexer(CharStream input, String cname) {
 
-        if(lexer != null) {
-            lexer.reset();
-            return lexer;
-        }
+        Lexer elexer = null;
 
         String name = cname + "Lexer";
+
+        if(lexer.containsKey(name)) {
+            elexer = lexer.get(name);
+            elexer.reset();
+            return elexer;
+        }
 
         Lexer ret = null;
 
@@ -114,23 +119,27 @@ public class StringCompiler {
 
         try {
             //System.out.println(cstr[0].toGenericString());
-            lexer = (Lexer) cstr[0].newInstance(input);
+            elexer = (Lexer) cstr[0].newInstance(input);
+            lexer.put(name, elexer);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;
         }
 
-        return lexer;
+        return elexer;
     }
 
     public static Parser instanciateParser(CommonTokenStream tstream, String cname) {
 
-        if(parser != null) {
-            parser.reset();
-            return parser;
-        }
-
         String name = cname + "Parser";
+
+        Parser eparser = null;
+
+        if(parser.containsKey(name)) {
+            eparser = parser.get(name);
+            eparser.reset();
+            return eparser;
+        }
 
         Parser ret = null;
 
@@ -141,13 +150,14 @@ public class StringCompiler {
         assert (cstr.length == 1);
 
         try {
-            parser = (Parser) cstr[0].newInstance(tstream);
+            eparser = (Parser) cstr[0].newInstance(tstream);
+            parser.put(name, eparser);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;
         }
 
-        return parser;
+        return eparser;
     }
 
 }
