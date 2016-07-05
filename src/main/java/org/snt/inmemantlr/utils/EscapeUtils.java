@@ -48,4 +48,22 @@ public class EscapeUtils {
         }
         return out.toString();
     }
+
+    public static String unescapeSpecialCharacters(String s) {
+        if(s == null)
+            return "";
+
+        StringBuilder out = new StringBuilder();
+        char pred = ' ';
+        for (char c : s.toCharArray()) {
+            if (pred == '\\' && special.contains(c)) {
+                out.deleteCharAt(out.length() - 1); // delete NULL
+                out.append(c);
+            } else {
+                out.append(c);
+            }
+            pred = c;
+        }
+        return out.toString();
+    }
 }
