@@ -32,26 +32,32 @@ import org.snt.inmemantlr.tree.AstProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
+import java.io.InputStream;
 
 
 public class TestAstProcessor {
 
-    static File grammar = null;
-    static File sfile = null;
+    static InputStream sgrammar = null;
+    static InputStream sfile = null;
+
+    String sgrammarcontent = "";
+    String s = "";
 
     @Before
     public void init() {
         ClassLoader classLoader = getClass().getClassLoader();
-        grammar = new File(classLoader.getResource("Java.g4").getFile());
-        sfile = new File(classLoader.getResource("HelloWorld.java").getFile());
+        sgrammar = classLoader.getResourceAsStream("Java.g4");
+        sfile = classLoader.getResourceAsStream("HelloWorld.java");
+
+        sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        s = FileUtils.getStringFromStream(sfile);
     }
 
     @Test
     public void testProcessor() {
 
-        GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
+        GenericParser gp = new GenericParser(sgrammarcontent, "Java");
         gp.compile();
-        String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
         Assert.assertTrue(s != null && s.length() > 0);
 

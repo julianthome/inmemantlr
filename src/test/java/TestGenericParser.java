@@ -44,7 +44,7 @@ public class TestGenericParser {
     @Test
     public void testParser() {
 
-        GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
+        GenericParser gp = new GenericParser(grammar, "Java");
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 

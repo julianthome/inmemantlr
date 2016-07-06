@@ -27,8 +27,11 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.tool.Grammar;
+import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -44,10 +47,21 @@ public class GenericParser {
 	private ParserRuleContext data;
 	private DefaultListener listener;
 
-	public GenericParser(String grammarFile, String name) {
+	public GenericParser(File grammarFile, String name) {
 		this.antlr = new Tool();
 		this.cname = name;
-		this.g = antlr.loadGrammar(grammarFile);
+		assert(grammarFile.exists());
+		this.g = antlr.loadGrammar(grammarFile.getAbsolutePath());
+		this.gen = new StringCodeGenPipeline(g, cname);
+		this.compiled = false;
+		this.parsed = false;
+		this.data = null;
+	}
+
+	public GenericParser(String content, String name) {
+		this.antlr = new Tool();
+		this.cname = name;
+		this.g = loadGrammarFromString(content, name);
 		this.gen = new StringCodeGenPipeline(g, cname);
 		this.compiled = false;
 		this.parsed = false;
@@ -58,6 +72,15 @@ public class GenericParser {
 		gen.process();
 		compiled = StringCompiler.compile(gen);
 		return compiled;
+	}
+
+
+	public Grammar loadGrammarFromString(String content, String name) {
+		GrammarRootAST grammarRootAST =  this.antlr.parseGrammarFromString(content);
+		final Grammar g = this.antlr.createGrammar(grammarRootAST);
+		g.fileName = name;
+		this.antlr.process(g, false);
+		return g;
 	}
 
 

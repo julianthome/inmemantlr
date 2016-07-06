@@ -45,7 +45,7 @@ public class TestTreeGeneration {
     @Test
     public void testGeneration() {
 
-        GenericParser gp = new GenericParser(grammar.getAbsolutePath(), "Java");
+        GenericParser gp = new GenericParser(grammar, "Java");
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 

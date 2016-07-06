@@ -1,6 +1,10 @@
 # inmemantlr
-In-memory compilation of ANTLR grammars that. With inmemantlr, you can test your
-ANTLR grammars without the need to generate .java files first. Furthermore, it automatically generates an abstract syntax tree (AST) from a parsed file. Hence, it is especially useful for testing purposes. Note that inmenantlr is using ANTLR v4.
+With inmemantlr you can test your
+ANTLR grammars directly without the need to generate and compile .java files first, which is done automatically and in-memory by the tool.
+
+Moreover, it automatically generates an abstract syntax tree (AST) from a parsed file that can be easily visualized using graphviz.
+
+inmemantlr is intended to assist you in the process of developing your context-free grammar by providing automated (re-)generation of Parser and Lexer, and by allowing you to visualize the resulting AST. Note that inmenantlr is using ANTLR v4.
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)
@@ -11,12 +15,13 @@ The following code snippet shows an example how to use inmemantlr. The descripti
 
 ``` java
 // 1. load grammar
-GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
+File f = new File("src/test/ressources/Java.g4");
+GenericParser gp = new GenericParser(f, "Java");
 // 2. load file content into string
 String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
 // 3. set listener for checking parse tree elements. Here you could use any ParseTreeListener implementation.
 gp.setListener(new DefaultListener());
-// 4. compile lexer and parser in-memory
+// 4. compile Lexer and parser in-memory
 gp.compile();
 try {
   // 5. parse the string that represents the content of HelloWorld.java
@@ -29,7 +34,8 @@ try {
 If you want to get the AST from a parsed file, the following snippet could be of use:
 
 ``` java
-GenericParser gp = new GenericParser("src/test/ressources/Java.g4", "Java");
+File f = new File("src/test/ressources/Java.g4");
+GenericParser gp = new GenericParser(f, "Java");
 String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
 
 // this listener will create an AST from the java file

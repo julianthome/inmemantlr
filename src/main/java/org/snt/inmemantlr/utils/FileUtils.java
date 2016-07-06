@@ -19,13 +19,17 @@
 
 package org.snt.inmemantlr.utils;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 
 
 public class FileUtils {
 
-    public static synchronized String loadFileContent(String path) {
+    public static String loadFileContent(String path) {
         byte[] bytes = null;
         try {
             RandomAccessFile f = new RandomAccessFile(path, "r");
@@ -35,5 +39,16 @@ public class FileUtils {
             e.printStackTrace();
         }
         return new String(bytes);
+    }
+
+    public static String getStringFromStream(InputStream is) {
+
+        StringWriter writer = new StringWriter();
+        try {
+            IOUtils.copy(is, writer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return writer.toString();
     }
 }
