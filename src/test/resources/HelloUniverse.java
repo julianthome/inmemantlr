@@ -17,11 +17,8 @@
 * limitations under the Licence.
 */
 
-package org.snt.inmemantlr.exceptions;
-
-public class IllegalWorkflowException extends Exception {
-
-    public IllegalWorkflowException(String msg) {
-        super(msg);
+public class HelloUniverse {
+    public void foo() {
+        System.out.println("foo");
     }
 }

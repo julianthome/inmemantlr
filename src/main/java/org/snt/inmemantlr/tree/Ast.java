@@ -37,7 +37,7 @@ public class Ast {
 
     public Ast(String nt, String label) {
         this();
-        this.root = newNode(null,nt,label);
+        this.root = newNode(null, nt, label);
     }
 
 
@@ -55,14 +55,14 @@ public class Ast {
         return root;
     }
 
-    private AstNode newNode(AstNode nod){
-        AstNode rn = new AstNode(this,nod);
+    private AstNode newNode(AstNode nod) {
+        AstNode rn = new AstNode(this, nod);
         this.nodes.add(rn);
         return rn;
     }
 
-    public AstNode newNode(AstNode parent, String nt, String label){
-        AstNode rn = new AstNode(this,parent,nt,label);
+    public AstNode newNode(AstNode parent, String nt, String label) {
+        AstNode rn = new AstNode(this, parent, nt, label);
         this.nodes.add(rn);
         return rn;
     }
@@ -87,10 +87,10 @@ public class Ast {
         sb.append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
         this.nodes.forEach(
-                n -> sb.append("\tn" + n.getId() + " [label=\"(" +n.getId() +")\\n"  +
+                n -> sb.append("\tn" + n.getId() + " [label=\"(" + n.getId() + ")\\n" +
                         n.getEscapedLabel() + "\\n" + n.getRule().toString() + "\"];\n"));
 
-        this.nodes.forEach(n -> n.getChildren().stream().filter(c -> c.hasParent()).forEach(c-> sb.append("\tn" +
+        this.nodes.forEach(n -> n.getChildren().stream().filter(c -> c.hasParent()).forEach(c -> sb.append("\tn" +
                 c.getParent().getId() + " -- n" + c.getId() + ";\n")));
 
         sb.append("}\n");
@@ -104,7 +104,7 @@ public class Ast {
         if (this.hasSubtree(oldTree)) {
             this.nodes.stream().filter(n -> oldTree.getRoot().equals(n)).forEach(
                     n -> {
-                        n.getParent().replaceChild(oldTree.getRoot(),newTree.getRoot());
+                        n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot());
                     }
             );
             this.nodes.addAll(newTree.nodes);
@@ -117,9 +117,9 @@ public class Ast {
     public boolean removeSubtree(Ast subtree) {
         if (this.hasSubtree(subtree)) {
             this.nodes.stream().filter(n -> subtree.getRoot().equals(n)).forEach(
-                  n -> {
-                      n.getParent().delChild(n);
-                  }
+                    n -> {
+                        n.getParent().delChild(n);
+                    }
             );
             return this.nodes.removeAll(subtree.nodes);
         }
@@ -128,17 +128,17 @@ public class Ast {
 
     public Set<Ast> getDominatingSubtrees(Predicate<AstNode> p) {
         Set<AstNode> selected = new HashSet<>();
-        searchDominatingNodes(this.root,selected,p);
+        searchDominatingNodes(this.root, selected, p);
         System.out.println(selected);
         return getSubtrees(n -> selected.contains(n));
     }
 
     private void searchDominatingNodes(AstNode n, Set<AstNode> selected, Predicate<AstNode> p) {
-        if(p.test(n)) {
+        if (p.test(n)) {
             selected.add(n);
         } else {
             for (AstNode an : n.getChildren()) {
-                searchDominatingNodes(an, selected,p);
+                searchDominatingNodes(an, selected, p);
             }
         }
     }
@@ -148,7 +148,7 @@ public class Ast {
         Set<Ast> ret = new HashSet<Ast>();
 
         this.nodes.stream().filter(p).forEach(
-                n-> {
+                n -> {
                     Ast a = new Ast(n);
                     ret.add(a);
                 }
@@ -174,10 +174,10 @@ public class Ast {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Ast)) {
+        if (!(o instanceof Ast)) {
             return false;
         }
-        Ast ast = (Ast)o;
+        Ast ast = (Ast) o;
         // will recursively check AST nodes
         return this.root.equals(ast.getRoot());
     }

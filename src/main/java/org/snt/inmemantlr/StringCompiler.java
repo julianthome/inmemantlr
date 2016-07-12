@@ -40,12 +40,18 @@ import java.util.Map;
 
 public class StringCompiler {
 
-    private static SpecialClassLoader cl = new SpecialClassLoader();
+    private SpecialClassLoader cl = null;
+    private Map<String, Lexer> lexer = null;
+    private Map<String, Parser> parser = null;
 
-    private static Map<String, Lexer> lexer = new HashMap<>();
-    private static Map<String, Parser> parser = new HashMap<>();
 
-    public static boolean compile(StringCodeGenPipeline scgp) {
+    public StringCompiler() {
+        this.cl = new SpecialClassLoader();
+        this.lexer = new HashMap<>();
+        this.parser = new HashMap<>();
+    }
+
+    public boolean compile(StringCodeGenPipeline scgp) {
 
         JavaCompiler javac = new EclipseCompiler();
 
@@ -84,9 +90,9 @@ public class StringCompiler {
         return compile.call();
     }
 
-    private static Class<?> findClass(String cname) {
+    private Class<?> findClass(String cname) {
         try {
-            return cl.findClass(cname);
+            return this.cl.findClass(cname);
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -96,13 +102,13 @@ public class StringCompiler {
     }
 
 
-    public static Lexer instanciateLexer(CharStream input, String cname) {
+    public Lexer instanciateLexer(CharStream input, String cname) {
 
         Lexer elexer = null;
 
         String name = cname + "Lexer";
 
-        if(lexer.containsKey(name)) {
+        if (lexer.containsKey(name)) {
             elexer = lexer.get(name);
             elexer.reset();
             return elexer;
@@ -111,7 +117,7 @@ public class StringCompiler {
         Lexer ret = null;
 
 
-        Class<?> elex = StringCompiler.findClass(name);
+        Class<?> elex = findClass(name);
 
         Constructor<?>[] cstr = elex.getConstructors();
 
@@ -129,13 +135,13 @@ public class StringCompiler {
         return elexer;
     }
 
-    public static Parser instanciateParser(CommonTokenStream tstream, String cname) {
+    public Parser instanciateParser(CommonTokenStream tstream, String cname) {
 
         String name = cname + "Parser";
 
         Parser eparser = null;
 
-        if(parser.containsKey(name)) {
+        if (parser.containsKey(name)) {
             eparser = parser.get(name);
             eparser.reset();
             return eparser;
@@ -143,7 +149,7 @@ public class StringCompiler {
 
         Parser ret = null;
 
-        Class<?> elex = StringCompiler.findClass(name);
+        Class<?> elex = findClass(name);
 
         Constructor<?>[] cstr = elex.getConstructors();
 

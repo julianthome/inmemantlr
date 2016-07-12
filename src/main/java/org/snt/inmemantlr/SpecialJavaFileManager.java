@@ -26,10 +26,12 @@ import java.io.IOException;
 
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
     private SpecialClassLoader xcl;
+
     public SpecialJavaFileManager(StandardJavaFileManager sjfm, SpecialClassLoader xcl) {
         super(sjfm);
         this.xcl = xcl;
     }
+
     public JavaFileObject getJavaFileForOutput(Location location, String name, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
         xcl.addClass(name, mbc);

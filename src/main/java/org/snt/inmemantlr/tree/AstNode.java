@@ -50,6 +50,7 @@ public class AstNode {
 
     /**
      * Deep copy constructor
+     *
      * @param tree
      * @param nod
      */
@@ -58,8 +59,8 @@ public class AstNode {
         this.id = nod.id;
         this.ntype = nod.ntype;
         this.label = nod.label;
-        for(AstNode c : nod.children) {
-            AstNode cnod = new AstNode(tree,c);
+        for (AstNode c : nod.children) {
+            AstNode cnod = new AstNode(tree, c);
             cnod.parent = this;
             this.tree.nodes.add(cnod);
             this.children.add(cnod);
@@ -67,19 +68,19 @@ public class AstNode {
     }
 
     public AstNode getChild(int i) {
-        assert(0 <= i && i < this.children.size());
+        assert (0 <= i && i < this.children.size());
         return this.children.get(i);
     }
 
-    public AstNode getLastChild(){
-        if(this.children.size() > 0) {
-            return this.children.get(this.children.size()-1);
+    public AstNode getLastChild() {
+        if (this.children.size() > 0) {
+            return this.children.get(this.children.size() - 1);
         }
         return null;
     }
 
-    public AstNode getFirstChild(){
-        if(!this.children.isEmpty()) {
+    public AstNode getFirstChild() {
+        if (!this.children.isEmpty()) {
             return this.children.get(0);
         }
         return null;
@@ -114,7 +115,7 @@ public class AstNode {
     }
 
     public void replaceChild(AstNode oldNode, AstNode newNode) {
-        if(this.children.contains(oldNode)) {
+        if (this.children.contains(oldNode)) {
             this.children.set(this.children.indexOf(oldNode), newNode);
             newNode.parent = this;
         }
@@ -148,10 +149,10 @@ public class AstNode {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof AstNode))
+        if (!(o instanceof AstNode))
             return false;
 
-        AstNode n = (AstNode)o;
+        AstNode n = (AstNode) o;
 
         return n.getId() == this.getId() && n.ntype.equals(this.ntype) &&
                 n.label.equals(this.label) && this.children.equals(n.children);

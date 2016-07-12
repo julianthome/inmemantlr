@@ -68,7 +68,7 @@ public class DefaultTreeListener extends DefaultListener {
     @Override
     public void enterEveryRule(ParserRuleContext ctx) {
         String rule = this.getRuleByKey(ctx.getRuleIndex());
-        if(this.filter.test(rule)){
+        if (this.filter.test(rule)) {
             AstNode n = ast.newNode(nodeptr, rule, ctx.getText());
             nodeptr.addChild(n);
             nodeptr = n;
@@ -78,7 +78,7 @@ public class DefaultTreeListener extends DefaultListener {
     @Override
     public void exitEveryRule(ParserRuleContext ctx) {
         String rule = this.getRuleByKey(ctx.getRuleIndex());
-        if(this.filter.test(rule)){
+        if (this.filter.test(rule)) {
             this.nodeptr = this.nodeptr.getParent();
         }
     }

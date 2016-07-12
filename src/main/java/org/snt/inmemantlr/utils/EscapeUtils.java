@@ -30,7 +30,7 @@ public class EscapeUtils {
 
 
     public static String escapeSpecialCharacters(String s) {
-        if(s == null)
+        if (s == null)
             return "";
 
         StringBuilder out = new StringBuilder();
@@ -50,7 +50,7 @@ public class EscapeUtils {
     }
 
     public static String unescapeSpecialCharacters(String s) {
-        if(s == null)
+        if (s == null)
             return "";
 
         StringBuilder out = new StringBuilder();

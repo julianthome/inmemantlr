@@ -33,50 +33,50 @@ import java.util.Stack;
 
 public class DefaultListener implements ParseTreeListener {
 
-	protected Parser parser;
-	private Map<String,Integer> rmap;
-	private Stack<Comparator> compstack = new Stack<Comparator>();
-	private Stack<String> context = new Stack<String>();
+    protected Parser parser;
+    private Map<String, Integer> rmap;
+    private Stack<Comparator> compstack = new Stack<Comparator>();
+    private Stack<String> context = new Stack<String>();
 
-	private static DefaultListener listener = null;
+    private static DefaultListener listener = null;
 
-	public DefaultListener() {
-		this.parser = null;
-		this.rmap = null;
-	}
+    public DefaultListener() {
+        this.parser = null;
+        this.rmap = null;
+    }
 
-	public String getRuleByKey(int key) {
+    public String getRuleByKey(int key) {
 
-		for(Map.Entry<String, Integer> e : this.rmap.entrySet()) {
-			if (e.getValue() == key)
-				return e.getKey();
-		}
-		return null;
-	}
+        for (Map.Entry<String, Integer> e : this.rmap.entrySet()) {
+            if (e.getValue() == key)
+                return e.getKey();
+        }
+        return null;
+    }
 
-	protected void setParser(Parser p) {
-		this.parser = p;
-		this.rmap = this.parser.getRuleIndexMap();
-	}
+    protected void setParser(Parser p) {
+        this.parser = p;
+        this.rmap = this.parser.getRuleIndexMap();
+    }
 
 
-	@Override
-	public void visitTerminal(TerminalNode terminalNode) {
+    @Override
+    public void visitTerminal(TerminalNode terminalNode) {
 
-	}
+    }
 
-	@Override
-	public void visitErrorNode(ErrorNode errorNode) {
+    @Override
+    public void visitErrorNode(ErrorNode errorNode) {
 
-	}
+    }
 
-	@Override
-	public void enterEveryRule(ParserRuleContext parserRuleContext) {
+    @Override
+    public void enterEveryRule(ParserRuleContext parserRuleContext) {
 
-	}
+    }
 
-	@Override
-	public void exitEveryRule(ParserRuleContext parserRuleContext) {
+    @Override
+    public void exitEveryRule(ParserRuleContext parserRuleContext) {
 
-	}
+    }
 }

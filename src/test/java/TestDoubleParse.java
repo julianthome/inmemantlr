@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
@@ -32,69 +33,54 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.InputStream;
 
 
-public class TestAstProcessor {
+public class TestDoubleParse {
 
     static InputStream sgrammar = null;
-    static InputStream sfile = null;
+    static InputStream sfile1 = null;
+    static InputStream sfile2 = null;
 
     String sgrammarcontent = "";
-    String s = "";
+    String s1 = "", s2 = "";
 
     @Before
     public void init() {
         ClassLoader classLoader = getClass().getClassLoader();
         sgrammar = classLoader.getResourceAsStream("Java.g4");
-        sfile = classLoader.getResourceAsStream("HelloWorld.java");
+        sfile1 = classLoader.getResourceAsStream("HelloWorld.java");
+        sfile2 = classLoader.getResourceAsStream("HelloUniverse.java");
 
         sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-        s = FileUtils.getStringFromStream(sfile);
+        s1 = FileUtils.getStringFromStream(sfile1);
+        s2 = FileUtils.getStringFromStream(sfile2);
     }
 
     @Test
     public void testProcessor() {
 
-        GenericParser gp = new GenericParser(sgrammarcontent, "Java");
-        gp.compile();
+        GenericParser gp1 = new GenericParser(sgrammarcontent, "Java");
+        gp1.compile();
+        GenericParser gp2 = new GenericParser(sgrammarcontent, "Java");
+        gp2.compile();
 
-        Assert.assertTrue(s != null && s.length() > 0);
+        DefaultTreeListener l1 = new DefaultTreeListener();
+        DefaultTreeListener l2 = new DefaultTreeListener();
 
-        DefaultTreeListener dlist = new DefaultTreeListener();
 
-        gp.setListener(dlist);
 
         ParserRuleContext ctx = null;
+        gp1.setListener(l1);
+        gp2.setListener(l2);
+
         try {
-            ctx = gp.parse(s);
+            gp1.parse(s1);
+            gp2.parse(s2);
         } catch (IllegalWorkflowException e) {
-            Assert.assertTrue(false);
+            e.printStackTrace();
         }
 
-        Ast ast = dlist.getAst();
-
-
-        // Process the tree botton up
-        AstProcessor<String,String> processor = new AstProcessor<String, String>(ast) {
-
-            int cnt = 0;
-
-            @Override
-            public String getResult() {
-                return String.valueOf(cnt);
-            }
-            @Override
-            protected void initialize() {
-                for(AstNode n : this.ast.getNodes()) {
-                    this.smap.put(n, "");
-                }
-            }
-            @Override
-            protected void process(AstNode n) {
-                cnt ++;
-            }
-        };
-
-        processor.process();
-        processor.getResult().equals(String.valueOf(ast.getNodes()));
+        Ast out1 = l1.getAst();
+        Ast out2 = l2.getAst();
+        Assert.assertFalse(out1.equals(out2));
     }
 
 }

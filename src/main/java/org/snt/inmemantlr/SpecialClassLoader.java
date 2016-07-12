@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 class SpecialClassLoader extends ClassLoader {
-    private Map<String,MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
+    private Map<String, MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         MemoryByteCode mbc = m.get(name);
-        if (mbc==null){
-            mbc = m.get(name.replace(".","/"));
-            if (mbc==null){
+        if (mbc == null) {
+            mbc = m.get(name.replace(".", "/"));
+            if (mbc == null) {
                 return super.findClass(name);
             }
         }

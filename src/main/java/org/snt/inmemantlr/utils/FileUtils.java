@@ -33,7 +33,7 @@ public class FileUtils {
         byte[] bytes = null;
         try {
             RandomAccessFile f = new RandomAccessFile(path, "r");
-            bytes = new byte[(int)f.length()];
+            bytes = new byte[(int) f.length()];
             f.read(bytes);
         } catch (IOException e) {
             e.printStackTrace();

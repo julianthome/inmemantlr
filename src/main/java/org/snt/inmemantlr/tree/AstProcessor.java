@@ -22,7 +22,7 @@ package org.snt.inmemantlr.tree;
 import java.util.*;
 
 
-public abstract class AstProcessor<R,T> {
+public abstract class AstProcessor<R, T> {
 
     protected Ast ast = null;
 
@@ -57,8 +57,9 @@ public abstract class AstProcessor<R,T> {
 
             AstNode parent = rn.getParent();
 
-            if(parent != null) {
-                nmap.replace(parent, nmap.get(parent) - 1);;
+            if (parent != null) {
+                nmap.replace(parent, nmap.get(parent) - 1);
+                ;
                 if (nmap.get(parent) == 0) {
                     active.add(parent);
                 }
@@ -66,7 +67,7 @@ public abstract class AstProcessor<R,T> {
 
         }
 
-        return getConstraints();
+        return getResult();
     }
 
     public String debug() {
@@ -88,20 +89,20 @@ public abstract class AstProcessor<R,T> {
     }
 
     public void simpleProp(AstNode n) {
-        if(n.getChildren().size() == 1) {
+        if (n.getChildren().size() == 1) {
             this.smap.put(n, this.smap.get(n.getFirstChild()));
         }
     }
 
     public T getElement(AstNode n) {
-        assert(this.smap.containsKey(n));
+        assert (this.smap.containsKey(n));
         return this.smap.get(n);
     }
 
+    public abstract R getResult();
 
-
-    public abstract R getConstraints();
     protected abstract void initialize();
+
     protected abstract void process(AstNode n);
 
 }
