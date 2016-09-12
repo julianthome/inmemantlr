@@ -21,15 +21,10 @@
 #
 
 language: java
+sudo : false
 
 jdk:
-    - oraclejdk8
-
-sudo: false
-
-cache:
-  directories:
-    - .spark-dist
+  - oraclejdk8
 
 install:
-  - mvn package
+  - mvn clean package
