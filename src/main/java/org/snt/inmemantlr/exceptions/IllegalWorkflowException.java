@@ -19,6 +19,11 @@
 
 package org.snt.inmemantlr.exceptions;
 
+/**
+ *
+ * This exception is thrown when
+ *
+ */
 public class IllegalWorkflowException extends Exception {
 
     public IllegalWorkflowException(String msg) {

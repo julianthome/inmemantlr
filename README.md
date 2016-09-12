@@ -7,7 +7,7 @@ Moreover, it automatically generates an abstract syntax tree (AST) from a parsed
 inmemantlr is intended to assist you in the process of developing your context-free grammar by providing automated (re-)generation of Parser and Lexer, and by allowing you to visualize the resulting AST. Note that inmenantlr is using ANTLR v4.
 
 # Status
-[![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)
+[![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  
 
 # Example
 
