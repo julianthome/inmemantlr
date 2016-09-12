@@ -32,4 +32,4 @@ cache:
     - .spark-dist
 
 install:
-  - mvn package
+  - mvn clean verify
