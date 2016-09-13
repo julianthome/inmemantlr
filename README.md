@@ -9,8 +9,19 @@ inmemantlr is intended to assist you in the process of developing your context-f
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
 
+# Integration
 
-# Example
+inmemantlr is available on maven central. One can integrate it by using the following depenency in the `pom.xml` file.
+
+```xml
+<dependency>
+    <groupId>com.github.julianthome</groupId>
+    <artifactId>inmemantlr</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
+# Usage
 
 The following code snippet shows an example how to use inmemantlr. The descriptions are provided as source code comments.
 
