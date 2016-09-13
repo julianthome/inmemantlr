@@ -118,8 +118,8 @@ public class TestTreeGeneration {
             Assert.assertTrue(c.isLeaf());
             Assert.assertFalse(c.equals(null));
             Assert.assertFalse(c.equals(null));
-            Assert.assertEquals(c.getLastChild(),null);
-            Assert.assertEquals(c.getFirstChild(),null);
+            Assert.assertNull(c.getLastChild());
+            Assert.assertNull(c.getFirstChild());
         }
 
 

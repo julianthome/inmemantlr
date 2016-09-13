@@ -17,28 +17,26 @@
 * limitations under the Licence.
 */
 
+
 import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
-import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.AstProcessor;
+import org.snt.inmemantlr.StringCodeGenPipeline;
+import org.snt.inmemantlr.StringCompiler;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.InputStream;
 
-
-public class TestAstProcessor {
+public class TestStringCompiler {
 
     static InputStream sgrammar = null;
     static InputStream sfile = null;
+    static StringCodeGenPipeline sg = null;
 
     String sgrammarcontent = "";
     String s = "";
+
 
     @Before
     public void init() {
@@ -48,54 +46,26 @@ public class TestAstProcessor {
 
         sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         s = FileUtils.getStringFromStream(sfile);
-    }
-
-    @Test
-    public void testProcessor() {
 
         GenericParser gp = new GenericParser(sgrammarcontent, "Java");
         gp.compile();
 
         Assert.assertTrue(s != null && s.length() > 0);
+        Assert.assertTrue(gp.getGrammar() != null);
 
-        DefaultTreeListener dlist = new DefaultTreeListener();
+        sg = new StringCodeGenPipeline(gp.getGrammar(), "Java");
+    }
 
-        gp.setListener(dlist);
+    @Test
+    public void testStringCompiler() {
 
-        ParserRuleContext ctx = null;
-        try {
-            ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            Assert.assertTrue(false);
-        }
+        StringCompiler sc = new StringCompiler();
 
-        Ast ast = dlist.getAst();
+        Assert.assertTrue(sc.instanciateLexer(null,"") == null);
 
 
-        // Process the tree botton up
-        AstProcessor<String,String> processor = new AstProcessor<String, String>(ast) {
-            int cnt = 0;
-            @Override
-            public String getResult() {
-                return String.valueOf(cnt);
-            }
+        Assert.assertTrue(sc.instanciateLexer(null,"blabal") == null);
 
-            @Override
-            protected void initialize() {
-                for(AstNode n : this.ast.getNodes()) {
-                    this.smap.put(n, "");
-                }
-            }
-            @Override
-            protected void process(AstNode n) {
-                cnt ++;
-                simpleProp(n);
-                Assert.assertTrue(getElement(n) != null);
-            }
-        };
-
-        processor.process();
-        Assert.assertTrue(processor.debug() != null);
 
     }
 

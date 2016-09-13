@@ -82,6 +82,7 @@ public class TestDoubleParse {
         Ast out1 = l1.getAst();
         Ast out2 = l2.getAst();
         Assert.assertFalse(out1.equals(out2));
+        Assert.assertTrue(out1.equals(out1));
     }
 
 }

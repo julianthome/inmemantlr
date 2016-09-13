@@ -94,11 +94,8 @@ public class StringCompiler {
         try {
             return this.cl.findClass(cname);
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
 
@@ -118,6 +115,9 @@ public class StringCompiler {
 
 
         Class<?> elex = findClass(name);
+
+        if(elex == null)
+            return null;
 
         Constructor<?>[] cstr = elex.getConstructors();
 
