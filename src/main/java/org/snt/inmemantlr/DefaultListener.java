@@ -30,7 +30,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Stack;
 
-
+/**
+ * default tree listener
+ */
 public class DefaultListener implements ParseTreeListener {
 
     protected Parser parser;
@@ -40,11 +42,19 @@ public class DefaultListener implements ParseTreeListener {
 
     private static DefaultListener listener = null;
 
+    /**
+     * constructor
+     */
     public DefaultListener() {
         this.parser = null;
         this.rmap = null;
     }
 
+    /**
+     * maps rule index to its actual name
+     * @param key rule index
+     * @return the corresponding rule name
+     */
     public String getRuleByKey(int key) {
 
         for (Map.Entry<String, Integer> e : this.rmap.entrySet()) {
@@ -54,6 +64,10 @@ public class DefaultListener implements ParseTreeListener {
         return null;
     }
 
+    /**
+     * set parser
+     * @param p parser
+     */
     protected void setParser(Parser p) {
         this.parser = p;
         this.rmap = this.parser.getRuleIndexMap();

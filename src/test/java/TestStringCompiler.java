@@ -58,15 +58,9 @@ public class TestStringCompiler {
 
     @Test
     public void testStringCompiler() {
-
         StringCompiler sc = new StringCompiler();
-
-        Assert.assertTrue(sc.instanciateLexer(null,"") == null);
-
-
-        Assert.assertTrue(sc.instanciateLexer(null,"blabal") == null);
-
-
+        Assert.assertNull(sc.instanciateLexer(null,""));
+        Assert.assertNull(sc.instanciateLexer(null,"blabal"));
     }
 
 }

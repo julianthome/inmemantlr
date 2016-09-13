@@ -35,7 +35,9 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-
+/**
+ * generic parser - an antlr parser representation
+ */
 public class GenericParser {
 
     private Tool antlr;
@@ -48,6 +50,11 @@ public class GenericParser {
     private DefaultListener listener;
     private StringCompiler sc;
 
+    /**
+     * constructor
+     * @param grammarFile grammar file
+     * @param name grammar name
+     */
     public GenericParser(File grammarFile, String name) {
         this.antlr = new Tool();
         this.cname = name;
@@ -60,6 +67,11 @@ public class GenericParser {
         this.sc = new StringCompiler();
     }
 
+    /**
+     * constructor
+     * @param content grammar file content
+     * @param name grammar
+     */
     public GenericParser(String content, String name) {
         this.antlr = new Tool();
         this.cname = name;
@@ -71,13 +83,22 @@ public class GenericParser {
         this.sc = new StringCompiler();
     }
 
+    /**
+     * compile grammar file
+     * @return true if compilation was succesful, false otherwise
+     */
     public boolean compile() {
         gen.process();
         compiled = this.sc.compile(gen);
         return compiled;
     }
 
-
+    /**
+     * load antlr grammar from string
+     * @param content string content from antlr grammar
+     * @param name name of antlr grammar
+     * @return grammar object
+     */
     public Grammar loadGrammarFromString(String content, String name) {
         GrammarRootAST grammarRootAST = this.antlr.parseGrammarFromString(content);
         final Grammar g = this.antlr.createGrammar(grammarRootAST);
@@ -86,7 +107,12 @@ public class GenericParser {
         return g;
     }
 
-
+    /**
+     * parse string an create a context
+     * @param toParse string to parse
+     * @return context
+     * @throws IllegalWorkflowException if listener is null or compilation did not take place
+     */
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
 
         if (listener == null) {
@@ -141,14 +167,26 @@ public class GenericParser {
         return this.data;
     }
 
+    /**
+     * get parse tree listener
+     * @return parse tree listener
+     */
     public ParseTreeListener getListener() {
         return this.listener;
     }
 
+    /**
+     * set parse tree listener
+     * @param listener listener to use
+     */
     public void setListener(DefaultListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * get antlr grammar object
+     * @return antlr grammar object
+     */
     public Grammar getGrammar() {
         return this.g;
     }

@@ -25,22 +25,44 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+/**
+ * memory source object that represents a source file
+ * for in-memory compilation
+ */
 class MemorySource extends SimpleJavaFileObject {
     private String src;
 
+    /**
+     * constructor
+     * @param name class name
+     * @param src source string
+     */
     public MemorySource(String name, String src) {
         super(URI.create("file:///" + name + ".java"), Kind.SOURCE);
         this.src = src;
     }
 
+    /**
+     * get character content
+     * @param ignoreEncodingErrors
+     * @return source as char sequence
+     */
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {
         return src;
     }
 
+    /**
+     * open new output stream
+     * @return output stream
+     */
     public OutputStream openOutputStream() {
         throw new IllegalStateException();
     }
 
+    /**
+     * open new input stream
+     * @return input stream
+     */
     public InputStream openInputStream() {
         return new ByteArrayInputStream(src.getBytes());
     }

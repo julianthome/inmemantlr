@@ -20,12 +20,15 @@
 package org.snt.inmemantlr.exceptions;
 
 /**
- *
- * This exception is thrown when
- *
+ * this exception is thrown when an illegal workflow for the generic
+ * parser is encountered
  */
 public class IllegalWorkflowException extends Exception {
 
+    /**
+     * constructor
+     * @param msg exception message
+     */
     public IllegalWorkflowException(String msg) {
         super(msg);
     }

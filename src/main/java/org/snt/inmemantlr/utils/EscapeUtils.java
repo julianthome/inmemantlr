@@ -23,12 +23,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * escaping helper class
+ */
 public class EscapeUtils {
 
     private static Character[] sarray = new Character[]{'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*', '\"', '$', '<', '>', '.', '|', '#'};
     private static Set<Character> special = new HashSet<Character>(Arrays.asList(sarray));
 
 
+    /**
+     * escape special character in a string with a backslash
+     * @param s string to be escaped
+     * @return escaped string
+     */
     public static String escapeSpecialCharacters(String s) {
         if (s == null)
             return "";
@@ -49,6 +57,11 @@ public class EscapeUtils {
         return out.toString();
     }
 
+    /**
+     * unescape special character in a string
+     * @param s string to be unescaped
+     * @return unescaped string
+     */
     public static String unescapeSpecialCharacters(String s) {
         if (s == null)
             return "";

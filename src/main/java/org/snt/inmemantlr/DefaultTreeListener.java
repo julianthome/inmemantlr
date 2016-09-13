@@ -29,6 +29,9 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
 
+/**
+ * default tree listener implementation
+ */
 public class DefaultTreeListener extends DefaultListener {
 
     private Stack<String> sctx = new Stack<String>();
@@ -40,10 +43,17 @@ public class DefaultTreeListener extends DefaultListener {
     private Predicate<String> filter = null;
 
 
+    /**
+     * constructor
+     */
     public DefaultTreeListener() {
         this(x -> !x.isEmpty());
     }
 
+    /**
+     * construtor
+     * @param filter condition that has to hold for every node
+     */
     public DefaultTreeListener(Predicate<String> filter) {
         this.sctx.add("S");
         this.ast = new Ast("root", "root");
@@ -80,10 +90,18 @@ public class DefaultTreeListener extends DefaultListener {
         }
     }
 
+    /**
+     * get ast
+     * @return ast
+     */
     public Ast getAst() {
         return this.ast;
     }
 
+    /**
+     * get ast nodes
+     * @return set of ast nodes
+     */
     public Set<AstNode> getNodes() {
         return this.getNodes();
     }

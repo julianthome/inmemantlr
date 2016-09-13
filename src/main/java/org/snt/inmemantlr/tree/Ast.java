@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * A usual abstract syntax tree implementation
+ * An abstract syntax tree
  */
 public class Ast {
 
@@ -115,7 +115,7 @@ public class Ast {
 
     /**
      * get all nodes
-     * @return
+     * @return list of ast nodes
      */
     public List<AstNode> getNodes() {
         return this.nodes;

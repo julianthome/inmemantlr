@@ -21,7 +21,11 @@ package org.snt.inmemantlr.tree;
 
 import java.util.*;
 
-
+/**
+ * Ast processor to process an abstract syntax tree
+ * @param <R> return type of result
+ * @param <T> datatype to which an AST node can be mapped to
+ */
 public abstract class AstProcessor<R, T> {
 
     protected Ast ast = null;
@@ -30,6 +34,10 @@ public abstract class AstProcessor<R, T> {
     protected Map<AstNode, T> smap;
     protected LinkedList<AstNode> active;
 
+    /**
+     * constructor
+     * @param ast abstract syntax tree to process
+     */
     public AstProcessor(Ast ast) {
         this.ast = ast;
         this.nmap = new HashMap<AstNode, Integer>();
@@ -37,6 +45,10 @@ public abstract class AstProcessor<R, T> {
         this.active = new LinkedList<AstNode>();
     }
 
+    /**
+     * process the abstract syntax tree
+     * @return result
+     */
     public R process() {
 
         initialize();
@@ -69,6 +81,10 @@ public abstract class AstProcessor<R, T> {
         return getResult();
     }
 
+    /**
+     * helper to print debugging information
+     * @return debugging string
+     */
     public String debug() {
 
         StringBuilder sb = new StringBuilder();
@@ -87,21 +103,41 @@ public abstract class AstProcessor<R, T> {
         return sb.toString();
     }
 
+    /**
+     * helper function
+     * @param n ast node
+     */
     public void simpleProp(AstNode n) {
         if (n.getChildren().size() == 1) {
             this.smap.put(n, this.smap.get(n.getFirstChild()));
         }
     }
 
+    /**
+     * helper function
+     * @param n ast node
+     * @return data mapped to n
+     */
     public T getElement(AstNode n) {
         assert (this.smap.containsKey(n));
         return this.smap.get(n);
     }
 
+    /**
+     * get processing result
+     * @return result
+     */
     public abstract R getResult();
 
+    /**
+     * initialization function
+     */
     protected abstract void initialize();
 
+    /**
+     * process a single ast node
+     * @param n ast node
+     */
     protected abstract void process(AstNode n);
 
 }

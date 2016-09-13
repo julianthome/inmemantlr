@@ -38,6 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * a compiler for strings
+ */
 public class StringCompiler {
 
     private SpecialClassLoader cl = null;
@@ -45,12 +48,20 @@ public class StringCompiler {
     private Map<String, Parser> parser = null;
 
 
+    /**
+     * constructors
+     */
     public StringCompiler() {
         this.cl = new SpecialClassLoader();
         this.lexer = new HashMap<>();
         this.parser = new HashMap<>();
     }
 
+    /**
+     * do the compilation for the antlr artifacts
+     * @param scgp string code generation pipeline
+     * @return true if compilation was successful, false otherwise
+     */
     public boolean compile(StringCodeGenPipeline scgp) {
 
         JavaCompiler javac = new EclipseCompiler();
@@ -90,6 +101,11 @@ public class StringCompiler {
         return compile.call();
     }
 
+    /**
+     * find classs based on class name
+     * @param cname class
+     * @return
+     */
     private Class<?> findClass(String cname) {
         try {
             return this.cl.findClass(cname);
@@ -99,6 +115,12 @@ public class StringCompiler {
     }
 
 
+    /**
+     * instanciate new lexer
+     * @param input lexer class content as character stream
+     * @param cname class name
+     * @return antlr lexer
+     */
     public Lexer instanciateLexer(CharStream input, String cname) {
 
         Lexer elexer = null;
@@ -135,6 +157,12 @@ public class StringCompiler {
         return elexer;
     }
 
+    /**
+     * instanciate new parser
+     * @param tstream parser class content as character stream
+     * @param cname class name
+     * @return antlr parser
+     */
     public Parser instanciateParser(CommonTokenStream tstream, String cname) {
 
         String name = cname + "Parser";

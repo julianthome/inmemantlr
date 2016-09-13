@@ -35,12 +35,23 @@ public class AstNode {
     private List<AstNode> children;
     private static int cnt = 0;
 
+    /**
+     * constructor
+     * @param tree tree to whom the node belongs to
+     */
     private AstNode(Ast tree) {
         this.tree = tree;
         this.id = cnt++;
         this.children = new Vector<AstNode>();
     }
 
+    /**
+     * constructor
+     * @param tree tree to whom the node belongs to
+     * @param parent parent node
+     * @param nt non terminal id
+     * @param label label
+     */
     protected AstNode(Ast tree, AstNode parent, String nt, String label) {
         this(tree);
         this.ntype = nt;
@@ -49,10 +60,9 @@ public class AstNode {
     }
 
     /**
-     * Deep copy constructor
-     *
-     * @param tree
-     * @param nod
+     * deep copy constructor
+     * @param tree tree to whom the node belongs to
+     * @param nod node to duplication
      */
     protected AstNode(Ast tree, AstNode nod) {
         this(tree);
@@ -67,11 +77,20 @@ public class AstNode {
         }
     }
 
+    /**
+     * get child with index i
+     * @param i the index of the child
+     * @return child with index i
+     */
     public AstNode getChild(int i) {
         assert (0 <= i && i < this.children.size());
         return this.children.get(i);
     }
 
+    /**
+     * get last child (note that nodes are ordered in their appearance)
+     * @return last child
+     */
     public AstNode getLastChild() {
         if (this.children.size() > 0) {
             return this.children.get(this.children.size() - 1);
@@ -79,6 +98,10 @@ public class AstNode {
         return null;
     }
 
+    /**
+     * get first child (note that nodes are ordered in their appearance)
+     * @return first child
+     */
     public AstNode getFirstChild() {
         if (!this.children.isEmpty()) {
             return this.children.get(0);
@@ -86,34 +109,67 @@ public class AstNode {
         return null;
     }
 
+    /**
+     * set parent node
+     * @param par parent node
+     */
     public void setParent(AstNode par) {
         this.parent = par;
     }
 
+    /**
+     * check if node has parent
+     * @return true if node has parent, false otherwise
+     */
     public boolean hasParent() {
         return this.parent != null;
     }
 
+    /**
+     * get parent node
+     * @return parent node
+     */
     public AstNode getParent() {
         return this.parent;
     }
 
+    /**
+     * check if node has children
+     * @return true if node has children, false otherwise
+     */
     public boolean hasChildren() {
         return !this.children.isEmpty();
     }
 
+    /**
+     * get List of children
+     * @return list of children
+     */
     public List<AstNode> getChildren() {
         return this.children;
     }
 
+    /**
+     * append child node
+     * @param n child node to be added
+     */
     public void addChild(AstNode n) {
         this.children.add(n);
     }
 
+    /**
+     * delete child node
+     * @param n child node to be deleted
+     */
     public void delChild(AstNode n) {
         this.children.remove(n);
     }
 
+    /**
+     * replace child
+     * @param oldNode child to be replaced
+     * @param newNode replacement
+     */
     public void replaceChild(AstNode oldNode, AstNode newNode) {
         if (this.children.contains(oldNode)) {
             this.children.set(this.children.indexOf(oldNode), newNode);
@@ -121,18 +177,34 @@ public class AstNode {
         }
     }
 
+    /**
+     * gt identifier
+     * @return id which identifies node uniquely
+     */
     public int getId() {
         return this.id;
     }
 
+    /**
+     * get non-terminal rule of that node
+     * @return non-terminal rule
+     */
     public String getRule() {
         return this.ntype;
     }
 
+    /**
+     * get label where special chars are escaped
+     * @return escaped label
+     */
     public String getEscapedLabel() {
         return EscapeUtils.escapeSpecialCharacters(this.label);
     }
 
+    /**
+     * get label
+     * @return unescaped label
+     */
     public String getLabel() {
         return this.label;
     }
@@ -159,6 +231,10 @@ public class AstNode {
 
     }
 
+    /**
+     * check whether this node is a leaf node
+     * @return true if node has no children, false otherwise
+     */
     public boolean isLeaf() {
         return this.children.size() == 0;
     }

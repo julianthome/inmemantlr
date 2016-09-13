@@ -32,12 +32,21 @@ import org.stringtemplate.v4.ST;
 import java.util.List;
 
 
+/**
+ * extended code gen pipeline for compiling
+ * antlr grammars in-memory
+ */
 public class StringCodeGenPipeline extends CodeGenPipeline {
 
     Grammar g;
     String name;
     private ST parser, lexer, visitor, listener, baseListener, baseVisitor;
 
+    /**
+     * constructor
+     * @param g antlr grammar object
+     * @param name grammar name
+     */
     public StringCodeGenPipeline(Grammar g, String name) {
         super(g);
         this.g = g;
@@ -49,62 +58,121 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
         this.baseVisitor = null;
     }
 
+    /**
+     * check if parser is set
+     * @return true if parser is set, false otherwise
+     */
     public boolean hasParser() {
         return this.parser != null;
     }
 
+    /**
+     * get parser
+     * @return parser
+     */
     public ST getParser() {
         return this.parser;
     }
 
+    /**
+     * get base listener
+     * @return base listener
+     */
     public ST getBaseListener() {
         return this.baseListener;
     }
 
+    /**
+     * check if base listener is set
+     * @return true if listener is set, false otherwise
+     */
     public boolean hasBaseListener() {
         return this.baseListener != null;
     }
 
+    /**
+     * get lexer
+     * @return lexer
+     */
     public ST getLexer() {
         return this.lexer;
     }
 
+    /**
+     * check if lexer is set
+     * @return true if lexer is set, false otherwise
+     */
     public boolean hasLexer() {
         return this.lexer != null;
     }
 
+    /**
+     * get visitor
+     * @return visitor
+     */
     public ST getVisitor() {
         return visitor;
     }
 
+    /**
+     * check if visitor is set
+     * @return true if visitor is set, false otherwise
+     */
     public boolean hasVisitor() {
         return this.visitor != null;
     }
 
+    /**
+     * get listener
+     * @return listener
+     */
     public ST getListener() {
         return this.listener;
     }
 
+    /**
+     * check if listener is set
+     * @return true if listener is set, false otherwise
+     */
     public boolean hasListener() {
         return this.listener != null;
     }
 
+    /**
+     * get base visitor
+     * @return base visitor
+     */
     public ST getBaseVisitor() {
         return this.baseVisitor;
     }
 
+    /**
+     * check if visitor is set
+     * @return true if visitor is set, false otherwise
+     */
     public boolean hasBaseVisitor() {
         return this.baseVisitor != null;
     }
 
+    /**
+     * get grammar
+     * @return grammar
+     */
     public Grammar getG() {
         return g;
     }
 
+    /**
+     * set grammar
+     * @param g grammar
+     */
     public void setG(Grammar g) {
         this.g = g;
     }
 
+    /**
+     * compile lexer and parser
+     */
     public void process() {
 
         CodeGenerator gen = new CodeGenerator(g);
@@ -151,26 +219,50 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
     }
 
 
+    /**
+     * get parser name
+     * @return parser name
+     */
     public String getParserName() {
         return this.name + "Parser";
     }
 
+    /**
+     * get lexer name
+     * @return lexer name
+     */
     public String getLexerName() {
         return this.name + "Lexer";
     }
 
+    /**
+     * get visitor name
+     * @return visitor name
+     */
     public String getVisitorName() {
         return this.name + "Visitor";
     }
 
+    /**
+     * get base visitor name
+     * @return base visitor name
+     */
     public String getBaseVisitorName() {
         return this.name + "BaseVisitor";
     }
 
+    /**
+     * get listener name
+     * @return listener name
+     */
     public String getListenerName() {
         return this.name + "Listener";
     }
 
+    /**
+     * get base listener name
+     * @return base listener name
+     */
     public String getBaseListenerName() {
         return this.name + "BaseListener";
     }

@@ -22,9 +22,18 @@ package org.snt.inmemantlr;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * extended class loader
+ */
 class SpecialClassLoader extends ClassLoader {
     private Map<String, MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
 
+    /**
+     * find a class that is already loaded
+     * @param name class name
+     * @return the actual class
+     * @throws ClassNotFoundException
+     */
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         MemoryByteCode mbc = m.get(name);
         if (mbc == null) {
@@ -36,6 +45,11 @@ class SpecialClassLoader extends ClassLoader {
         return defineClass(name, mbc.getBytes(), 0, mbc.getBytes().length);
     }
 
+    /**
+     * add class to class loader
+     * @param name class name
+     * @param mbc representation
+     */
     public void addClass(String name, MemoryByteCode mbc) {
         m.put(name, mbc);
     }

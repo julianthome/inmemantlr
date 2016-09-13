@@ -29,6 +29,11 @@ import java.io.StringWriter;
 
 public class FileUtils {
 
+    /**
+     * load file content
+     * @param path path of the file to load
+     * @return file content as string
+     */
     public static String loadFileContent(String path) {
         byte[] bytes = null;
         try {
@@ -41,6 +46,11 @@ public class FileUtils {
         return new String(bytes);
     }
 
+    /**
+     * load input stream
+     * @param is input stream
+     * @return stream content as string
+     */
     public static String getStringFromStream(InputStream is) {
 
         StringWriter writer = new StringWriter();

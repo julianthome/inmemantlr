@@ -17,7 +17,6 @@
 * limitations under the Licence.
 */
 
-
 package org.snt.inmemantlr;
 
 import javax.tools.SimpleJavaFileObject;
@@ -26,26 +25,50 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+/**
+ * a representation of byte code in memory
+ */
 class MemoryByteCode extends SimpleJavaFileObject {
     private ByteArrayOutputStream baos;
 
+    /**
+     * constructor
+     * @param name class name
+     */
     public MemoryByteCode(String name) {
         super(URI.create("byte:///" + name + ".class"), Kind.CLASS);
     }
 
+    /**
+     * get byte code content as character sequence
+     * @param ignoreEncodingErrors flag if encoding errors should be ignored
+     * @return character sequence of memory byte code
+     */
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {
         throw new IllegalStateException();
     }
 
+    /**
+     * open new output stream
+     * @return output stream
+     */
     public OutputStream openOutputStream() {
         baos = new ByteArrayOutputStream();
         return baos;
     }
 
+    /**
+     * open new input stream
+     * @return input stream
+     */
     public InputStream openInputStream() {
         throw new IllegalStateException();
     }
 
+    /**
+     * return byte code as byte sequence
+     * @return byte array
+     */
     public byte[] getBytes() {
         return baos.toByteArray();
     }

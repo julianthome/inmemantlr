@@ -23,21 +23,42 @@ package org.snt.inmemantlr;
 import javax.tools.*;
 import java.io.IOException;
 
-
+/**
+ * file manager for in-memory compilation
+ */
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
     private SpecialClassLoader xcl;
 
+    /**
+     * constructor
+     * @param sjfm
+     * @param xcl
+     */
     public SpecialJavaFileManager(StandardJavaFileManager sjfm, SpecialClassLoader xcl) {
         super(sjfm);
         this.xcl = xcl;
     }
 
+    /**
+     * get a java file (memory byte code)
+     * @param location path
+     * @param name filename
+     * @param kind file kind
+     * @param sibling file sibling
+     * @return memory byte code object
+     * @throws IOException
+     */
     public JavaFileObject getJavaFileForOutput(Location location, String name, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
         xcl.addClass(name, mbc);
         return mbc;
     }
 
+    /**
+     * get special class loader
+     * @param location file location
+     * @return class loader
+     */
     public ClassLoader getClassLoader(Location location) {
         return xcl;
     }
