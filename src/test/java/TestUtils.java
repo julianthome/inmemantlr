@@ -38,6 +38,9 @@ public class TestUtils {
         Assert.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#");
         String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
         Assert.assertEquals(suesc, sorig);
+
+        Assert.assertEquals(EscapeUtils.escapeSpecialCharacters(null), "" );
+        Assert.assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "" );
     }
 
 }

@@ -45,15 +45,28 @@ public class TestGenericParser {
     public void testParser() {
 
         GenericParser gp = new GenericParser(grammar, "Java");
-        gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
+
+        /**
+         * Incorrect workflows
+         */
+        boolean thrown = false;
+        try {
+            gp.parse(s);
+        } catch (IllegalWorkflowException e) {
+            thrown = true;
+        }
+
+        Assert.assertTrue(thrown);
+
+        gp.compile();
 
         Assert.assertTrue(s != null && s.length() > 0);
 
         /**
          * Incorrect workflows
          */
-        boolean thrown = false;
+        thrown = false;
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException e) {
@@ -76,10 +89,15 @@ public class TestGenericParser {
 
         thrown = false;
 
+        Assert.assertEquals(gp.getListener(), null);
+
         /**
          * Correct workflow
          */
         gp.setListener(new DefaultListener());
+
+        Assert.assertFalse(gp.getListener() == null);
+
         gp.compile();
 
         try {

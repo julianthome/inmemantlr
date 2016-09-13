@@ -41,10 +41,7 @@ public class DefaultTreeListener extends DefaultListener {
 
 
     public DefaultTreeListener() {
-        this.sctx.add("S");
-        this.ast = new Ast("root", "root");
-        this.nodeptr = this.ast.getRoot();
-        this.filter = x -> !x.isEmpty();
+        this(x -> !x.isEmpty());
     }
 
     public DefaultTreeListener(Predicate<String> filter) {

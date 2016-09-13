@@ -67,18 +67,21 @@ public class TestStringCodeGenPipeline {
         Assert.assertTrue(sg.getLexerName().equals("JavaLexer"));
         Assert.assertTrue(sg.getListenerName().equals("JavaListener"));
         Assert.assertTrue(sg.getBaseListenerName().equals("JavaBaseListener"));
+        Assert.assertTrue(sg.getBaseVisitorName().equals("JavaBaseVisitor"));
         Assert.assertTrue(sg.getParserName().equals("JavaParser"));
 
         Assert.assertTrue(sg.getVisitor() == null);
         Assert.assertTrue(sg.getLexer() == null);
         Assert.assertTrue(sg.getListener() == null);
         Assert.assertTrue(sg.getBaseListener() == null);
+        Assert.assertTrue(sg.getBaseVisitor() == null);
         Assert.assertTrue(sg.getParser() == null);
 
         Assert.assertFalse(sg.hasVisitor());
         Assert.assertFalse(sg.hasLexer());
         Assert.assertFalse(sg.hasListener());
         Assert.assertFalse(sg.hasBaseListener());
+        Assert.assertFalse(sg.hasBaseVisitor());
         Assert.assertFalse(sg.hasParser());
 
 
@@ -93,6 +96,8 @@ public class TestStringCodeGenPipeline {
         Assert.assertTrue(sg.hasListener());
         Assert.assertTrue(sg.hasBaseListener());
         Assert.assertTrue(sg.hasParser());
+
+        Assert.assertTrue(sg.getG().equals(gp.getGrammar()));
 
     }
 }

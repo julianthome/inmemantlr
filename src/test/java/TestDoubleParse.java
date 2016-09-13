@@ -65,7 +65,8 @@ public class TestDoubleParse {
         DefaultTreeListener l1 = new DefaultTreeListener();
         DefaultTreeListener l2 = new DefaultTreeListener();
 
-
+        Assert.assertFalse(l1.toString() == null);
+        Assert.assertEquals(l1.toString(), "");
 
         ParserRuleContext ctx = null;
         gp1.setListener(l1);
