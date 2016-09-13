@@ -59,7 +59,6 @@ public abstract class AstProcessor<R, T> {
 
             if (parent != null) {
                 nmap.replace(parent, nmap.get(parent) - 1);
-                ;
                 if (nmap.get(parent) == 0) {
                     active.add(parent);
                 }

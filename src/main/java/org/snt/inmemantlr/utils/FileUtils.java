@@ -35,8 +35,8 @@ public class FileUtils {
             RandomAccessFile f = new RandomAccessFile(path, "r");
             bytes = new byte[(int) f.length()];
             f.read(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+           return null;
         }
         return new String(bytes);
     }
@@ -46,8 +46,8 @@ public class FileUtils {
         StringWriter writer = new StringWriter();
         try {
             IOUtils.copy(is, writer, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return null;
         }
         return writer.toString();
     }

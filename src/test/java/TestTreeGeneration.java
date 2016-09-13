@@ -116,9 +116,16 @@ public class TestTreeGeneration {
             Assert.assertTrue(c.hasParent());
             Assert.assertFalse(c.hasChildren());
             Assert.assertTrue(c.isLeaf());
+            Assert.assertFalse(c.equals(null));
+            Assert.assertFalse(c.equals(null));
+            Assert.assertEquals(c.getLastChild(),null);
+            Assert.assertEquals(c.getFirstChild(),null);
         }
 
 
+        AstNode croot = cast.getRoot();
+        croot.setParent(ast.getRoot());
+        Assert.assertTrue(croot.getParent().equals(ast.getRoot()));
     }
 
 }

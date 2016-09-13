@@ -79,6 +79,7 @@ public class TestAstProcessor {
             public String getResult() {
                 return String.valueOf(cnt);
             }
+
             @Override
             protected void initialize() {
                 for(AstNode n : this.ast.getNodes()) {
@@ -88,13 +89,14 @@ public class TestAstProcessor {
             @Override
             protected void process(AstNode n) {
                 cnt ++;
+                simpleProp(n);
+                Assert.assertTrue(getElement(n) != null);
             }
         };
 
         processor.process();
+        Assert.assertTrue(processor.debug() != null);
         processor.getResult().equals(String.valueOf(ast.getNodes()));
-
-
 
     }
 
