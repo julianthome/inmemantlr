@@ -25,6 +25,7 @@ import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.AstNode;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
@@ -64,7 +65,11 @@ public class TestTreeGeneration {
 
         Ast ast = dlist.getAst();
 
+        // create copy
+        Ast cast = new Ast(ast);
+
         Assert.assertTrue(ast != null);
+        Assert.assertEquals(ast.getNodes().size(),cast.getNodes().size());
 
         Set<Ast> asts = ast.getSubtrees(n -> n.getRule().equals("expression"));
 
@@ -72,22 +77,48 @@ public class TestTreeGeneration {
 
         for(Ast a : asts) {
             Assert.assertTrue(ast.hasSubtree(a));
+            Assert.assertFalse(ast.getSubtree(a) == null);
         }
 
         int sizeBefore = ast.getNodes().size();
 
         Ast first = asts.iterator().next();
 
-
         ast.removeSubtree(first);
-
-        System.out.println(ast.toDot());
 
         Assert.assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
 
+        Ast repl = new Ast("replacement", "replacement");
+
+        cast.replaceSubtree(first, repl);
+
+        Assert.assertTrue(cast.getNodes().size() == ast.getNodes().size() + 1);
+        Assert.assertTrue(cast.getDominatingSubtrees( n -> n.getRule().equals("classBody")).size() == 1);
+        Assert.assertTrue(cast.toDot() != null && cast.toDot().length() > 0);
+
+        AstNode root = cast.getRoot();
+
+        Assert.assertTrue(root.hasChildren() == true);
+        Assert.assertFalse(root.hasParent());
+
+        for(AstNode n : cast.getNodes()) {
+            Assert.assertTrue(n.getLabel() != null);
+            Assert.assertTrue(n.getRule() != null);
+            for(int i = 0; i < n.getChildren().size(); i++) {
+                if(i == 0)
+                    Assert.assertTrue(n.getChild(i).equals(n.getFirstChild()));
+                if(i == n.getChildren().size() - 1)
+                    Assert.assertTrue(n.getChild(i).equals(n.getLastChild()));
+            }
+        }
+
+        for(AstNode c : cast.getLeafs()) {
+            Assert.assertTrue(c.hasParent());
+            Assert.assertFalse(c.hasChildren());
+            Assert.assertTrue(c.isLeaf());
+        }
+
 
     }
-
-
 
 }

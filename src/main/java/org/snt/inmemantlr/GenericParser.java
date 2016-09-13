@@ -149,4 +149,8 @@ public class GenericParser {
         this.listener = listener;
     }
 
+    public Grammar getGrammar() {
+        return this.g;
+    }
+
 }

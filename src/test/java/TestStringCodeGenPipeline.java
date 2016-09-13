@@ -19,10 +19,12 @@
 
 import junit.framework.Assert;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.tool.Grammar;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.StringCodeGenPipeline;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
@@ -32,7 +34,7 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.InputStream;
 
 
-public class TestAstProcessor {
+public class TestStringCodeGenPipeline {
 
     static InputStream sgrammar = null;
     static InputStream sfile = null;
@@ -51,51 +53,46 @@ public class TestAstProcessor {
     }
 
     @Test
-    public void testProcessor() {
+    public void testCodeGenPipeline() {
 
         GenericParser gp = new GenericParser(sgrammarcontent, "Java");
         gp.compile();
 
         Assert.assertTrue(s != null && s.length() > 0);
+        Assert.assertTrue(gp.getGrammar() != null);
 
-        DefaultTreeListener dlist = new DefaultTreeListener();
+        StringCodeGenPipeline sg = new StringCodeGenPipeline(gp.getGrammar(), "Java");
 
-        gp.setListener(dlist);
+        Assert.assertTrue(sg.getVisitorName().equals("JavaVisitor"));
+        Assert.assertTrue(sg.getLexerName().equals("JavaLexer"));
+        Assert.assertTrue(sg.getListenerName().equals("JavaListener"));
+        Assert.assertTrue(sg.getBaseListenerName().equals("JavaBaseListener"));
+        Assert.assertTrue(sg.getParserName().equals("JavaParser"));
 
-        ParserRuleContext ctx = null;
-        try {
-            ctx = gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            Assert.assertTrue(false);
-        }
+        Assert.assertTrue(sg.getVisitor() == null);
+        Assert.assertTrue(sg.getLexer() == null);
+        Assert.assertTrue(sg.getListener() == null);
+        Assert.assertTrue(sg.getBaseListener() == null);
+        Assert.assertTrue(sg.getParser() == null);
 
-        Ast ast = dlist.getAst();
-
-
-        // Process the tree botton up
-        AstProcessor<String,String> processor = new AstProcessor<String, String>(ast) {
-            int cnt = 0;
-            @Override
-            public String getResult() {
-                return String.valueOf(cnt);
-            }
-            @Override
-            protected void initialize() {
-                for(AstNode n : this.ast.getNodes()) {
-                    this.smap.put(n, "");
-                }
-            }
-            @Override
-            protected void process(AstNode n) {
-                cnt ++;
-            }
-        };
-
-        processor.process();
-        processor.getResult().equals(String.valueOf(ast.getNodes()));
+        Assert.assertFalse(sg.hasVisitor());
+        Assert.assertFalse(sg.hasLexer());
+        Assert.assertFalse(sg.hasListener());
+        Assert.assertFalse(sg.hasBaseListener());
+        Assert.assertFalse(sg.hasParser());
 
 
+        sg.process();
+
+        Assert.assertFalse(sg.getLexer() == null);
+        Assert.assertFalse(sg.getListener() == null);
+        Assert.assertFalse(sg.getBaseListener() == null);
+        Assert.assertFalse(sg.getParser() == null);
+
+        Assert.assertTrue(sg.hasBaseListener());
+        Assert.assertTrue(sg.hasListener());
+        Assert.assertTrue(sg.hasBaseListener());
+        Assert.assertTrue(sg.hasParser());
 
     }
-
 }
