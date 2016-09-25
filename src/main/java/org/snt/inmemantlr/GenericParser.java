@@ -28,10 +28,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.SerializationException;
+import org.snt.inmemantlr.memobjects.GenericParserSerialize;
+import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -40,15 +46,17 @@ import java.lang.reflect.Method;
  */
 public class GenericParser {
 
+    final static Logger logger = LoggerFactory.getLogger(GenericParser.class);
+
     private Tool antlr;
     private String cname;
     private Grammar g = null;
-    private boolean compiled;
-    private boolean parsed;
     private StringCodeGenPipeline gen;
-    private ParserRuleContext data;
     private DefaultListener listener;
     private StringCompiler sc;
+    private File gfile;
+    private String gconent;
+
 
     /**
      * constructor
@@ -58,12 +66,11 @@ public class GenericParser {
     public GenericParser(File grammarFile, String name) {
         this.antlr = new Tool();
         this.cname = name;
+        this.gfile = grammarFile;
+        this.gconent = FileUtils.loadFileContent(grammarFile.getAbsolutePath());
         assert (grammarFile.exists());
         this.g = antlr.loadGrammar(grammarFile.getAbsolutePath());
         this.gen = new StringCodeGenPipeline(g, cname);
-        this.compiled = false;
-        this.parsed = false;
-        this.data = null;
         this.sc = new StringCompiler();
     }
 
@@ -75,22 +82,26 @@ public class GenericParser {
     public GenericParser(String content, String name) {
         this.antlr = new Tool();
         this.cname = name;
+        this.gconent = content;
         this.g = loadGrammarFromString(content, name);
         this.gen = new StringCodeGenPipeline(g, cname);
-        this.compiled = false;
-        this.parsed = false;
-        this.data = null;
         this.sc = new StringCompiler();
     }
+
 
     /**
      * compile grammar file
      * @return true if compilation was succesful, false otherwise
      */
     public boolean compile() {
+
+        // the antlr objects are already compiled
+        if(antrlObjectsAvailable())
+            return false;
+
+        logger.debug("compiled");
         gen.process();
-        compiled = this.sc.compile(gen);
-        return compiled;
+        return this.sc.compile(gen);
     }
 
     /**
@@ -116,10 +127,11 @@ public class GenericParser {
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
 
         if (listener == null) {
-            throw new IllegalWorkflowException("Listener is not set");
+            //throw new IllegalWorkflowException("Listener is not set");
+            this.listener = new DefaultListener();
         }
-        if (!compiled) {
-            throw new IllegalWorkflowException("Parser not yet compiled");
+        if (!antrlObjectsAvailable()) {
+            throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
 
         ANTLRInputStream input = new ANTLRInputStream(toParse);
@@ -142,7 +154,7 @@ public class GenericParser {
 
         String[] rules = parser.getRuleNames();
         String EntryPoint = rules[0];
-
+        ParserRuleContext data = null;
 
         try {
             Class<?> pc = parser.getClass();
@@ -155,7 +167,6 @@ public class GenericParser {
             e.printStackTrace();
             return null;
         }
-        this.parsed = true;
 
         System.out.println(data.toStringTree(parser));
         System.out.println(data.toInfoString(parser));
@@ -164,7 +175,7 @@ public class GenericParser {
 
         walker.walk(this.listener, data);
 
-        return this.data;
+        return data;
     }
 
     /**
@@ -189,6 +200,137 @@ public class GenericParser {
      */
     public Grammar getGrammar() {
         return this.g;
+    }
+
+    /**
+     * get all compiled antlr objects (lexer, parser, etc) in source and
+     * bytecode format
+     * @return memory tuple set
+     */
+    public MemoryTupleSet getAllCompiledObjects() {
+        return this.sc.getAllCompiledObjects();
+    }
+
+    public boolean antrlObjectsAvailable() {
+        return getAllCompiledObjects().size() > 0;
+    }
+
+
+    public void store(String file, boolean overwrite) throws SerializationException {
+
+        File loc = new File(file);
+        File path = loc.getParentFile();
+
+        logger.debug("store file " + loc.getAbsolutePath());
+
+        if(loc.exists() && !overwrite) {
+            throw new SerializationException("File " + file + " already exists");
+        }
+
+        if(!path.exists()) {
+            throw new SerializationException("Cannot find path " + path.getAbsolutePath());
+        }
+
+        if(!antrlObjectsAvailable()) {
+            throw new SerializationException("You have not compiled your grammar yet -- there" +
+                    "are no antlr objects availabe");
+        }
+
+        FileOutputStream f_out = null;
+        ObjectOutputStream o_out = null;
+
+        try {
+            f_out = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            throw new SerializationException("output file cannot be found");
+        }
+
+        try {
+            o_out = new ObjectOutputStream (f_out);
+        } catch (IOException e) {
+            throw new SerializationException("object output stream cannot be created");
+        }
+
+        GenericParserSerialize towrite = new GenericParserSerialize(this.gfile,
+                this.gconent,
+                getAllCompiledObjects(),
+                this.cname);
+
+        try {
+            o_out.writeObject(towrite);
+        } catch (NotSerializableException e) {
+            logger.error("Not serializable " + e.getMessage());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new SerializationException("error occurred while writing object");
+        }
+
+    }
+
+    public static GenericParser load(String file) throws DeserializationException {
+
+        File loc = new File(file);
+        File path = loc.getParentFile();
+
+        if(!loc.exists()) {
+            throw new DeserializationException("File " + file + " does not exist");
+        }
+
+        if(!path.exists()) {
+            throw new DeserializationException("Cannot find path " + path.getAbsolutePath());
+        }
+
+        logger.debug("load file " + loc.getAbsolutePath());
+
+        FileInputStream f_in = null;
+        ObjectInputStream o_in = null;
+
+        try {
+            f_in = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            throw new DeserializationException("input file " + file + " cannot be found");
+        }
+
+        try {
+            o_in = new ObjectInputStream (f_in);
+        } catch (IOException e) {
+            throw new DeserializationException("object input stream cannot be found");
+        }
+
+        Object toread = null;
+
+        try {
+            toread = o_in.readObject();
+        } catch (NotSerializableException e) {
+            throw new DeserializationException("cannot read object: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new DeserializationException("cannot find class: " + e.getMessage());
+        } catch (IOException e) {
+            throw new DeserializationException("io exception: " + e.getMessage());
+        }
+
+        assert(toread instanceof GenericParserSerialize);
+        GenericParserSerialize gin = (GenericParserSerialize) toread;
+
+        GenericParser gp = null;
+
+        if(gin.getGrammarFile() != null && gin.getGrammarFile().exists()) {
+            gp = new GenericParser(gin.getGrammarFile(), gin.getCname());
+        } else if(gin.getGrammarContent() != null && gin.getGrammarContent().length() > 0) {
+            gp = new GenericParser(gin.getGrammarContent(), gin.getCname());
+        } else {
+            throw new DeserializationException("cannot deserialize " + file);
+        }
+
+        assert(gp != null);
+
+        gp.sc.load(gin.getMemoryTupleSet());
+
+        if(!gp.antrlObjectsAvailable()) {
+            throw new DeserializationException("there are no antlr objects available in " + file);
+        }
+
+        return gp;
     }
 
 }

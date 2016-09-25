@@ -17,35 +17,49 @@
 * limitations under the Licence.
 */
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.memobjects;
 
-import javax.tools.SimpleJavaFileObject;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 
 /**
- * a representation of byte code in memory
+ * memory source object that represents a source file
+ * for in-memory compilation
  */
-class MemoryByteCode extends SimpleJavaFileObject {
-    private ByteArrayOutputStream baos;
+public class MemorySource extends MemoryFile implements Serializable {
+    private String src;
+    private String cname;
+
+
+    public MemorySource(){
+        super();
+    }
 
     /**
      * constructor
      * @param name class name
+     * @param src source string
      */
-    public MemoryByteCode(String name) {
-        super(URI.create("byte:///" + name + ".class"), Kind.CLASS);
+    public MemorySource(String name, String src) {
+        super(URI.create("file:///" + name + ".java"), Kind.SOURCE);
+        this.src = src;
+        this.cname = name;
+    }
+
+    public String getClassName() {
+        return cname;
     }
 
     /**
-     * get byte code content as character sequence
-     * @param ignoreEncodingErrors flag if encoding errors should be ignored
-     * @return character sequence of memory byte code
+     * get character content
+     * @param ignoreEncodingErrors
+     * @return source as char sequence
      */
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-        throw new IllegalStateException();
+        return src;
     }
 
     /**
@@ -53,8 +67,7 @@ class MemoryByteCode extends SimpleJavaFileObject {
      * @return output stream
      */
     public OutputStream openOutputStream() {
-        baos = new ByteArrayOutputStream();
-        return baos;
+        throw new IllegalStateException();
     }
 
     /**
@@ -62,14 +75,6 @@ class MemoryByteCode extends SimpleJavaFileObject {
      * @return input stream
      */
     public InputStream openInputStream() {
-        throw new IllegalStateException();
-    }
-
-    /**
-     * return byte code as byte sequence
-     * @return byte array
-     */
-    public byte[] getBytes() {
-        return baos.toByteArray();
+        return new ByteArrayInputStream(src.getBytes());
     }
 }

@@ -26,6 +26,7 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Stack;
@@ -33,7 +34,7 @@ import java.util.Stack;
 /**
  * default tree listener
  */
-public class DefaultListener implements ParseTreeListener {
+public class DefaultListener implements ParseTreeListener, Serializable {
 
     protected Parser parser;
     private Map<String, Integer> rmap;

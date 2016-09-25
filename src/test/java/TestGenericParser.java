@@ -85,11 +85,11 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        Assert.assertTrue(thrown);
+        Assert.assertFalse(thrown);
 
         thrown = false;
 
-        Assert.assertEquals(gp.getListener(), null);
+        Assert.assertNotSame(gp.getListener(), null);
 
         /**
          * Correct workflow

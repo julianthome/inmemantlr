@@ -20,14 +20,25 @@
 
 package org.snt.inmemantlr;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.memobjects.MemoryByteCode;
+
 import javax.tools.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * file manager for in-memory compilation
  */
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+
+    final static Logger logger = LoggerFactory.getLogger(SpecialJavaFileManager.class);
+
     private SpecialClassLoader xcl;
+    private HashMap<String, MemoryByteCode> mb;
 
     /**
      * constructor
@@ -37,6 +48,7 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
     public SpecialJavaFileManager(StandardJavaFileManager sjfm, SpecialClassLoader xcl) {
         super(sjfm);
         this.xcl = xcl;
+        this.mb = new HashMap<String, MemoryByteCode>();
     }
 
     /**
@@ -50,7 +62,10 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      */
     public JavaFileObject getJavaFileForOutput(Location location, String name, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
-        xcl.addClass(name, mbc);
+        // bookkeeping of memory bytecode
+        this.mb.put(mbc.getClassName(), mbc);
+        logger.debug("add bytecode " + name);
+        xcl.addClass(mbc);
         return mbc;
     }
 
@@ -61,5 +76,21 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      */
     public ClassLoader getClassLoader(Location location) {
         return xcl;
+    }
+
+
+    /**
+     * get the bytecode of a class
+     * @param cname the name of the class for which one would like to get the bytecode
+     * @return the bytecode of class cname
+     */
+    public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
+        logger.debug("get cname " + cname);
+        assert(this.mb.containsKey(cname));
+
+        return this.mb.values().stream().filter( m -> m.getClassName().equals(cname) ||
+        m.getClassName().matches(cname + "\\$.*")).
+                collect(Collectors.toSet());
+
     }
 }

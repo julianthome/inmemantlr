@@ -19,6 +19,10 @@
 
 package org.snt.inmemantlr;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.memobjects.MemoryByteCode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +30,9 @@ import java.util.Map;
  * extended class loader
  */
 class SpecialClassLoader extends ClassLoader {
+
+    final static Logger logger = LoggerFactory.getLogger(SpecialClassLoader.class);
+
     private Map<String, MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
 
     /**
@@ -39,18 +46,22 @@ class SpecialClassLoader extends ClassLoader {
         if (mbc == null) {
             mbc = m.get(name.replace(".", "/"));
             if (mbc == null) {
+                logger.error("Could not find " + name);
                 return super.findClass(name);
             }
         }
-        return defineClass(name, mbc.getBytes(), 0, mbc.getBytes().length);
+
+        byte [] bseq = mbc.getBytes();
+        return defineClass(name, bseq, 0, bseq.length);
     }
 
     /**
      * add class to class loader
-     * @param name class name
      * @param mbc representation
      */
-    public void addClass(String name, MemoryByteCode mbc) {
-        m.put(name, mbc);
+    public void addClass(MemoryByteCode mbc) {
+        m.put(mbc.getClassName(), mbc);
     }
+
+
 }

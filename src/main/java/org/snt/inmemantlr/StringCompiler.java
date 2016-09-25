@@ -24,6 +24,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.memobjects.MemoryByteCode;
+import org.snt.inmemantlr.memobjects.MemorySource;
+import org.snt.inmemantlr.memobjects.MemoryTuple;
+import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -33,17 +39,18 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * a compiler for strings
  */
 public class StringCompiler {
 
+    final static Logger logger = LoggerFactory.getLogger(StringCompiler.class);
+
     private SpecialClassLoader cl = null;
+
+    private MemoryTupleSet mt = null;
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
 
@@ -55,6 +62,17 @@ public class StringCompiler {
         this.cl = new SpecialClassLoader();
         this.lexer = new HashMap<>();
         this.parser = new HashMap<>();
+        this.mt = new MemoryTupleSet();
+    }
+
+    public void load(MemoryTupleSet mset) {
+        assert(mset != null && mset.size() > 0);
+        this.mt.addAll(mset);
+        for(MemoryTuple tup : mset) {
+            for(MemoryByteCode bc : tup.getByteCodeObjects()) {
+                this.cl.addClass(bc);
+            }
+        }
     }
 
     /**
@@ -68,27 +86,48 @@ public class StringCompiler {
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
         SpecialJavaFileManager fileManager = new SpecialJavaFileManager(sjfm, cl);
+
         List<MemorySource> compilationUnits = new ArrayList<MemorySource>();
 
+
+        Set<MemorySource> mset = new HashSet<>();
+
         if (scgp.hasLexer()) {
-            compilationUnits.add(new MemorySource(scgp.getLexerName(), scgp.getLexer().render()));
+            MemorySource ms = new MemorySource(scgp.getLexerName(), scgp.getLexer().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
         if (scgp.hasBaseListener()) {
-            compilationUnits.add(new MemorySource(scgp.getBaseListenerName(), scgp.getBaseListener().render()));
+            MemorySource ms = new MemorySource(scgp.getBaseListenerName(), scgp.getBaseListener().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
         if (scgp.hasBaseVisitor()) {
-            compilationUnits.add(new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render()));
+            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
         if (scgp.hasParser()) {
-            compilationUnits.add(new MemorySource(scgp.getParserName(), scgp.getParser().render()));
+            MemorySource ms = new MemorySource(scgp.getParserName(), scgp.getParser().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
         if (scgp.hasListener()) {
-            compilationUnits.add(new MemorySource(scgp.getListenerName(), scgp.getListener().render()));
+            MemorySource ms = new MemorySource(scgp.getListenerName(), scgp.getListener().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
         if (scgp.hasVisitor()) {
-            compilationUnits.add(new MemorySource(scgp.getBaseVisitorName(), scgp.getVisitor().render()));
+            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
+            logger.debug("add memory source " + ms.getClassName());
+            compilationUnits.add(ms);
+            mset.add(ms);
         }
-
 
         DiagnosticListener<? super JavaFileObject> dianosticListener = null;
         Iterable<String> classes = null;
@@ -98,7 +137,16 @@ public class StringCompiler {
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager, dianosticListener, optionList, classes, compilationUnits);
 
-        return compile.call();
+        boolean ret = compile.call();
+
+        for(MemorySource ms : mset) {
+            Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
+            assert (mb != null);
+            // book keeping of source-bytecode tuples
+            this.mt.addMemoryTuple(ms, mb);
+        }
+
+        return ret;
     }
 
     /**
@@ -193,5 +241,17 @@ public class StringCompiler {
 
         return eparser;
     }
+
+    /**
+     * get all compiled antlr objects (lexer, parser, etc) in source and
+     * bytecode format
+     * @return memory tuple set
+     */
+    public MemoryTupleSet getAllCompiledObjects() {
+        return this.mt;
+    }
+
+
+
 
 }
