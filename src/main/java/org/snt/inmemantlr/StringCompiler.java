@@ -53,7 +53,7 @@ public class StringCompiler {
     private MemoryTupleSet mt = null;
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
-
+    private Map<String,Class<?>> classes = new HashMap<>();
 
     /**
      * constructors
@@ -155,11 +155,19 @@ public class StringCompiler {
      * @return
      */
     private Class<?> findClass(String cname) {
+        Class clazz;
         try {
-            return this.cl.findClass(cname);
+            if (classes.containsKey(cname)) {
+                clazz = classes.get(cname);
+            } else {
+                clazz = this.cl.findClass(cname);
+                classes.put(cname, clazz);
+            }
         } catch (ClassNotFoundException e) {
             return null;
         }
+
+        return clazz;
     }
 
 
