@@ -21,13 +21,10 @@ import junit.framework.Assert;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
-import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.AstProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.InputStream;
@@ -57,9 +54,9 @@ public class TestDoubleParse {
     @Test
     public void testProcessor() {
 
-        GenericParser gp1 = new GenericParser(sgrammarcontent, "Java");
+        GenericParser gp1 = new GenericParser(sgrammarcontent, "Java", null);
         gp1.compile();
-        GenericParser gp2 = new GenericParser(sgrammarcontent, "Java");
+        GenericParser gp2 = new GenericParser(sgrammarcontent, "Java", null);
         gp2.compile();
 
         DefaultTreeListener l1 = new DefaultTreeListener();

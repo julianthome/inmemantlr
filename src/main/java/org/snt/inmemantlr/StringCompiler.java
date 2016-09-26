@@ -59,7 +59,7 @@ public class StringCompiler {
      * constructors
      */
     public StringCompiler() {
-        this.cl = new SpecialClassLoader();
+        this.cl = new SpecialClassLoader(getClass().getClassLoader());
         this.lexer = new HashMap<>();
         this.parser = new HashMap<>();
         this.mt = new MemoryTupleSet();

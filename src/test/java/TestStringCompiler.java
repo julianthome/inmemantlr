@@ -47,7 +47,7 @@ public class TestStringCompiler {
         sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         s = FileUtils.getStringFromStream(sfile);
 
-        GenericParser gp = new GenericParser(sgrammarcontent, "Java");
+        GenericParser gp = new GenericParser(sgrammarcontent, "Java", null);
         gp.compile();
 
         Assert.assertTrue(s != null && s.length() > 0);

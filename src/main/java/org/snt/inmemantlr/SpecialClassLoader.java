@@ -35,6 +35,10 @@ class SpecialClassLoader extends ClassLoader {
 
     private Map<String, MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
 
+    public SpecialClassLoader(ClassLoader parent) {
+        super(parent);
+    }
+
     /**
      * find a class that is already loaded
      * @param name class name
