@@ -72,6 +72,10 @@ Ast ast = dlist.getAst();
 System.out.println(ast.toDot());
 ```
 
+By providing the output of `ast.toDot()` to graphviz, one could visualize the AST as illustrated in the picture below.
+
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
+
 ## Incremental parsing
 If you have multiple strings to parse one after another, the following code snippet might be useful:
 
@@ -98,7 +102,6 @@ try {
 }
 ```
 
-<img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
 
 ## Accessing ANTLR objects
 
