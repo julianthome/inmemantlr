@@ -29,10 +29,10 @@ The following code snippet shows an example how to use inmemantlr. The descripti
 
 ``` java
 // 1. load grammar
-File f = new File("src/test/ressources/Java.g4");
+File f = new File("Java.g4");
 GenericParser gp = new GenericParser(f, "Java");
 // 2. load file content into string
-String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
+String s = FileUtils.loadFileContent("HelloWorld.java");
 // 3. set listener for checking parse tree elements. Here you could use any ParseTreeListener implementation. The default listener is used per default
 gp.setListener(new DefaultListener());
 // 4. compile Lexer and parser in-memory
@@ -47,7 +47,7 @@ try {
 
 ## AST generation
 
-If you want to get the AST from a parsed file, the following snippet could be of use:
+If you would like to get the derived AST from a parsed file, the following snippet could be of use:
 
 ``` java
 File f = new File("src/test/ressources/Java.g4");
@@ -72,6 +72,32 @@ Ast ast = dlist.getAst();
 System.out.println(ast.toDot());
 ```
 
+## Incremental parsing
+If you have multiple strings to parse one after another, the following code snippet might be useful:
+
+```java
+File f = new File("Simple.g4");
+GenericParser gp = new GenericParser(f, "Simple");
+
+// Note that the listener should alsways be set before
+// the compilation. Otherwise, the listener cannot
+// capture the parsing information.
+gp.setListener(new DefaultTreeListener());
+gp.compile();
+try {
+  Ast ast;
+  gp.parse("PRINT a+b");
+  ast = t.getAst();
+  // so something with parsing result
+  gp.parse("PRINT \"test\"");
+  ast = t.getAst();
+  // do something with parsing resulting
+  // ...
+} catch (IllegalWorkflowException e) {
+// ...
+}
+```
+
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
 
 ## Accessing ANTLR objects
@@ -89,13 +115,14 @@ for(MemoryTuple tup : set) {
   // get source code object
   MemorySource = tup.getSource();
   // get byte code objects
-  Set<MemoryByteCode> bcode = tup.tup.getByteCodeObjects();
+  Set<MemoryByteCode> bcode = tup.getByteCodeObjects();
 }
 ```
 
 ## Serializing a generic parser
 
-With inmemantlr, one can also serialize/deserialize an existing generic parser to avoid unnecessary compilation.
+For avoiding unnecessary compilation and for enabling
+the re-use of a generic parser across different Java applications or runs, it is possible to serialize a generic parser.
 
 A generic parser could be serialized to a file with the following code:
 ```java

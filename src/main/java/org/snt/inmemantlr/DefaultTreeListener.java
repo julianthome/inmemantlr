@@ -90,6 +90,17 @@ public class DefaultTreeListener extends DefaultListener {
         }
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+        this.sctx.clear();
+        this.sctx.add("S");
+        this.ast = new Ast("root", "root");
+        this.nodeptr = this.ast.getRoot();
+        this.glob.delete(0, this.glob.length());
+
+    }
+
     /**
      * get ast
      * @return ast

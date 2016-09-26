@@ -130,6 +130,9 @@ public class GenericParser {
             //throw new IllegalWorkflowException("Listener is not set");
             this.listener = new DefaultListener();
         }
+
+        this.listener.reset();
+
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
@@ -142,6 +145,8 @@ public class GenericParser {
         tokens.fill();
 
         Parser parser = this.sc.instanciateParser(tokens, cname);
+        parser.reset();
+
 
         // make parser information available to listener
         this.listener.setParser(parser);

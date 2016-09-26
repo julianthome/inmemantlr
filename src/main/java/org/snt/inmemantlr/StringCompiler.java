@@ -178,6 +178,7 @@ public class StringCompiler {
         if (lexer.containsKey(name)) {
             elexer = lexer.get(name);
             elexer.reset();
+            elexer.setInputStream(input);
             return elexer;
         }
 

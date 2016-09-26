@@ -74,6 +74,10 @@ public class DefaultListener implements ParseTreeListener, Serializable {
         this.rmap = this.parser.getRuleIndexMap();
     }
 
+    public void reset() {
+
+    }
+
 
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
