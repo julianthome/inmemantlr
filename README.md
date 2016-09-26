@@ -50,9 +50,9 @@ try {
 If you would like to get the derived AST from a parsed file, the following snippet could be of use:
 
 ``` java
-File f = new File("src/test/ressources/Java.g4");
+File f = new File("Java.g4");
 GenericParser gp = new GenericParser(f, "Java");
-String s = FileUtils.loadFileContent("src/test/ressources/HelloWorld.java");
+String s = FileUtils.loadFileContent("HelloWorld.java");
 
 // this listener will create an AST from the java file
 DefaultTreeListener dlist = new DefaultTreeListener();
