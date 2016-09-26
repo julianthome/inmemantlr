@@ -55,7 +55,7 @@ public class MemorySource extends MemoryFile implements Serializable {
 
     /**
      * get character content
-     * @param ignoreEncodingErrors
+     * @param ignoreEncodingErrors true to ignore encoding errors, otherwise false
      * @return source as char sequence
      */
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {

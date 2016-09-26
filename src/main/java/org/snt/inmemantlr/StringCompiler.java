@@ -183,14 +183,7 @@ public class StringCompiler {
 
         String name = cname + "Lexer";
 
-        if (lexer.containsKey(name)) {
-            elexer = lexer.get(name);
-            elexer.reset();
-            return elexer;
-        }
-
         Lexer ret = null;
-
 
         Class<?> elex = findClass(name);
 
@@ -202,7 +195,7 @@ public class StringCompiler {
         assert (cstr.length == 1);
 
         try {
-            //System.out.println(cstr[0].toGenericString());
+            // System.out.println(cstr[0].toGenericString());
             elexer = (Lexer) cstr[0].newInstance(input);
             lexer.put(name, elexer);
         } catch (InstantiationException | IllegalAccessException
@@ -224,12 +217,6 @@ public class StringCompiler {
         String name = cname + "Parser";
 
         Parser eparser = null;
-
-        if (parser.containsKey(name)) {
-            eparser = parser.get(name);
-            eparser.reset();
-            return eparser;
-        }
 
         Parser ret = null;
 
@@ -258,8 +245,4 @@ public class StringCompiler {
     public MemoryTupleSet getAllCompiledObjects() {
         return this.mt;
     }
-
-
-
-
 }

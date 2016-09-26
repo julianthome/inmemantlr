@@ -79,6 +79,7 @@ public class GenericParser {
      * constructor
      * @param content grammar file content
      * @param name grammar
+     * @param tlc a ToolCustomizer
      */
     public GenericParser(String content, String name, ToolCustomizer tlc) {
         this.antlr = new Tool();
@@ -126,12 +127,11 @@ public class GenericParser {
      * parse string an create a context
      * @param toParse string to parse
      * @return context
-     * @throws IllegalWorkflowException if listener is null or compilation did not take place
+     * @throws IllegalWorkflowException if compilation did not take place
      */
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
 
         if (listener == null) {
-            //throw new IllegalWorkflowException("Listener is not set");
             this.listener = new DefaultListener();
         }
         if (!antrlObjectsAvailable()) {
@@ -183,13 +183,12 @@ public class GenericParser {
     }
 
     /**
-     * Parse in fresh
-     *
-     * @param toParse
-     * @param listener
+     * parse in fresh
+     * @param toParse string to parse
+     * @param listener a ParseTreeListener
      * @param production Production name to parse
      * @return context
-     * @throws IllegalWorkflowException
+     * @throws IllegalWorkflowException if compilation did not take place
      */
     public ParserRuleContext parse(String toParse, DefaultListener listener, String production) throws IllegalWorkflowException {
 
