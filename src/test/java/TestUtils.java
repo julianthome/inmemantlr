@@ -22,15 +22,9 @@ import org.junit.Test;
 import org.snt.inmemantlr.utils.EscapeUtils;
 import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.InputStream;
-
 
 public class TestUtils {
-
-    static InputStream sgrammar = null;
-    static InputStream sfile = null;
-
-
+    
     @Test
     public void testEscapeUtils() {
 

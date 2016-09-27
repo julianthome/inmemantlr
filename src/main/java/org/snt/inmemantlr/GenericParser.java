@@ -84,14 +84,6 @@ public class GenericParser {
      * @param tlc a ToolCustomizer
      */
     public GenericParser(File grammarFile, String name, ToolCustomizer tlc) {
-        /**this.antlr = new Tool();
-        this.cname = name;
-        this.gfile = grammarFile;
-        this.gconent = FileUtils.loadFileContent(grammarFile.getAbsolutePath());
-        assert (grammarFile.exists());
-        this.g = antlr.loadGrammar(grammarFile.getAbsolutePath());
-        this.gen = new StringCodeGenPipeline(g, cname);
-        this.sc = new StringCompiler();**/
         this(FileUtils.loadFileContent(grammarFile.getAbsolutePath()), name, tlc);
         this.gfile = grammarFile;
     }
