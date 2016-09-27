@@ -19,4 +19,6 @@ parlist: operand (',' operand)*;
 
 sequence:  Datatype parlist;
 
+range:
+
 WS  :  [ \t\r\n]+ -> skip;
