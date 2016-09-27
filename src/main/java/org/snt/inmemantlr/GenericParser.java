@@ -61,13 +61,18 @@ public class GenericParser {
 
     /**
      * constructor
-     * @param grammarFile
-     * @param name
+     * @param grammarFile path to grammar file
+     * @param name parser name
      */
     public GenericParser(File grammarFile, String name) {
         this(grammarFile, name, null);
     }
 
+    /**
+     * constructor
+     * @param content grammar file content
+     * @param name parser name
+     */
     public GenericParser(String content, String name) {
         this(content,name, null);
     }
