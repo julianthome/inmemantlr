@@ -34,7 +34,7 @@ public class GenericParserSerialize implements Serializable {
     private String cname;
 
     /**
-     * concstructor
+     * constructor
      * @param gfile grammar file
      * @param gcontent grammar file content
      * @param mset set of source/byte code tuples

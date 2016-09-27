@@ -24,7 +24,7 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 
 public class TestUtils {
-    
+
     @Test
     public void testEscapeUtils() {
 
