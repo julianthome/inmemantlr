@@ -87,7 +87,7 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
 
     /**
      * return the class name of this object
-     * @return
+     * @return the class name
      */
     public String getClassName() {
         return this.cname;

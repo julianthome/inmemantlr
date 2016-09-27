@@ -53,13 +53,13 @@ public class StringCompiler {
     private MemoryTupleSet mt = null;
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
-
+    private Map<String,Class<?>> classes = new HashMap<>();
 
     /**
      * constructors
      */
     public StringCompiler() {
-        this.cl = new SpecialClassLoader();
+        this.cl = new SpecialClassLoader(getClass().getClassLoader());
         this.lexer = new HashMap<>();
         this.parser = new HashMap<>();
         this.mt = new MemoryTupleSet();
@@ -155,11 +155,19 @@ public class StringCompiler {
      * @return
      */
     private Class<?> findClass(String cname) {
+        Class clazz;
         try {
-            return this.cl.findClass(cname);
+            if (classes.containsKey(cname)) {
+                clazz = classes.get(cname);
+            } else {
+                clazz = this.cl.findClass(cname);
+                classes.put(cname, clazz);
+            }
         } catch (ClassNotFoundException e) {
             return null;
         }
+
+        return clazz;
     }
 
 
@@ -184,7 +192,6 @@ public class StringCompiler {
 
         Lexer ret = null;
 
-
         Class<?> elex = findClass(name);
 
         if(elex == null)
@@ -195,7 +202,7 @@ public class StringCompiler {
         assert (cstr.length == 1);
 
         try {
-            //System.out.println(cstr[0].toGenericString());
+            // System.out.println(cstr[0].toGenericString());
             elexer = (Lexer) cstr[0].newInstance(input);
             lexer.put(name, elexer);
         } catch (InstantiationException | IllegalAccessException
@@ -217,12 +224,6 @@ public class StringCompiler {
         String name = cname + "Parser";
 
         Parser eparser = null;
-
-        if (parser.containsKey(name)) {
-            eparser = parser.get(name);
-            eparser.reset();
-            return eparser;
-        }
 
         Parser ret = null;
 
@@ -251,8 +252,4 @@ public class StringCompiler {
     public MemoryTupleSet getAllCompiledObjects() {
         return this.mt;
     }
-
-
-
-
 }

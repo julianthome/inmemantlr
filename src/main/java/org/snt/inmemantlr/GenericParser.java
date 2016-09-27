@@ -40,6 +40,7 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * generic parser - an antlr parser representation
@@ -60,27 +61,47 @@ public class GenericParser {
 
     /**
      * constructor
-     * @param grammarFile grammar file
-     * @param name grammar name
+     * @param grammarFile
+     * @param name
      */
     public GenericParser(File grammarFile, String name) {
-        this.antlr = new Tool();
+        this(grammarFile, name, null);
+    }
+
+    public GenericParser(String content, String name) {
+        this(content,name, null);
+    }
+
+    /**
+     * constructor
+     * @param grammarFile grammar file
+     * @param name grammar name
+     * @param tlc a ToolCustomizer
+     */
+    public GenericParser(File grammarFile, String name, ToolCustomizer tlc) {
+        /**this.antlr = new Tool();
         this.cname = name;
         this.gfile = grammarFile;
         this.gconent = FileUtils.loadFileContent(grammarFile.getAbsolutePath());
         assert (grammarFile.exists());
         this.g = antlr.loadGrammar(grammarFile.getAbsolutePath());
         this.gen = new StringCodeGenPipeline(g, cname);
-        this.sc = new StringCompiler();
+        this.sc = new StringCompiler();**/
+        this(FileUtils.loadFileContent(grammarFile.getAbsolutePath()), name, tlc);
+        this.gfile = grammarFile;
     }
 
     /**
      * constructor
      * @param content grammar file content
      * @param name grammar
+     * @param tlc a ToolCustomizer
      */
-    public GenericParser(String content, String name) {
+    public GenericParser(String content, String name, ToolCustomizer tlc) {
         this.antlr = new Tool();
+        if (tlc != null) {
+            tlc.customize(this.antlr);
+        }
         this.cname = name;
         this.gconent = content;
         this.g = loadGrammarFromString(content, name);
@@ -122,12 +143,11 @@ public class GenericParser {
      * parse string an create a context
      * @param toParse string to parse
      * @return context
-     * @throws IllegalWorkflowException if listener is null or compilation did not take place
+     * @throws IllegalWorkflowException if compilation did not take place
      */
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
 
         if (listener == null) {
-            //throw new IllegalWorkflowException("Listener is not set");
             this.listener = new DefaultListener();
         }
 
@@ -169,16 +189,84 @@ public class GenericParser {
                 IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            // e.printStackTrace();
             return null;
         }
 
-        System.out.println(data.toStringTree(parser));
-        System.out.println(data.toInfoString(parser));
+        // System.out.println(data.toStringTree(parser));
+        // System.out.println(data.toInfoString(parser));
 
         ParseTreeWalker walker = new ParseTreeWalker();
 
         walker.walk(this.listener, data);
+
+        return data;
+    }
+
+    /**
+     * parse in fresh
+     * @param toParse string to parse
+     * @param listener a ParseTreeListener
+     * @param production Production name to parse
+     * @return context
+     * @throws IllegalWorkflowException if compilation did not take place
+     */
+    public ParserRuleContext parse(String toParse, DefaultListener listener, String production) throws IllegalWorkflowException {
+
+        if (listener == null) {
+            this.listener = new DefaultListener();
+        }
+        if (!antrlObjectsAvailable()) {
+            throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
+        }
+
+        ANTLRInputStream input = new ANTLRInputStream(toParse);
+
+        Lexer lex = this.sc.instanciateLexer(input, cname);
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+
+        tokens.fill();
+
+        Parser parser = this.sc.instanciateParser(tokens, cname);
+
+        // make parser information available to listener
+        listener.setParser(parser);
+
+        //parser.addErrorListener(new DiagnosticErrorListener());
+        parser.removeErrorListeners();
+        parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+        parser.setBuildParseTree(true);
+        parser.setTokenStream(tokens);
+
+        String[] rules = parser.getRuleNames();
+        String EntryPoint = null;
+        if (production == null) {
+            EntryPoint = rules[0];
+        } else {
+            if (!Arrays.asList(rules).contains(production))
+                throw new IllegalArgumentException(String.format("Rule %s not found", production));
+            EntryPoint = production;
+        }
+
+        ParserRuleContext data = null;
+        try {
+            Class<?> pc = parser.getClass();
+            Method m = pc.getMethod(EntryPoint, (Class<?>[]) null);
+            data = (ParserRuleContext) m.invoke(parser, (Object[]) null);
+        } catch (NoSuchMethodException | SecurityException |
+                IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            //e.printStackTrace();
+            return null;
+        }
+
+        // System.out.println(prc.toStringTree(parser));
+        // System.out.println(prc.toInfoString(parser));
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        walker.walk(listener, data);
 
         return data;
     }
@@ -322,7 +410,7 @@ public class GenericParser {
         if(gin.getGrammarFile() != null && gin.getGrammarFile().exists()) {
             gp = new GenericParser(gin.getGrammarFile(), gin.getCname());
         } else if(gin.getGrammarContent() != null && gin.getGrammarContent().length() > 0) {
-            gp = new GenericParser(gin.getGrammarContent(), gin.getCname());
+            gp = new GenericParser(gin.getGrammarContent(), gin.getCname(), null);
         } else {
             throw new DeserializationException("cannot deserialize " + file);
         }

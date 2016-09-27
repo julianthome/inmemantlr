@@ -44,7 +44,7 @@ public class SimpleTest {
 
         sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
 
-        GenericParser gp = new GenericParser(sgrammarcontent, "Simple");
+        GenericParser gp = new GenericParser(sgrammarcontent, "Simple", null);
         DefaultTreeListener t = new DefaultTreeListener();
 
         gp.setListener(t);
