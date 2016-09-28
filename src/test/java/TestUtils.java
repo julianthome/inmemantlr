@@ -28,9 +28,9 @@ public class TestUtils {
     @Test
     public void testEscapeUtils() {
 
-        String sorig = "+{}()[]&^-?*\"$<>.|#";
+        String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
         String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        Assert.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#");
+        Assert.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
         String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
         Assert.assertEquals(suesc, sorig);
 

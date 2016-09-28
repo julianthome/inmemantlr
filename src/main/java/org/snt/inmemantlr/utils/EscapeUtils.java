@@ -44,11 +44,8 @@ public class EscapeUtils {
         StringBuilder out = new StringBuilder();
         char pred = ' ';
         for (char c : s.toCharArray()) {
-            if (pred != '\\' && special.contains(c)) {
+            if (special.contains(c)) {
                 out.append("\\" + c);
-            } else if (pred == '\\' && special.contains(c)) {
-                out.deleteCharAt(out.length() - 1); // delete NULL
-                out.append(c);
             } else {
                 out.append(c);
             }
@@ -70,7 +67,7 @@ public class EscapeUtils {
         char pred = ' ';
         for (char c : s.toCharArray()) {
             if (pred == '\\' && special.contains(c)) {
-                out.deleteCharAt(out.length() - 1); // delete NULL
+                out.deleteCharAt(out.length() - 1);
                 out.append(c);
             } else {
                 out.append(c);
