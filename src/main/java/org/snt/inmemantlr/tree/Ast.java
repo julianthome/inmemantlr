@@ -173,9 +173,9 @@ public class Ast {
      */
     public boolean replaceSubtree(Ast oldTree, Ast newTree) {
         if (hasSubtree(oldTree)) {
-            nodes.stream().filter(n -> oldTree.getRoot().equals(n)).forEach(
-                    n -> n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot())
-            );
+            nodes.stream()
+                    .filter(n -> oldTree.getRoot().equals(n))
+                    .forEach(n -> n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot()));
             nodes.addAll(newTree.nodes);
             return nodes.removeAll(oldTree.nodes);
         }
@@ -222,9 +222,7 @@ public class Ast {
         if (p.test(n)) {
             selected.add(n);
         } else {
-            for (AstNode an : n.getChildren()) {
-                searchDominatingNodes(an, selected, p);
-            }
+            n.getChildren().forEach(an -> searchDominatingNodes(an, selected, p));
         }
     }
 
@@ -235,15 +233,7 @@ public class Ast {
      * @return set of ast nodes
      */
     public Set<Ast> getSubtrees(Predicate<AstNode> p) {
-        Set<Ast> ret = new HashSet<>();
-
-        nodes.stream()
-                .filter(p)
-                .forEach(n -> {
-                    Ast a = new Ast(n);
-                    ret.add(a);
-                });
-        return ret;
+        return nodes.stream().filter(p).map(Ast::new).collect(toSet());
     }
 
     /**
