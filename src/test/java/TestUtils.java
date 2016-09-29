@@ -17,31 +17,29 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
 import org.junit.Test;
 import org.snt.inmemantlr.utils.EscapeUtils;
 import org.snt.inmemantlr.utils.FileUtils;
 
+import static org.junit.Assert.assertEquals;
 
 public class TestUtils {
 
     @Test
     public void testEscapeUtils() {
-
         String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
         String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        Assert.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
+        assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
         String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
-        Assert.assertEquals(suesc, sorig);
+        assertEquals(suesc, sorig);
 
-        Assert.assertEquals(EscapeUtils.escapeSpecialCharacters(null), "" );
-        Assert.assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "" );
+        assertEquals(EscapeUtils.escapeSpecialCharacters(null), "");
+        assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "");
     }
 
     @Test
     public void testFileUtils() {
-        Assert.assertEquals(FileUtils.loadFileContent(""),null);
-        Assert.assertEquals(FileUtils.getStringFromStream(null),null);
+        assertEquals(FileUtils.loadFileContent(""), null);
+        assertEquals(FileUtils.getStringFromStream(null), null);
     }
-
 }

@@ -17,8 +17,6 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultTreeListener;
@@ -29,52 +27,49 @@ import org.snt.inmemantlr.tree.AstNode;
 import org.snt.inmemantlr.tree.AstProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertTrue;
 
 public class TestAstProcessor {
-
-    static InputStream sgrammar = null;
-    static InputStream sfile = null;
 
     String sgrammarcontent = "";
     String s = "";
 
     @Before
-    public void init() {
+    public void init() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        sgrammar = classLoader.getResourceAsStream("Java.g4");
-        sfile = classLoader.getResourceAsStream("HelloWorld.java");
-
-        sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-        s = FileUtils.getStringFromStream(sfile);
+        try (InputStream sgrammar = classLoader.getResourceAsStream("Java.g4");
+             InputStream sfile = classLoader.getResourceAsStream("HelloWorld.java")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+            s = FileUtils.getStringFromStream(sfile);
+        }
     }
 
     @Test
     public void testProcessor() {
-
         GenericParser gp = new GenericParser(sgrammarcontent, "Java", null);
         gp.compile();
 
-        Assert.assertTrue(s != null && s.length() > 0);
+        assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
         gp.setListener(dlist);
 
-        ParserRuleContext ctx = null;
         try {
-            ctx = gp.parse(s);
+            gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
 
         Ast ast = dlist.getAst();
 
-
-        // Process the tree botton up
-        AstProcessor<String,String> processor = new AstProcessor<String, String>(ast) {
+        // Process the tree bottom up
+        AstProcessor<String, String> processor = new AstProcessor<String, String>(ast) {
             int cnt = 0;
+
             @Override
             public String getResult() {
                 return String.valueOf(cnt);
@@ -82,21 +77,20 @@ public class TestAstProcessor {
 
             @Override
             protected void initialize() {
-                for(AstNode n : this.ast.getNodes()) {
-                    this.smap.put(n, "");
+                for (AstNode n : ast.getNodes()) {
+                    smap.put(n, "");
                 }
             }
+
             @Override
             protected void process(AstNode n) {
-                cnt ++;
+                cnt++;
                 simpleProp(n);
-                Assert.assertTrue(getElement(n) != null);
+                assertTrue(getElement(n) != null);
             }
         };
 
         processor.process();
-        Assert.assertTrue(processor.debug() != null);
-
+        assertTrue(processor.debug() != null);
     }
-
 }

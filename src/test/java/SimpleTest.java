@@ -17,8 +17,6 @@
 * limitations under the Licence.
 */
 
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,21 +26,22 @@ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.Assert.assertEquals;
 
 public class SimpleTest {
 
-    final static Logger logger = LoggerFactory.getLogger(SimpleTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTest.class);
 
-    static InputStream sgrammar = null;
     String sgrammarcontent = "";
 
     @Test
-    public void testInterpreter() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        sgrammar = classLoader.getResourceAsStream("Simple.g4");
-
-        sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+    public void testInterpreter() throws IOException {
+        try (InputStream sgrammar = getClass().getClassLoader().getResourceAsStream("Simple.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        }
 
         GenericParser gp = new GenericParser(sgrammarcontent, "Simple", null);
         DefaultTreeListener t = new DefaultTreeListener();
@@ -50,23 +49,19 @@ public class SimpleTest {
         gp.setListener(t);
         gp.compile();
 
-
-        // this example shows you how one cold use inmemantlr for
-        // incremental parsing
+        // this example shows you how one could use inmemantlr for incremental parsing
         try {
             Ast ast;
             gp.parse("PRINT a+b");
             ast = t.getAst();
-            logger.debug(ast.toDot());
-            Assert.assertEquals(ast.getNodes().size(), 6);
+            LOGGER.debug(ast.toDot());
+            assertEquals(ast.getNodes().size(), 6);
             gp.parse("PRINT \"test\"");
             ast = t.getAst();
-            logger.debug(ast.toDot());
-            Assert.assertEquals(ast.getNodes().size(), 4);
+            LOGGER.debug(ast.toDot());
+            assertEquals(ast.getNodes().size(), 4);
         } catch (IllegalWorkflowException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
-
-
     }
 }

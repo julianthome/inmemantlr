@@ -17,8 +17,6 @@
 * limitations under the Licence.
 */
 
-
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
@@ -26,32 +24,34 @@ import org.snt.inmemantlr.StringCodeGenPipeline;
 import org.snt.inmemantlr.StringCompiler;
 import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestStringCompiler {
 
-    static InputStream sgrammar = null;
-    static InputStream sfile = null;
     static StringCodeGenPipeline sg = null;
 
     String sgrammarcontent = "";
     String s = "";
 
-
     @Before
-    public void init() {
+    public void init() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        sgrammar = classLoader.getResourceAsStream("Java.g4");
-        sfile = classLoader.getResourceAsStream("HelloWorld.java");
-
-        sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-        s = FileUtils.getStringFromStream(sfile);
+        try (InputStream sgrammar = classLoader.getResourceAsStream("Java.g4");
+             InputStream sfile = classLoader.getResourceAsStream("HelloWorld.java")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+            s = FileUtils.getStringFromStream(sfile);
+        }
 
         GenericParser gp = new GenericParser(sgrammarcontent, "Java", null);
         gp.compile();
 
-        Assert.assertTrue(s != null && s.length() > 0);
-        Assert.assertTrue(gp.getGrammar() != null);
+        assertTrue(s != null && !s.isEmpty());
+        assertNotNull(gp.getGrammar());
 
         sg = new StringCodeGenPipeline(gp.getGrammar(), "Java");
     }
@@ -59,8 +59,7 @@ public class TestStringCompiler {
     @Test
     public void testStringCompiler() {
         StringCompiler sc = new StringCompiler();
-        Assert.assertNull(sc.instanciateLexer(null,""));
-        Assert.assertNull(sc.instanciateLexer(null,"blabal"));
+        assertNull(sc.instanciateLexer(null, ""));
+        assertNull(sc.instanciateLexer(null, "blabal"));
     }
-
 }

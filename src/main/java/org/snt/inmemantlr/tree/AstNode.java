@@ -37,16 +37,18 @@ public class AstNode {
 
     /**
      * constructor
+     *
      * @param tree tree to whom the node belongs to
      */
     private AstNode(Ast tree) {
         this.tree = tree;
-        this.id = cnt++;
-        this.children = new Vector<AstNode>();
+        id = cnt++;
+        children = new Vector<>();
     }
 
     /**
      * constructor
+     *
      * @param tree tree to whom the node belongs to
      * @param parent parent node
      * @param nt non terminal id
@@ -54,169 +56,180 @@ public class AstNode {
      */
     protected AstNode(Ast tree, AstNode parent, String nt, String label) {
         this(tree);
-        this.ntype = nt;
+        ntype = nt;
         this.label = label;
         this.parent = parent;
     }
 
     /**
      * deep copy constructor
+     *
      * @param tree tree to whom the node belongs to
      * @param nod node to duplication
      */
     protected AstNode(Ast tree, AstNode nod) {
         this(tree);
-        this.id = nod.id;
-        this.ntype = nod.ntype;
-        this.label = nod.label;
+        id = nod.id;
+        ntype = nod.ntype;
+        label = nod.label;
         for (AstNode c : nod.children) {
             AstNode cnod = new AstNode(tree, c);
             cnod.parent = this;
             this.tree.nodes.add(cnod);
-            this.children.add(cnod);
+            children.add(cnod);
         }
     }
 
     /**
      * get child with index i
+     *
      * @param i the index of the child
      * @return child with index i
      */
     public AstNode getChild(int i) {
-        assert (0 <= i && i < this.children.size());
-        return this.children.get(i);
+        assert 0 <= i && i < children.size();
+        return children.get(i);
     }
 
     /**
      * get last child (note that nodes are ordered in their appearance)
+     *
      * @return last child
      */
     public AstNode getLastChild() {
-        if (this.children.size() > 0) {
-            return this.children.get(this.children.size() - 1);
+        if (!children.isEmpty()) {
+            return children.get(children.size() - 1);
         }
         return null;
     }
 
     /**
      * get first child (note that nodes are ordered in their appearance)
+     *
      * @return first child
      */
     public AstNode getFirstChild() {
-        if (!this.children.isEmpty()) {
-            return this.children.get(0);
+        if (!children.isEmpty()) {
+            return children.get(0);
         }
         return null;
     }
 
     /**
      * set parent node
+     *
      * @param par parent node
      */
     public void setParent(AstNode par) {
-        this.parent = par;
+        parent = par;
     }
 
     /**
      * check if node has parent
+     *
      * @return true if node has parent, false otherwise
      */
     public boolean hasParent() {
-        return this.parent != null;
+        return parent != null;
     }
 
     /**
      * get parent node
+     *
      * @return parent node
      */
     public AstNode getParent() {
-        return this.parent;
+        return parent;
     }
 
     /**
      * check if node has children
+     *
      * @return true if node has children, false otherwise
      */
     public boolean hasChildren() {
-        return !this.children.isEmpty();
+        return !children.isEmpty();
     }
 
     /**
      * get List of children
+     *
      * @return list of children
      */
     public List<AstNode> getChildren() {
-        return this.children;
+        return children;
     }
 
     /**
      * append child node
+     *
      * @param n child node to be added
      */
     public void addChild(AstNode n) {
-        this.children.add(n);
+        children.add(n);
     }
 
     /**
      * delete child node
+     *
      * @param n child node to be deleted
      */
     public void delChild(AstNode n) {
-        this.children.remove(n);
+        children.remove(n);
     }
 
     /**
      * replace child
+     *
      * @param oldNode child to be replaced
      * @param newNode replacement
      */
     public void replaceChild(AstNode oldNode, AstNode newNode) {
-        if (this.children.contains(oldNode)) {
-            this.children.set(this.children.indexOf(oldNode), newNode);
+        if (children.contains(oldNode)) {
+            children.set(children.indexOf(oldNode), newNode);
             newNode.parent = this;
         }
     }
 
     /**
      * gt identifier
+     *
      * @return id which identifies node uniquely
      */
     public int getId() {
-        return this.id;
+        return id;
     }
 
     /**
      * get non-terminal rule of that node
+     *
      * @return non-terminal rule
      */
     public String getRule() {
-        return this.ntype;
+        return ntype;
     }
 
     /**
      * get label where special chars are escaped
+     *
      * @return escaped label
      */
     public String getEscapedLabel() {
-        return EscapeUtils.escapeSpecialCharacters(this.label);
+        return EscapeUtils.escapeSpecialCharacters(label);
     }
 
     /**
      * get label
+     *
      * @return unescaped label
      */
     public String getLabel() {
-        return this.label;
+        return label;
     }
 
     @Override
     public int hashCode() {
-        return this.id;
-    }
-
-    @Override
-    public String toString() {
-        return this.id + " " + this.ntype.toString() + " " + this.label;
+        return id;
     }
 
     @Override
@@ -225,18 +238,21 @@ public class AstNode {
             return false;
 
         AstNode n = (AstNode) o;
+        return n.getId() == getId() && n.ntype.equals(ntype) &&
+                n.label.equals(label) && children.equals(n.children);
+    }
 
-        return n.getId() == this.getId() && n.ntype.equals(this.ntype) &&
-                n.label.equals(this.label) && this.children.equals(n.children);
-
+    @Override
+    public String toString() {
+        return id + " " + ntype + " " + label;
     }
 
     /**
      * check whether this node is a leaf node
+     *
      * @return true if node has no children, false otherwise
      */
     public boolean isLeaf() {
-        return this.children.size() == 0;
+        return children.isEmpty();
     }
-
 }

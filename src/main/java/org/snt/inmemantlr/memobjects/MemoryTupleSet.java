@@ -34,31 +34,33 @@ import java.util.function.Consumer;
  * and parsers such that they can be used later on without
  * the need to compile the whole stuff again
  */
-public class MemoryTupleSet implements Serializable, Iterable <MemoryTuple> {
+public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
 
-    final static Logger logger = LoggerFactory.getLogger(MemoryTupleSet.class);
+    private static final long serialVersionUID = -1187957244085829285L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemoryTupleSet.class);
 
     private Set<MemoryTuple> mts = null;
 
     /**
      * constructor
      */
-    public MemoryTupleSet(){
-        this.mts = new HashSet<MemoryTuple>();
+    public MemoryTupleSet() {
+        mts = new HashSet<>();
     }
 
     /**
      * add a memory (source,bytecode) tuple to the list
+     *
      * @param source the source code
      * @param bytecode the corresponding bytecode
      */
     public void addMemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {
-        logger.debug("add tuple " + source.getClassName());
-        this.mts.add(new MemoryTuple(source, bytecode));
+        LOGGER.debug("add tuple {}", source.getClassName());
+        mts.add(new MemoryTuple(source, bytecode));
     }
 
     public int size() {
-        return this.mts.size();
+        return mts.size();
     }
 
     @Override
@@ -76,10 +78,8 @@ public class MemoryTupleSet implements Serializable, Iterable <MemoryTuple> {
         return mts.spliterator();
     }
 
-
-    public void addAll(MemoryTupleSet mset){
-        assert(mset != null);
-        this.mts.addAll(mset.mts);
+    public void addAll(MemoryTupleSet mset) {
+        assert mset != null;
+        mts.addAll(mset.mts);
     }
-
 }

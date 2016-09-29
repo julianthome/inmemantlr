@@ -17,7 +17,6 @@
 * limitations under the Licence.
 */
 
-
 package org.snt.inmemantlr;
 
 import org.antlr.v4.runtime.Parser;
@@ -27,75 +26,69 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.Serializable;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * default tree listener
  */
 public class DefaultListener implements ParseTreeListener, Serializable {
 
-    protected Parser parser;
-    private Map<String, Integer> rmap;
-    private Stack<Comparator> compstack = new Stack<Comparator>();
-    private Stack<String> context = new Stack<String>();
+    private static final long serialVersionUID = 7449676975470436260L;
 
-    private static DefaultListener listener = null;
+    protected Parser parser;
+
+    private final Map<String, Integer> rmap = new HashMap<>();
 
     /**
      * constructor
      */
     public DefaultListener() {
-        this.parser = null;
-        this.rmap = null;
+        parser = null;
+        rmap.clear();
     }
 
     /**
      * maps rule index to its actual name
+     *
      * @param key rule index
      * @return the corresponding rule name
      */
     public String getRuleByKey(int key) {
-
-        for (Map.Entry<String, Integer> e : this.rmap.entrySet()) {
-            if (e.getValue() == key)
-                return e.getKey();
-        }
-        return null;
+        return rmap.entrySet().stream()
+                .filter(e -> e.getValue() == key)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
      * set parser
+     *
      * @param p parser
      */
     protected void setParser(Parser p) {
-        this.parser = p;
-        this.rmap = this.parser.getRuleIndexMap();
+        parser = p;
+        rmap.clear();
+        rmap.putAll(parser.getRuleIndexMap());
     }
 
     public void reset() {
-
     }
-
 
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
-
     }
 
     @Override
     public void visitErrorNode(ErrorNode errorNode) {
-
     }
 
     @Override
     public void enterEveryRule(ParserRuleContext parserRuleContext) {
-
     }
 
     @Override
     public void exitEveryRule(ParserRuleContext parserRuleContext) {
-
     }
 }

@@ -22,17 +22,17 @@ package org.snt.inmemantlr.memobjects;
 import javax.tools.SimpleJavaFileObject;
 import java.net.URI;
 
-
 /**
  * This is just a dummy class used for serialization -- it
- * is providign a non-parametric constructor
+ * is providing a non-parametric constructor
  */
 public class MemoryFile extends SimpleJavaFileObject {
+
     /**
-     * Construct a SimpleJavaFileObject of the given kind and with the
+     * construct a SimpleJavaFileObject of the given kind and with the
      * given URI.
      *
-     * @param uri  the URI for this file object
+     * @param uri the URI for this file object
      * @param kind the kind of this file object
      */
     protected MemoryFile(URI uri, Kind kind) {
@@ -44,7 +44,6 @@ public class MemoryFile extends SimpleJavaFileObject {
      * serialization work
      */
     public MemoryFile() {
-        this(URI.create("byte:///nop.class"),Kind.OTHER);
+        this(URI.create("byte:///nop.class"), Kind.OTHER);
     }
-
 }

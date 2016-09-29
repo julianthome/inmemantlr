@@ -17,43 +17,38 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.Assert.*;
+import static org.snt.inmemantlr.utils.FileUtils.getStringFromStream;
 
 public class TestDoubleParse {
-
-    static InputStream sgrammar = null;
-    static InputStream sfile1 = null;
-    static InputStream sfile2 = null;
 
     String sgrammarcontent = "";
     String s1 = "", s2 = "";
 
     @Before
-    public void init() {
+    public void init() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        sgrammar = classLoader.getResourceAsStream("Java.g4");
-        sfile1 = classLoader.getResourceAsStream("HelloWorld.java");
-        sfile2 = classLoader.getResourceAsStream("HelloUniverse.java");
-
-        sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-        s1 = FileUtils.getStringFromStream(sfile1);
-        s2 = FileUtils.getStringFromStream(sfile2);
+        try (InputStream sgrammar = classLoader.getResourceAsStream("Java.g4");
+             InputStream sfile1 = classLoader.getResourceAsStream("HelloWorld.java");
+             InputStream sfile2 = classLoader.getResourceAsStream("HelloUniverse.java")) {
+            sgrammarcontent = getStringFromStream(sgrammar);
+            s1 = getStringFromStream(sfile1);
+            s2 = getStringFromStream(sfile2);
+        }
     }
 
     @Test
     public void testProcessor() {
-
         GenericParser gp1 = new GenericParser(sgrammarcontent, "Java", null);
         gp1.compile();
         GenericParser gp2 = new GenericParser(sgrammarcontent, "Java", null);
@@ -62,10 +57,9 @@ public class TestDoubleParse {
         DefaultTreeListener l1 = new DefaultTreeListener();
         DefaultTreeListener l2 = new DefaultTreeListener();
 
-        Assert.assertFalse(l1.toString() == null);
-        Assert.assertEquals(l1.toString(), "");
+        assertFalse(l1.toString() == null);
+        assertEquals(l1.toString(), "");
 
-        ParserRuleContext ctx = null;
         gp1.setListener(l1);
         gp2.setListener(l2);
 
@@ -78,8 +72,7 @@ public class TestDoubleParse {
 
         Ast out1 = l1.getAst();
         Ast out2 = l2.getAst();
-        Assert.assertFalse(out1.equals(out2));
-        Assert.assertTrue(out1.equals(out1));
+        assertFalse(out1.equals(out2));
+        assertTrue(out1.equals(out1));
     }
-
 }

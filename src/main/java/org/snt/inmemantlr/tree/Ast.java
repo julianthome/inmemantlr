@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 
 /**
  * An abstract syntax tree
@@ -36,44 +36,48 @@ public class Ast {
     List<AstNode> nodes = null;
 
     private Ast() {
-        this.nodes = new Vector<AstNode>();
+        nodes = new Vector<>();
     }
 
     /**
      * constructor
      * <p>
      * create a new abstract syntax tree
+     *
      * @param nt name of root non-terminal node
      * @param label value of root non-terminal node
      */
     public Ast(String nt, String label) {
         this();
-        this.root = newNode(null, nt, label);
+        root = newNode(null, nt, label);
     }
 
     /**
      * constructor
      * <p>
      * copy constructor
+     *
      * @param tree tree to be duplicated
      */
     public Ast(Ast tree) {
         this();
-        this.root = newNode(tree.getRoot());
+        root = newNode(tree.getRoot());
     }
 
     /**
      * constructor
      * <p>
+     *
      * @param nod root node
      */
     private Ast(AstNode nod) {
         this();
-        this.root = newNode(nod);
+        root = newNode(nod);
     }
 
     /**
      * get root node
+     *
      * @return root node
      */
     public AstNode getRoot() {
@@ -82,17 +86,19 @@ public class Ast {
 
     /**
      * create new ast node
+     *
      * @param parent root of new ast node to be created
      * @return newly created ast node
      */
     private AstNode newNode(AstNode parent) {
         AstNode rn = new AstNode(this, parent);
-        this.nodes.add(rn);
+        nodes.add(rn);
         return rn;
     }
 
     /**
      * create new ast node
+     *
      * @param parent parent node
      * @param nt name of node to be crated
      * @param label value of node to be created
@@ -100,87 +106,94 @@ public class Ast {
      */
     public AstNode newNode(AstNode parent, String nt, String label) {
         AstNode rn = new AstNode(this, parent, nt, label);
-        this.nodes.add(rn);
+        nodes.add(rn);
         return rn;
     }
 
     /**
      * get leaf nodes
+     *
      * @return set of leaf nodes
      */
     public Set<AstNode> getLeafs() {
-        return this.nodes.stream().filter(n -> !n.hasChildren()).
-                collect(Collectors.toSet());
+        return nodes.stream().filter(n -> !n.hasChildren()).collect(toSet());
     }
 
     /**
      * get all nodes
+     *
      * @return list of ast nodes
      */
     public List<AstNode> getNodes() {
-        return this.nodes;
+        return nodes;
     }
-
 
     /**
      * generate dot representation from ast
+     *
      * @return dot format string
      */
     public String toDot() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder()
+                .append("graph {\n")
+                .append("\tnode [fontname=Helvetica,fontsize=11];\n")
+                .append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
-        sb.append("graph {\n");
+        nodes.forEach(n -> sb
+                .append("\tn")
+                .append(n.getId())
+                .append(" [label=\"(")
+                .append(n.getId())
+                .append(")\\n")
+                .append(n.getEscapedLabel())
+                .append("\\n")
+                .append(n.getRule())
+                .append("\"];\n"));
 
-        sb.append("\tnode [fontname=Helvetica,fontsize=11];\n");
-        sb.append("\tedge [fontname=Helvetica,fontsize=10];\n");
-
-        this.nodes.forEach(
-                n -> sb.append("\tn" + n.getId() + " [label=\"(" + n.getId() + ")\\n" +
-                        n.getEscapedLabel() + "\\n" + n.getRule().toString() + "\"];\n"));
-
-        this.nodes.forEach(n -> n.getChildren().stream().filter(c -> c.hasParent()).forEach(c -> sb.append("\tn" +
-                c.getParent().getId() + " -- n" + c.getId() + ";\n")));
+        nodes.forEach(n -> n.getChildren().stream()
+                .filter(AstNode::hasParent)
+                .forEach(c -> sb
+                        .append("\tn")
+                        .append(c.getParent().getId())
+                        .append(" -- n")
+                        .append(c.getId())
+                        .append(";\n")));
 
         sb.append("}\n");
 
         return sb.toString();
     }
 
-
     /**
      * replace oldTree by newTree
+     *
      * @param oldTree tree to be replaced
      * @param newTree tree replacement
      * @return true when subtree replacement was successful, false otherwise
      */
     public boolean replaceSubtree(Ast oldTree, Ast newTree) {
-
-        if (this.hasSubtree(oldTree)) {
-            this.nodes.stream().filter(n -> oldTree.getRoot().equals(n)).forEach(
-                    n -> {
-                        n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot());
-                    }
-            );
-            this.nodes.addAll(newTree.nodes);
-            return this.nodes.removeAll(oldTree.nodes);
+        if (hasSubtree(oldTree)) {
+            nodes.stream()
+                    .filter(n -> oldTree.getRoot().equals(n))
+                    .forEach(n -> n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot()));
+            nodes.addAll(newTree.nodes);
+            return nodes.removeAll(oldTree.nodes);
         }
         return false;
     }
 
-
     /**
      * remove subtree from ast
+     *
      * @param subtree to be removed
      * @return true when removal was succesful, false otherwise
      */
     public boolean removeSubtree(Ast subtree) {
-        if (this.hasSubtree(subtree)) {
-            this.nodes.stream().filter(n -> subtree.getRoot().equals(n)).forEach(
-                    n -> {
-                        n.getParent().delChild(n);
-                    }
-            );
-            return this.nodes.removeAll(subtree.nodes);
+        if (hasSubtree(subtree)) {
+            nodes.stream()
+                    .filter(n -> subtree.getRoot().equals(n))
+                    .forEach(n -> n.getParent().delChild(n));
+            return nodes.removeAll(subtree.nodes);
         }
         return false;
     }
@@ -188,18 +201,19 @@ public class Ast {
     /**
      * find dominant subtrees, i.e., subtrees where the distance of the subtree root
      * node to the ast root node is minimal.
+     *
      * @param p predicate to search for the dominating subtree root node
      * @return set of dominating subtrees
      */
     public Set<Ast> getDominatingSubtrees(Predicate<AstNode> p) {
         Set<AstNode> selected = new HashSet<>();
-        searchDominatingNodes(this.root, selected, p);
-        System.out.println(selected);
-        return getSubtrees(n -> selected.contains(n));
+        searchDominatingNodes(root, selected, p);
+        return getSubtrees(selected::contains);
     }
 
     /**
      * helper method for finding the dominating subtrees
+     *
      * @param n current root
      * @param selected set to keep track of visited nodes
      * @param p predicate to search for the dominating subtree root node
@@ -208,54 +222,45 @@ public class Ast {
         if (p.test(n)) {
             selected.add(n);
         } else {
-            for (AstNode an : n.getChildren()) {
-                searchDominatingNodes(an, selected, p);
-            }
+            n.getChildren().forEach(an -> searchDominatingNodes(an, selected, p));
         }
     }
 
     /**
      * get subtree with the root node identified by p
+     *
      * @param p predicate for identifying the root node
      * @return set of ast nodes
      */
     public Set<Ast> getSubtrees(Predicate<AstNode> p) {
-
-        Set<Ast> ret = new HashSet<Ast>();
-
-        this.nodes.stream().filter(p).forEach(
-                n -> {
-                    Ast a = new Ast(n);
-                    ret.add(a);
-                }
-        );
-        return ret;
+        return nodes.stream().filter(p).map(Ast::new).collect(toSet());
     }
 
     /**
      * check the presence of subree in the current tree
+     *
      * @param subtree tree whose presence is checked
      * @return true if subtree is present in actual one, false otherwise
      */
     public boolean hasSubtree(Ast subtree) {
         Set<Ast> subtrees = getSubtrees(n -> subtree.getRoot().equals(n));
-        return subtrees.stream().filter(s -> subtree.equals(s)).count() > 0;
+        return subtrees.stream().filter(subtree::equals).count() > 0;
     }
 
     /**
      * get subtree
+     *
      * @param subtree tree whose presence is checked
      * @return subree
      */
     public Ast getSubtree(Ast subtree) {
         Set<Ast> subtrees = getSubtrees(n -> n.equals(subtree.getRoot()));
-        return subtrees.stream().filter(s -> subtree.equals(s)).findFirst().get();
+        return subtrees.stream().filter(subtree::equals).findFirst().orElse(null);
     }
-
 
     @Override
     public int hashCode() {
-        return this.root.getId();
+        return root.getId();
     }
 
     @Override
@@ -265,7 +270,6 @@ public class Ast {
         }
         Ast ast = (Ast) o;
         // will recursively check AST nodes
-        return this.root.equals(ast.getRoot());
+        return root.equals(ast.getRoot());
     }
-
 }

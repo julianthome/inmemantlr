@@ -30,95 +30,103 @@ import java.util.Set;
  */
 public class MemoryTuple implements Serializable {
 
+    private static final long serialVersionUID = 3586252835232647406L;
+
     private MemorySource source;
     private Set<MemoryByteCode> bytecodeObjects;
     private String cname;
 
-    public MemoryTuple(){
-        this.bytecodeObjects = new HashSet<MemoryByteCode>();
+    public MemoryTuple() {
+        bytecodeObjects = new HashSet<>();
     }
 
     /**
-     * construct
+     * constructor
+     *
      * @param source the source object of a give class
      * @param bytecode the bytecodeObjects derived from the source object
      */
-    public MemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode){
+    public MemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {
         this();
-        assert(bytecode != null && bytecode.size() > 0);
+        assert bytecode != null && !bytecode.isEmpty();
         this.source = source;
-        this.bytecodeObjects.addAll(bytecode);
-        this.cname = source.getClassName();
+        bytecodeObjects.addAll(bytecode);
+        cname = source.getClassName();
     }
 
     /**
      * get source code
+     *
      * @return source code representation of this object
      */
     public MemorySource getSource() {
-        return this.source;
+        return source;
     }
 
     /**
      * get byte code
+     *
      * @return byte code representation of this object
      */
     public Set<MemoryByteCode> getByteCodeObjects() {
-        return this.bytecodeObjects;
+        return bytecodeObjects;
     }
 
     /**
      * return class name
+     *
      * @return get class name of this object
      */
     public String getClassName() {
-        return this.cname;
+        return cname;
     }
 
     @Override
     public int hashCode() {
-        return this.cname.hashCode();
+        return cname.hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof MemoryTuple))
+        if (!(o instanceof MemoryTuple))
             return false;
-        MemoryTuple mo = (MemoryTuple)o;
-        return(mo.cname.equals(this.cname));
+        MemoryTuple mo = (MemoryTuple) o;
+        return mo.cname.equals(cname);
     }
 
     /**
      * check if this object represents the parser class
+     *
      * @return true, if this class is a parser, false otherwise
      */
     public boolean isParser() {
-        return this.cname.endsWith("Parser");
+        return cname.endsWith("Parser");
     }
 
     /**
      * check if this object represents a base listener
+     *
      * @return true, if this class is a base listener, false otherwise
      */
     public boolean isBaseListener() {
-        return this.cname.endsWith("BaseListener");
+        return cname.endsWith("BaseListener");
     }
 
     /**
      * check if this object represents a listener class
+     *
      * @return true, if this class is a listener, false otherwise
      */
     public boolean isListener() {
-        return this.cname.endsWith("Listener");
+        return cname.endsWith("Listener");
     }
-
 
     /**
      * check if this object represents a lexer class
+     *
      * @return true, if this class is a lexer, false otherwise
      */
     public boolean isLexer() {
-        return this.cname.endsWith("Lexer");
+        return cname.endsWith("Lexer");
     }
-
 }

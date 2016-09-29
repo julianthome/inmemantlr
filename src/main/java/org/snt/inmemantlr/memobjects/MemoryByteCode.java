@@ -30,35 +30,38 @@ import java.net.URI;
  */
 public class MemoryByteCode extends MemoryFile implements Serializable {
 
+    private static final long serialVersionUID = 2268365481259432191L;
+
     private transient ByteArrayOutputStream baos;
     private String cname;
-    private byte [] bytebuf = null;
+    private byte[] bytebuf = null;
 
-
-    public MemoryByteCode(){
-        super();
+    public MemoryByteCode() {
     }
 
     /**
      * constructor
+     *
      * @param name class name
      */
     public MemoryByteCode(String name) {
         super(URI.create("byte:///" + name + ".class"), Kind.CLASS);
-        this.cname = name;
+        cname = name;
     }
 
     /**
      * get byte code content as character sequence
+     *
      * @param ignoreEncodingErrors flag if encoding errors should be ignored
      * @return character sequence of memory byte code
      */
     public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-        return new String(this.getBytes());
+        return new String(getBytes());
     }
 
     /**
      * open new output stream
+     *
      * @return output stream
      */
     public OutputStream openOutputStream() {
@@ -68,6 +71,7 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
 
     /**
      * open new input stream
+     *
      * @return input stream
      */
     public InputStream openInputStream() {
@@ -76,10 +80,11 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
 
     /**
      * return byte code as byte sequence
+     *
      * @return byte array
      */
     public byte[] getBytes() {
-        if(bytebuf == null)
+        if (bytebuf == null)
             bytebuf = baos.toByteArray();
 
         return bytebuf;
@@ -87,29 +92,28 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
 
     /**
      * return the class name of this object
+     *
      * @return the class name
      */
     public String getClassName() {
-        return this.cname;
+        return cname;
     }
 
     public boolean isInnerClass() {
-        return this.cname.contains("$");
+        return cname.contains("$");
     }
 
     @Override
     public int hashCode() {
-        return this.getClassName().hashCode();
+        return getClassName().hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof MemoryByteCode))
+        if (!(o instanceof MemoryByteCode))
             return false;
 
-        MemoryByteCode mb = (MemoryByteCode)o;
-        return mb.getClassName().equals(this.cname);
+        MemoryByteCode mb = (MemoryByteCode) o;
+        return mb.getClassName().equals(cname);
     }
-
-
 }

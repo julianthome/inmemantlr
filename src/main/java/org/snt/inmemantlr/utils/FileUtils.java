@@ -21,44 +21,44 @@ package org.snt.inmemantlr.utils;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
+public final class FileUtils {
 
-public class FileUtils {
+    private FileUtils() {
+    }
 
     /**
      * load file content
+     *
      * @param path path of the file to load
      * @return file content as string
      */
     public static String loadFileContent(String path) {
-        byte[] bytes = null;
+        byte[] bytes;
         try {
             RandomAccessFile f = new RandomAccessFile(path, "r");
             bytes = new byte[(int) f.length()];
             f.read(bytes);
         } catch (Exception e) {
-           return null;
+            return null;
         }
         return new String(bytes);
     }
 
     /**
      * load input stream
+     *
      * @param is input stream
      * @return stream content as string
      */
     public static String getStringFromStream(InputStream is) {
-
-        StringWriter writer = new StringWriter();
         try {
-            IOUtils.copy(is, writer, "UTF-8");
+            return IOUtils.toString(is, StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }
-        return writer.toString();
     }
 }
