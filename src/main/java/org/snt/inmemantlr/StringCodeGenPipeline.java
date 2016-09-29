@@ -32,7 +32,7 @@ import org.stringtemplate.v4.ST;
 import java.util.List;
 
 /**
- * xtended code gen pipeline for compiling
+ * extended code gen pipeline for compiling
  * antlr grammars in-memory
  */
 public class StringCodeGenPipeline extends CodeGenPipeline {

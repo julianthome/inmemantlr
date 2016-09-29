@@ -55,7 +55,7 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
      * @param bytecode the corresponding bytecode
      */
     public void addMemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {
-        LOGGER.debug("add tuple " + source.getClassName());
+        LOGGER.debug("add tuple {}", source.getClassName());
         mts.add(new MemoryTuple(source, bytecode));
     }
 
