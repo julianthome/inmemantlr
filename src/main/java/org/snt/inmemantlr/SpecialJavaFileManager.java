@@ -17,7 +17,6 @@
 * limitations under the Licence.
 */
 
-
 package org.snt.inmemantlr;
 
 import org.slf4j.Logger;
@@ -28,49 +27,53 @@ import javax.tools.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * file manager for in-memory compilation
  */
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
-    final static Logger logger = LoggerFactory.getLogger(SpecialJavaFileManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpecialJavaFileManager.class);
 
     private SpecialClassLoader xcl;
     private HashMap<String, MemoryByteCode> mb;
 
     /**
      * constructor
-     * @param sjfm
-     * @param xcl
+     *
+     * @param sjfm a StandardJavaFileManager
+     * @param xcl a SpecialClassLoader
      */
     public SpecialJavaFileManager(StandardJavaFileManager sjfm, SpecialClassLoader xcl) {
         super(sjfm);
         this.xcl = xcl;
-        this.mb = new HashMap<String, MemoryByteCode>();
+        mb = new HashMap<>();
     }
 
     /**
      * get a java file (memory byte code)
+     *
      * @param location path
      * @param name filename
      * @param kind file kind
      * @param sibling file sibling
      * @return memory byte code object
-     * @throws IOException
+     * @throws IOException if an error occurs getting the java file
      */
     public JavaFileObject getJavaFileForOutput(Location location, String name, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
         // bookkeeping of memory bytecode
-        this.mb.put(mbc.getClassName(), mbc);
-        logger.debug("add bytecode " + name);
+        mb.put(mbc.getClassName(), mbc);
+        LOGGER.debug("add bytecode " + name);
         xcl.addClass(mbc);
         return mbc;
     }
 
     /**
      * get special class loader
+     *
      * @param location file location
      * @return class loader
      */
@@ -78,19 +81,18 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
         return xcl;
     }
 
-
     /**
      * get the bytecode of a class
+     *
      * @param cname the name of the class for which one would like to get the bytecode
      * @return the bytecode of class cname
      */
     public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
-        logger.debug("get cname " + cname);
-        assert(this.mb.containsKey(cname));
+        LOGGER.debug("get cname " + cname);
+        assert mb.containsKey(cname);
 
-        return this.mb.values().stream().filter( m -> m.getClassName().equals(cname) ||
-        m.getClassName().matches(cname + "\\$.*")).
-                collect(Collectors.toSet());
-
+        return mb.values().stream()
+                .filter(m -> m.getClassName().equals(cname) || m.getClassName().matches(cname + "\\$.*"))
+                .collect(toSet());
     }
 }

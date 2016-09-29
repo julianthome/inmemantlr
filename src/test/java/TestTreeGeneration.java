@@ -17,8 +17,7 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultTreeListener;
@@ -30,6 +29,8 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class TestTreeGeneration {
 
@@ -45,22 +46,20 @@ public class TestTreeGeneration {
 
     @Test
     public void testGeneration() {
-
         GenericParser gp = new GenericParser(grammar, "Java");
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assert.assertTrue(s != null && s.length() > 0);
+        assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
         gp.setListener(dlist);
 
-        ParserRuleContext ctx = null;
         try {
-            ctx = gp.parse(s);
+            gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
 
         Ast ast = dlist.getAst();
@@ -68,16 +67,16 @@ public class TestTreeGeneration {
         // create copy
         Ast cast = new Ast(ast);
 
-        Assert.assertTrue(ast != null);
-        Assert.assertEquals(ast.getNodes().size(),cast.getNodes().size());
+        assertTrue(ast != null);
+        Assert.assertEquals(ast.getNodes().size(), cast.getNodes().size());
 
-        Set<Ast> asts = ast.getSubtrees(n -> n.getRule().equals("expression"));
+        Set<Ast> asts = ast.getSubtrees(n -> "expression".equals(n.getRule()));
 
-        assert(asts.size() == 5);
+        assert asts.size() == 5;
 
-        for(Ast a : asts) {
-            Assert.assertTrue(ast.hasSubtree(a));
-            Assert.assertFalse(ast.getSubtree(a) == null);
+        for (Ast a : asts) {
+            assertTrue(ast.hasSubtree(a));
+            assertFalse(ast.getSubtree(a) == null);
         }
 
         int sizeBefore = ast.getNodes().size();
@@ -86,46 +85,44 @@ public class TestTreeGeneration {
 
         ast.removeSubtree(first);
 
-        Assert.assertTrue((ast.getNodes().size() + first.getNodes().size()) == sizeBefore);
+        assertTrue(ast.getNodes().size() + first.getNodes().size() == sizeBefore);
 
         Ast repl = new Ast("replacement", "replacement");
 
         cast.replaceSubtree(first, repl);
 
-        Assert.assertTrue(cast.getNodes().size() == ast.getNodes().size() + 1);
-        Assert.assertTrue(cast.getDominatingSubtrees( n -> n.getRule().equals("classBody")).size() == 1);
-        Assert.assertTrue(cast.toDot() != null && cast.toDot().length() > 0);
+        assertTrue(cast.getNodes().size() == ast.getNodes().size() + 1);
+        assertTrue(cast.getDominatingSubtrees(n -> "classBody".equals(n.getRule())).size() == 1);
+        assertTrue(cast.toDot() != null && !cast.toDot().isEmpty());
 
         AstNode root = cast.getRoot();
 
-        Assert.assertTrue(root.hasChildren() == true);
-        Assert.assertFalse(root.hasParent());
+        assertTrue(root.hasChildren());
+        assertFalse(root.hasParent());
 
-        for(AstNode n : cast.getNodes()) {
-            Assert.assertTrue(n.getLabel() != null);
-            Assert.assertTrue(n.getRule() != null);
-            for(int i = 0; i < n.getChildren().size(); i++) {
-                if(i == 0)
-                    Assert.assertTrue(n.getChild(i).equals(n.getFirstChild()));
-                if(i == n.getChildren().size() - 1)
-                    Assert.assertTrue(n.getChild(i).equals(n.getLastChild()));
+        for (AstNode n : cast.getNodes()) {
+            assertTrue(n.getLabel() != null);
+            assertTrue(n.getRule() != null);
+            for (int i = 0; i < n.getChildren().size(); i++) {
+                if (i == 0)
+                    assertTrue(n.getChild(i).equals(n.getFirstChild()));
+                if (i == n.getChildren().size() - 1)
+                    assertTrue(n.getChild(i).equals(n.getLastChild()));
             }
         }
 
-        for(AstNode c : cast.getLeafs()) {
-            Assert.assertTrue(c.hasParent());
-            Assert.assertFalse(c.hasChildren());
-            Assert.assertTrue(c.isLeaf());
-            Assert.assertFalse(c.equals(null));
-            Assert.assertFalse(c.equals(null));
-            Assert.assertNull(c.getLastChild());
-            Assert.assertNull(c.getFirstChild());
+        for (AstNode c : cast.getLeafs()) {
+            assertTrue(c.hasParent());
+            assertFalse(c.hasChildren());
+            assertTrue(c.isLeaf());
+            assertFalse(c.equals(null));
+            assertFalse(c.equals(null));
+            assertNull(c.getLastChild());
+            assertNull(c.getFirstChild());
         }
-
 
         AstNode croot = cast.getRoot();
         croot.setParent(ast.getRoot());
-        Assert.assertTrue(croot.getParent().equals(ast.getRoot()));
+        assertTrue(croot.getParent().equals(ast.getRoot()));
     }
-
 }

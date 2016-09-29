@@ -30,23 +30,25 @@ import java.net.URI;
  * for in-memory compilation
  */
 public class MemorySource extends MemoryFile implements Serializable {
+
+    private static final long serialVersionUID = 898301300090559769L;
+
     private String src;
     private String cname;
 
-
-    public MemorySource(){
-        super();
+    public MemorySource() {
     }
 
     /**
      * constructor
+     *
      * @param name class name
      * @param src source string
      */
     public MemorySource(String name, String src) {
         super(URI.create("file:///" + name + ".java"), Kind.SOURCE);
         this.src = src;
-        this.cname = name;
+        cname = name;
     }
 
     public String getClassName() {
@@ -55,6 +57,7 @@ public class MemorySource extends MemoryFile implements Serializable {
 
     /**
      * get character content
+     *
      * @param ignoreEncodingErrors true to ignore encoding errors, otherwise false
      * @return source as char sequence
      */
@@ -64,6 +67,7 @@ public class MemorySource extends MemoryFile implements Serializable {
 
     /**
      * open new output stream
+     *
      * @return output stream
      */
     public OutputStream openOutputStream() {
@@ -72,6 +76,7 @@ public class MemorySource extends MemoryFile implements Serializable {
 
     /**
      * open new input stream
+     *
      * @return input stream
      */
     public InputStream openInputStream() {

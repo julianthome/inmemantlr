@@ -25,11 +25,24 @@ package org.snt.inmemantlr.exceptions;
  */
 public class IllegalWorkflowException extends Exception {
 
+    private static final long serialVersionUID = -8475184705514927769L;
+
     /**
      * constructor
+     *
      * @param msg exception message
      */
     public IllegalWorkflowException(String msg) {
         super(msg);
+    }
+
+    /**
+     * constructor
+     *
+     * @param msg exception message
+     * @param cause the cause
+     */
+    public IllegalWorkflowException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 }

@@ -25,6 +25,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
@@ -34,14 +35,13 @@ import java.util.function.Predicate;
  */
 public class DefaultTreeListener extends DefaultListener {
 
-    private Stack<String> sctx = new Stack<String>();
+    private static final long serialVersionUID = 5637734678821255670L;
 
+    private Stack<String> sctx = new Stack<>();
     private StringBuffer glob = new StringBuffer();
-
     private Ast ast = null;
     private AstNode nodeptr = null;
     private Predicate<String> filter = null;
-
 
     /**
      * constructor
@@ -51,31 +51,29 @@ public class DefaultTreeListener extends DefaultListener {
     }
 
     /**
-     * construtor
+     * constructor
+     *
      * @param filter condition that has to hold for every node
      */
     public DefaultTreeListener(Predicate<String> filter) {
-        this.sctx.add("S");
-        this.ast = new Ast("root", "root");
-        this.nodeptr = this.ast.getRoot();
+        sctx.add("S");
+        ast = new Ast("root", "root");
+        nodeptr = ast.getRoot();
         this.filter = filter;
     }
 
-
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
-
     }
 
     @Override
     public void visitErrorNode(ErrorNode errorNode) {
-
     }
 
     @Override
     public void enterEveryRule(ParserRuleContext ctx) {
-        String rule = this.getRuleByKey(ctx.getRuleIndex());
-        if (this.filter.test(rule)) {
+        String rule = getRuleByKey(ctx.getRuleIndex());
+        if (filter.test(rule)) {
             AstNode n = ast.newNode(nodeptr, rule, ctx.getText());
             nodeptr.addChild(n);
             nodeptr = n;
@@ -84,43 +82,42 @@ public class DefaultTreeListener extends DefaultListener {
 
     @Override
     public void exitEveryRule(ParserRuleContext ctx) {
-        String rule = this.getRuleByKey(ctx.getRuleIndex());
-        if (this.filter.test(rule)) {
-            this.nodeptr = this.nodeptr.getParent();
+        String rule = getRuleByKey(ctx.getRuleIndex());
+        if (filter.test(rule)) {
+            nodeptr = nodeptr.getParent();
         }
     }
 
     @Override
     public void reset() {
         super.reset();
-        this.sctx.clear();
-        this.sctx.add("S");
-        this.ast = new Ast("root", "root");
-        this.nodeptr = this.ast.getRoot();
-        this.glob.delete(0, this.glob.length());
-
+        sctx.clear();
+        sctx.add("S");
+        ast = new Ast("root", "root");
+        nodeptr = ast.getRoot();
+        glob.delete(0, glob.length());
     }
 
     /**
      * get ast
+     *
      * @return ast
      */
     public Ast getAst() {
-        return this.ast;
+        return ast;
     }
 
     /**
      * get ast nodes
+     *
      * @return set of ast nodes
      */
     public Set<AstNode> getNodes() {
-        return this.getNodes();
+        return new HashSet<>(ast.getNodes());
     }
 
     @Override
     public String toString() {
-        return this.glob.toString();
+        return glob.toString();
     }
-
-
 }

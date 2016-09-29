@@ -31,9 +31,8 @@ import org.stringtemplate.v4.ST;
 
 import java.util.List;
 
-
 /**
- * extended code gen pipeline for compiling
+ * xtended code gen pipeline for compiling
  * antlr grammars in-memory
  */
 public class StringCodeGenPipeline extends CodeGenPipeline {
@@ -44,6 +43,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
 
     /**
      * constructor
+     *
      * @param g antlr grammar object
      * @param name grammar name
      */
@@ -51,63 +51,70 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
         super(g);
         this.g = g;
         this.name = name;
-        this.lexer = null;
-        this.listener = null;
-        this.visitor = null;
-        this.baseListener = null;
-        this.baseVisitor = null;
+        lexer = null;
+        listener = null;
+        visitor = null;
+        baseListener = null;
+        baseVisitor = null;
     }
 
     /**
      * check if parser is set
+     *
      * @return true if parser is set, false otherwise
      */
     public boolean hasParser() {
-        return this.parser != null;
+        return parser != null;
     }
 
     /**
      * get parser
+     *
      * @return parser
      */
     public ST getParser() {
-        return this.parser;
+        return parser;
     }
 
     /**
      * get base listener
+     *
      * @return base listener
      */
     public ST getBaseListener() {
-        return this.baseListener;
+        return baseListener;
     }
 
     /**
      * check if base listener is set
+     *
      * @return true if listener is set, false otherwise
      */
     public boolean hasBaseListener() {
-        return this.baseListener != null;
+        return baseListener != null;
     }
 
     /**
      * get lexer
+     *
      * @return lexer
      */
     public ST getLexer() {
-        return this.lexer;
+        return lexer;
     }
 
     /**
      * check if lexer is set
+     *
      * @return true if lexer is set, false otherwise
      */
     public boolean hasLexer() {
-        return this.lexer != null;
+        return lexer != null;
     }
 
     /**
      * get visitor
+     *
      * @return visitor
      */
     public ST getVisitor() {
@@ -116,46 +123,52 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
 
     /**
      * check if visitor is set
+     *
      * @return true if visitor is set, false otherwise
      */
     public boolean hasVisitor() {
-        return this.visitor != null;
+        return visitor != null;
     }
 
     /**
      * get listener
+     *
      * @return listener
      */
     public ST getListener() {
-        return this.listener;
+        return listener;
     }
 
     /**
      * check if listener is set
+     *
      * @return true if listener is set, false otherwise
      */
     public boolean hasListener() {
-        return this.listener != null;
+        return listener != null;
     }
 
     /**
      * get base visitor
+     *
      * @return base visitor
      */
     public ST getBaseVisitor() {
-        return this.baseVisitor;
+        return baseVisitor;
     }
 
     /**
      * check if visitor is set
+     *
      * @return true if visitor is set, false otherwise
      */
     public boolean hasBaseVisitor() {
-        return this.baseVisitor != null;
+        return baseVisitor != null;
     }
 
     /**
      * get grammar
+     *
      * @return grammar
      */
     public Grammar getG() {
@@ -164,6 +177,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
 
     /**
      * set grammar
+     *
      * @param g grammar
      */
     public void setG(Grammar g) {
@@ -174,98 +188,95 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * compile lexer and parser
      */
     public void process() {
-
         CodeGenerator gen = new CodeGenerator(g);
         IntervalSet idTypes = new IntervalSet();
         idTypes.add(ANTLRParser.ID);
         idTypes.add(ANTLRParser.RULE_REF);
         idTypes.add(ANTLRParser.TOKEN_REF);
         List<GrammarAST> idNodes = g.ast.getNodesWithType(idTypes);
-        for (GrammarAST idNode : idNodes) {
-            if (gen.getTarget().grammarSymbolCausesIssueInGeneratedCode(idNode)) {
-                g.tool.errMgr.grammarError(ErrorType.USE_OF_BAD_WORD,
+        idNodes.stream()
+                .filter(idNode -> gen.getTarget().grammarSymbolCausesIssueInGeneratedCode(idNode))
+                .forEach(idNode -> g.tool.errMgr.grammarError(ErrorType.USE_OF_BAD_WORD,
                         g.fileName, idNode.getToken(),
-                        idNode.getText());
-            }
-        }
+                        idNode.getText()));
 
         if (g.isLexer()) {
-            this.lexer = gen.generateLexer();
+            lexer = gen.generateLexer();
         } else {
-            this.parser = gen.generateParser();
+            parser = gen.generateParser();
 
             if (g.tool.gen_listener) {
-                this.listener = gen.generateListener();
+                listener = gen.generateListener();
                 if (gen.getTarget().wantsBaseListener()) {
-                    this.baseListener = gen.generateBaseListener();
+                    baseListener = gen.generateBaseListener();
                 }
             }
             if (g.tool.gen_visitor) {
-                this.visitor = gen.generateVisitor();
+                visitor = gen.generateVisitor();
                 if (gen.getTarget().wantsBaseVisitor()) {
-                    this.baseVisitor = gen.generateBaseVisitor();
+                    baseVisitor = gen.generateBaseVisitor();
                 }
             }
 
-            LexerGrammar lg = null;
+            LexerGrammar lg;
             if ((lg = g.implicitLexer) != null) {
-
                 CodeGenerator lgcg = new CodeGenerator(lg);
-                this.lexer = lgcg.generateLexer();
+                lexer = lgcg.generateLexer();
             }
-
         }
-
     }
-
 
     /**
      * get parser name
+     *
      * @return parser name
      */
     public String getParserName() {
-        return this.name + "Parser";
+        return name + "Parser";
     }
 
     /**
      * get lexer name
+     *
      * @return lexer name
      */
     public String getLexerName() {
-        return this.name + "Lexer";
+        return name + "Lexer";
     }
 
     /**
      * get visitor name
+     *
      * @return visitor name
      */
     public String getVisitorName() {
-        return this.name + "Visitor";
+        return name + "Visitor";
     }
 
     /**
      * get base visitor name
+     *
      * @return base visitor name
      */
     public String getBaseVisitorName() {
-        return this.name + "BaseVisitor";
+        return name + "BaseVisitor";
     }
 
     /**
      * get listener name
+     *
      * @return listener name
      */
     public String getListenerName() {
-        return this.name + "Listener";
+        return name + "Listener";
     }
 
     /**
      * get base listener name
+     *
      * @return base listener name
      */
     public String getBaseListenerName() {
-        return this.name + "BaseListener";
+        return name + "BaseListener";
     }
-
-
 }

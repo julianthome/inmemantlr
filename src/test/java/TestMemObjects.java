@@ -17,8 +17,6 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,9 +36,12 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class TestMemObjects {
 
-    final static Logger logger = LoggerFactory.getLogger(TestMemObjects.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestMemObjects.class);
 
     static File grammar = null;
     static File sfile = null;
@@ -61,65 +62,63 @@ public class TestMemObjects {
     public void testAntlrObjectAccess() {
         GenericParser gp = new GenericParser(grammar, "Java");
 
-        Assert.assertTrue(gp.compile());
+        assertTrue(gp.compile());
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assert.assertTrue(s != null && s.length() > 0);
+        assertTrue(s != null && !s.isEmpty());
 
         MemoryTupleSet set = gp.getAllCompiledObjects();
 
-        Assert.assertTrue(set != null && set.size() == 4);
+        assertTrue(set != null && set.size() == 4);
 
-        for(MemoryTuple tup : set) {
-            logger.debug("tuple name " + tup.getClassName());
+        for (MemoryTuple tup : set) {
+            LOGGER.debug("tuple name {}", tup.getClassName());
             // for printing the source code
-            logger.debug("source " + tup.getSource().getClassName());
-            // for printint the byte code
-            for(MemoryByteCode mc : tup.getByteCodeObjects()) {
-                assert(mc != null);
-                logger.debug("bc name: " + mc.getClassName());
+            LOGGER.debug("source {}", tup.getSource().getClassName());
+            // for printing the byte code
+            for (MemoryByteCode mc : tup.getByteCodeObjects()) {
+                assert mc != null;
+                LOGGER.debug("bc name: {}", mc.getClassName());
 
-                if(!mc.isInnerClass()) {
+                if (!mc.isInnerClass()) {
                     mc.getClassName().equals(tup.getSource().getClassName());
                 } else {
                     mc.getClassName().startsWith(tup.getSource().getClassName());
                 }
-                //logger.debug("bc code: " + mc.getCharContent(true));
             }
         }
     }
 
     @Test
     public void testStoreAndLoad() {
-
         GenericParser gp = new GenericParser(grammar, "Java");
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assert.assertTrue(s != null && s.length() > 0);
+        assertTrue(s != null && !s.isEmpty());
 
         File file = null;
 
         try {
             file = folder.newFile(fname);
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
         try {
             gp.store(file.getAbsolutePath(), true);
         } catch (SerializationException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
         GenericParser cgp = null;
@@ -127,33 +126,29 @@ public class TestMemObjects {
         try {
             cgp = GenericParser.load(file.getAbsolutePath());
         } catch (DeserializationException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
         try {
-            ParserRuleContext ctx = cgp.parse(s);
+            cgp.parse(s);
         } catch (IllegalWorkflowException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
         DefaultTreeListener dlist = new DefaultTreeListener();
         cgp.setListener(dlist);
 
         try {
-            ParserRuleContext ctx = cgp.parse(s);
+            cgp.parse(s);
         } catch (IllegalWorkflowException e) {
-            logger.error(e.getMessage());
-            Assert.assertFalse(true);
+            LOGGER.error(e.getMessage());
+            assertFalse(true);
         }
 
-        Assert.assertTrue(dlist.getAst() != null);
+        assertTrue(dlist.getAst() != null);
 
-        logger.debug(dlist.getAst().toDot());
-
-
-
+        LOGGER.debug(dlist.getAst().toDot());
     }
-
 }

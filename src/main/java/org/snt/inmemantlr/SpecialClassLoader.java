@@ -31,9 +31,9 @@ import java.util.Map;
  */
 class SpecialClassLoader extends ClassLoader {
 
-    final static Logger logger = LoggerFactory.getLogger(SpecialClassLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpecialClassLoader.class);
 
-    private Map<String, MemoryByteCode> m = new HashMap<String, MemoryByteCode>();
+    private Map<String, MemoryByteCode> m = new HashMap<>();
 
     public SpecialClassLoader(ClassLoader parent) {
         super(parent);
@@ -41,31 +41,31 @@ class SpecialClassLoader extends ClassLoader {
 
     /**
      * find a class that is already loaded
+     *
      * @param name class name
      * @return the actual class
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException if the class could not be found
      */
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         MemoryByteCode mbc = m.get(name);
         if (mbc == null) {
             mbc = m.get(name.replace(".", "/"));
             if (mbc == null) {
-                logger.error("Could not find " + name);
+                LOGGER.error("Could not find {}", name);
                 return super.findClass(name);
             }
         }
 
-        byte [] bseq = mbc.getBytes();
+        byte[] bseq = mbc.getBytes();
         return defineClass(name, bseq, 0, bseq.length);
     }
 
     /**
      * add class to class loader
+     *
      * @param mbc representation
      */
     public void addClass(MemoryByteCode mbc) {
         m.put(mbc.getClassName(), mbc);
     }
-
-
 }

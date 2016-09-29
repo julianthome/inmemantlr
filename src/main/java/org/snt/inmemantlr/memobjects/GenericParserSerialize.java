@@ -28,6 +28,8 @@ import java.io.Serializable;
  */
 public class GenericParserSerialize implements Serializable {
 
+    private static final long serialVersionUID = -8824622790097111310L;
+
     private String gcontent;
     private File gfile;
     private MemoryTupleSet mset;
@@ -35,6 +37,7 @@ public class GenericParserSerialize implements Serializable {
 
     /**
      * constructor
+     *
      * @param gfile grammar file
      * @param gcontent grammar file content
      * @param mset set of source/byte code tuples
@@ -44,8 +47,8 @@ public class GenericParserSerialize implements Serializable {
                                   String gcontent,
                                   MemoryTupleSet mset,
                                   String cname) {
-        assert(mset != null && mset.size() > 0);
-        assert(gfile != null || gcontent != null);
+        assert mset != null && mset.size() > 0;
+        assert gfile != null || gcontent != null;
         this.mset = mset;
         this.cname = cname;
         this.gfile = gfile;
@@ -53,19 +56,18 @@ public class GenericParserSerialize implements Serializable {
     }
 
     public MemoryTupleSet getMemoryTupleSet() {
-        return this.mset;
+        return mset;
     }
 
     public String getCname() {
-        return this.cname;
+        return cname;
     }
 
     public String getGrammarContent() {
-        return this.gcontent;
+        return gcontent;
     }
 
     public File getGrammarFile() {
-        return this.gfile;
+        return gfile;
     }
-
 }

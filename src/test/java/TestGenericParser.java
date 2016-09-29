@@ -17,8 +17,6 @@
 * limitations under the Licence.
 */
 
-import junit.framework.Assert;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
@@ -28,6 +26,7 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
 
+import static org.junit.Assert.*;
 
 public class TestGenericParser {
 
@@ -43,13 +42,10 @@ public class TestGenericParser {
 
     @Test
     public void testParser() {
-
         GenericParser gp = new GenericParser(grammar, "Java");
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        /**
-         * Incorrect workflows
-         */
+        // Incorrect workflows
         boolean thrown = false;
         try {
             gp.parse(s);
@@ -57,15 +53,11 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        Assert.assertTrue(thrown);
-
+        assertTrue(thrown);
         gp.compile();
+        assertTrue(s != null && !s.isEmpty());
 
-        Assert.assertTrue(s != null && s.length() > 0);
-
-        /**
-         * Incorrect workflows
-         */
+        // Incorrect workflows
         thrown = false;
         try {
             gp.parse(s);
@@ -74,39 +66,28 @@ public class TestGenericParser {
         }
 
         gp.compile();
-
         thrown = false;
-
-        ParserRuleContext ctx = null;
-
         try {
-            ctx = gp.parse(s);
+            gp.parse(s);
         } catch (IllegalWorkflowException e) {
             thrown = true;
         }
 
-        Assert.assertFalse(thrown);
-
+        assertFalse(thrown);
         thrown = false;
+        assertNotSame(gp.getListener(), null);
 
-        Assert.assertNotSame(gp.getListener(), null);
-
-        /**
-         * Correct workflow
-         */
+        // Correct workflow
         gp.setListener(new DefaultListener());
-
-        Assert.assertFalse(gp.getListener() == null);
-
+        assertNotNull(gp.getListener());
         gp.compile();
 
         try {
-            ctx = gp.parse(s);
+            gp.parse(s);
         } catch (IllegalWorkflowException e) {
             thrown = true;
         }
 
-        Assert.assertFalse(thrown);
+        assertFalse(thrown);
     }
-
 }

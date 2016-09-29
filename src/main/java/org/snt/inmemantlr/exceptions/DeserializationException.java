@@ -24,11 +24,24 @@ package org.snt.inmemantlr.exceptions;
  */
 public class DeserializationException extends Exception {
 
+    private static final long serialVersionUID = -8661250014314129370L;
+
     /**
      * constructor
+     *
      * @param msg exception message
      */
     public DeserializationException(String msg) {
         super(msg);
+    }
+
+    /**
+     * constructor
+     *
+     * @param msg exception message
+     * @param cause the cause
+     */
+    public DeserializationException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 }
