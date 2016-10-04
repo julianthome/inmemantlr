@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * default tree listener
@@ -45,7 +46,6 @@ public class DefaultListener implements ParseTreeListener, Serializable {
      */
     public DefaultListener() {
         parser = null;
-        rmap.clear();
     }
 
     /**
@@ -56,7 +56,7 @@ public class DefaultListener implements ParseTreeListener, Serializable {
      */
     public String getRuleByKey(int key) {
         return rmap.entrySet().stream()
-                .filter(e -> e.getValue() == key)
+                .filter(e -> Objects.equals(e.getValue(), key))
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);

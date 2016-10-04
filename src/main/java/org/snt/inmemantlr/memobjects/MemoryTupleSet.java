@@ -49,7 +49,7 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
     }
 
     /**
-     * add a memory (source,bytecode) tuple to the list
+     * add a memory (source, bytecode) tuple to the list
      *
      * @param source the source code
      * @param bytecode the corresponding bytecode
