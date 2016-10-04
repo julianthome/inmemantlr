@@ -1,17 +1,17 @@
 # inmemantlr
 With inmemantlr you can test your
-ANTLR grammars directly without the need to generate and compile .java files first, which is done automatically and in-memory by the tool.
+ANTLR grammars directly without the need to generate and compile `.java` files first, which is done automatically and in-memory by the tool.
 
 Moreover, it automatically generates an abstract syntax tree (AST) from a parsed file that can be easily visualized using graphviz.
 
-inmemantlr is intended to assist you in the process of developing your context-free grammar by providing automated (re-)generation of Parser and Lexer, and by allowing you to visualize the resulting AST. Note that inmenantlr is using ANTLR v4.
+inmemantlr is intended to assist you in the process of developing your context-free grammar by providing automated (re-)generation of Parser and Lexer, and by allowing you to visualize the resulting AST. Note that inmemantlr is using ANTLR v4.
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
 
 # Integration
 
-inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged releases.
+inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged (releases)[https://github.com/julianthome/inmemantlr/releases].
 
 ```xml
 <dependency>
