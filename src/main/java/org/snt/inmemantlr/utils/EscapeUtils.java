@@ -36,7 +36,7 @@ public final class EscapeUtils {
     }
 
     /**
-     * escape SPECIAL character in a string with a backslash
+     * escape special character in a string with a backslash
      *
      * @param s string to be escaped
      * @return escaped string
@@ -57,7 +57,7 @@ public final class EscapeUtils {
     }
 
     /**
-     * unescape SPECIAL character in a string
+     * unescape special character in a string
      *
      * @param s string to be unescaped
      * @return unescaped string

@@ -53,7 +53,7 @@ public class GenericParser {
     private String cname;
     private Grammar g = null;
     private StringCodeGenPipeline gen;
-    private DefaultListener listener;
+    private DefaultListener listener = new DefaultListener();
     private StringCompiler sc;
     private File gfile;
     private String gconent;
@@ -123,6 +123,10 @@ public class GenericParser {
         this.useCached = useCached;
     }
 
+    public static GenericParser instance(String content, String name, ToolCustomizer tlc) {
+        return new GenericParser(content, name, tlc);
+    }
+
     public static GenericParser independentInstance(String content, String name, ToolCustomizer tlc) {
         return new GenericParser(content, name, tlc, false);
     }
@@ -165,27 +169,23 @@ public class GenericParser {
      * @throws IllegalWorkflowException if compilation did not take place
      */
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
-        DefaultListener listener = this.listener == null ? new DefaultListener() : this.listener;
-        listener.reset();
-        return parse(toParse, listener, null);
+        return parse(toParse, null);
     }
 
     /**
      * parse in fresh
      *
      * @param toParse string to parse
-     * @param listener a ParseTreeListener
      * @param production Production name to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      */
-    public ParserRuleContext parse(String toParse, DefaultListener listener, String production) throws IllegalWorkflowException {
-        if (listener != null) {
-            this.listener = listener;
-        }
+    public ParserRuleContext parse(String toParse, String production) throws IllegalWorkflowException {
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
+
+        listener.reset();
 
         ANTLRInputStream input = new ANTLRInputStream(toParse);
 
@@ -197,7 +197,7 @@ public class GenericParser {
         Parser parser = sc.instanciateParser(tokens, cname);
 
         // make parser information available to listener
-        this.listener.setParser(parser);
+        listener.setParser(parser);
 
         // parser.addErrorListener(new DiagnosticErrorListener());
         parser.removeErrorListeners();
@@ -210,9 +210,9 @@ public class GenericParser {
         if (production == null) {
             entryPoint = rules[0];
         } else {
-            if (!Arrays.asList(rules).contains(production)) {
+            if (!Arrays.asList(rules).contains(production))
                 throw new IllegalArgumentException("Rule " + production + " not found");
-            }
+
             entryPoint = production;
         }
 

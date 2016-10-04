@@ -40,7 +40,6 @@
         <url>https://github.com/julianthome/inmemantlr/tree/master</url>
     </scm>
 
-
     <build>
         <plugins>
             <plugin>
