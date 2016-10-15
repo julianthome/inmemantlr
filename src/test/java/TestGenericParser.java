@@ -21,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.ToolCustomizer;
+import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.utils.FileUtils;
 
@@ -90,4 +92,68 @@ public class TestGenericParser {
 
         assertFalse(thrown);
     }
+
+    @Test
+    public void testDeserializationException() {
+        boolean thrown = false;
+        // Undeclared exception!
+        try {
+            GenericParser.load("");
+            fail("Expecting exception: NullPointerException");
+        } catch (NullPointerException | DeserializationException e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void testWrongParams1Exception() {
+        boolean thrown = false;
+        GenericParser genericParser0 = null;
+        try {
+            genericParser0 = new GenericParser((File) null, "xyz", (ToolCustomizer) null);
+            fail("Expecting exception: NullPointerException");
+        } catch (NullPointerException e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void testWrongParams2Exception() {
+        boolean thrown = false;
+        GenericParser genericParser0 = null;
+        try {
+            genericParser0 = new GenericParser("xyz", "abc");
+            fail("Expecting exception: Error");
+        } catch (NullPointerException | Error e) {
+           thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void testIndepenedentInstanceException() {
+        boolean thrown = false;
+        try {
+            GenericParser.independentInstance("Jayi,3c29V@fo?BF@_", "", (ToolCustomizer) null);
+            fail("Expecting exception: Error");
+        } catch(NullPointerException | Error e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void testInstanceException() {
+        boolean thrown = false;
+        try {
+            GenericParser.instance("Jayi,3c29V@fo?BF@_", "", (ToolCustomizer) null);
+            fail("Expecting exception: Error");
+        } catch(NullPointerException | Error e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
 }

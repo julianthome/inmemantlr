@@ -17,6 +17,7 @@
 * limitations under the Licence.
 */
 
+import org.antlr.v4.tool.Grammar;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
@@ -27,13 +28,29 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestStringCompiler {
 
+    /**
+     * a dummy class just for testing purposes
+     */
+    class DummyStringCodeGenPipeline extends StringCodeGenPipeline {
+        public boolean bv = false;
+        public boolean v = false;
+        public DummyStringCodeGenPipeline(Grammar g, String name) {
+            super(g, name);
+        }
+        public boolean hasBaseVisitor(){
+            return bv;
+        }
+        public boolean hasVisitor(){
+            return v;
+        }
+    }
+
     static StringCodeGenPipeline sg = null;
+    static DummyStringCodeGenPipeline dsg = null;
 
     String sgrammarcontent = "";
     String s = "";
@@ -54,12 +71,34 @@ public class TestStringCompiler {
         assertNotNull(gp.getGrammar());
 
         sg = new StringCodeGenPipeline(gp.getGrammar(), "Java");
+        dsg = new DummyStringCodeGenPipeline(gp.getGrammar(), "Java");
     }
 
     @Test
     public void testStringCompiler() {
         StringCompiler sc = new StringCompiler();
         assertNull(sc.instanciateLexer(null, ""));
-        assertNull(sc.instanciateLexer(null, "blabal"));
+        assertNull(sc.instanciateLexer(null, "bla"));
+
+        dsg.bv = true;
+
+        boolean thrown = false;
+        try {
+            sc.compile(dsg);
+        } catch (Exception e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+        thrown = false;
+        dsg.bv = false;
+        dsg.v = true;
+
+        try {
+            sc.compile(dsg);
+        } catch (Exception e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
     }
+
 }
