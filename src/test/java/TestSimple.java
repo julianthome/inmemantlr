@@ -31,14 +31,15 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
-public class SimpleTest {
+public class TestSimple {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestSimple.class);
 
     String sgrammarcontent = "";
 
     @Test
     public void testInterpreter() throws IOException {
+
         try (InputStream sgrammar = getClass().getClassLoader().getResourceAsStream("Simple.g4")) {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }

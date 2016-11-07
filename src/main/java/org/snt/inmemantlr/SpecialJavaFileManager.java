@@ -62,14 +62,18 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      * @return memory byte code object
      * @throws IOException if an error occurs getting the java file
      */
-    public JavaFileObject getJavaFileForOutput(Location location, String name, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
+    @Override
+    public JavaFileObject getJavaFileForOutput(Location location, String name,
+                                               JavaFileObject.Kind kind,
+                                               FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
         // bookkeeping of memory bytecode
         mb.put(mbc.getClassName(), mbc);
-        LOGGER.debug("add bytecode " + name);
+        LOGGER.debug("add bytecode " + name + " " + mbc.getName());
         xcl.addClass(mbc);
         return mbc;
     }
+
 
     /**
      * get special class loader

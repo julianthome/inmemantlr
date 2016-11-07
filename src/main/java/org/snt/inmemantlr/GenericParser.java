@@ -39,6 +39,9 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -50,14 +53,14 @@ public class GenericParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericParser.class);
 
     private Tool antlr;
-    private String cname;
-    private Grammar g = null;
-    private StringCodeGenPipeline gen;
+    private List<StringCodeGenPipeline> gen = new Vector();
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc;
     private File gfile;
     private String gconent;
     private boolean useCached = true;
+    private String lexerName = "";
+    private String parserName = "";
 
     /**
      * constructor
@@ -77,6 +80,41 @@ public class GenericParser {
      */
     public GenericParser(String content, String name) {
         this(content, name, null);
+    }
+
+
+    public GenericParser(String fpath) {
+        this(Collections.singletonList(fpath));
+    }
+
+
+    private StringCodeGenPipeline getPipeline(String content, String gname) {
+
+        Grammar g = loadGrammarFromString(content, gname);
+
+        if(g.isParser()) {
+            parserName = g.name;
+        } else if (g.isLexer()) {
+            lexerName = g.name;
+        } else {
+            parserName = gname + "Parser";
+            lexerName = gname + "Lexer";
+        }
+
+        return new StringCodeGenPipeline(g, gname);
+    }
+
+    public GenericParser(List<String> files) {
+        antlr = new Tool();
+        List<GrammarRootAST> ast = antlr.sortGrammarByTokenVocab(files);
+        for (GrammarRootAST gast : ast) {
+            String gname = gast.getGrammarName();
+            LOGGER.debug("Add {}", gname);
+            String content = FileUtils.loadFileContent(gast.fileName);
+            StringCodeGenPipeline pip = getPipeline(content, gname);
+            gen.add(pip);
+        }
+        sc = new StringCompiler();
     }
 
     /**
@@ -103,10 +141,7 @@ public class GenericParser {
         if (tlc != null) {
             tlc.customize(antlr);
         }
-        cname = name;
-        gconent = content;
-        g = loadGrammarFromString(content, name);
-        gen = new StringCodeGenPipeline(g, cname);
+        gen.add(getPipeline(content,name));
         sc = new StringCompiler();
     }
 
@@ -137,28 +172,47 @@ public class GenericParser {
      * @return true if compilation was successful, false otherwise
      */
     public boolean compile() {
+        LOGGER.debug("compile");
         // the antlr objects are already compiled
         if (antrlObjectsAvailable())
             return false;
 
-        LOGGER.debug("compiled");
-        gen.process();
-        return sc.compile(gen);
+        for(StringCodeGenPipeline p : gen) {
+            // process grammar first
+            process(p.getG());
+            // process string code gen pipeline afterwards
+            p.process();
+            if(!sc.compile(gen))
+                return false;
+        }
+
+        LOGGER.debug("compile {} elements", gen.size());
+        return true;
     }
 
     /**
      * load antlr grammar from string
      *
      * @param content string content from antlr grammar
-     * @param name name of antlr grammar
+     * @param cname name of antlr grammar
      * @return grammar object
      */
-    public Grammar loadGrammarFromString(String content, String name) {
+    public Grammar loadGrammarFromString(String content, String cname) {
         GrammarRootAST grammarRootAST = antlr.parseGrammarFromString(content);
         final Grammar g = antlr.createGrammar(grammarRootAST);
-        g.fileName = name;
-        antlr.process(g, false);
+        g.fileName = cname;
+        //process(g);
         return g;
+    }
+
+
+    private void process(Grammar g){
+        LOGGER.debug("process grammar {}", g.name);
+        if(g.isCombined()) {
+            antlr.process(g,false);
+        } else {
+            antlr.processNonCombinedGrammar(g,false);
+        }
     }
 
     /**
@@ -189,12 +243,14 @@ public class GenericParser {
 
         ANTLRInputStream input = new ANTLRInputStream(toParse);
 
-        Lexer lex = sc.instanciateLexer(input, cname, useCached);
+        LOGGER.debug("load lexer {}", lexerName);
+        Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
         CommonTokenStream tokens = new CommonTokenStream(lex);
 
         tokens.fill();
 
-        Parser parser = sc.instanciateParser(tokens, cname);
+        LOGGER.debug("load parser {}", parserName);
+        Parser parser = sc.instanciateParser(tokens, parserName);
 
         // make parser information available to listener
         listener.setParser(parser);
@@ -251,15 +307,6 @@ public class GenericParser {
     }
 
     /**
-     * get antlr grammar object
-     *
-     * @return antlr grammar object
-     */
-    public Grammar getGrammar() {
-        return g;
-    }
-
-    /**
      * get all compiled antlr objects (lexer, parser, etc) in source and bytecode format
      *
      * @return memory tuple set
@@ -305,8 +352,7 @@ public class GenericParser {
 
         GenericParserSerialize towrite = new GenericParserSerialize(gfile,
                 gconent,
-                getAllCompiledObjects(),
-                cname);
+                getAllCompiledObjects());
 
         try {
             o_out.writeObject(towrite);
@@ -369,9 +415,9 @@ public class GenericParser {
         GenericParser gp;
 
         if (gin.getGrammarFile() != null && gin.getGrammarFile().exists()) {
-            gp = new GenericParser(gin.getGrammarFile(), gin.getCname());
+            gp = new GenericParser(gin.getGrammarFile().toString());
         } else if (gin.getGrammarContent() != null && !gin.getGrammarContent().isEmpty()) {
-            gp = new GenericParser(gin.getGrammarContent(), gin.getCname(), null);
+            gp = new GenericParser(gin.getGrammarContent(), null);
         } else {
             throw new DeserializationException("cannot deserialize " + file);
         }

@@ -21,15 +21,22 @@ package org.snt.inmemantlr;
 
 import org.antlr.v4.codegen.CodeGenPipeline;
 import org.antlr.v4.codegen.CodeGenerator;
+import org.antlr.v4.codegen.model.*;
 import org.antlr.v4.parse.ANTLRParser;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.tool.ErrorType;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.LexerGrammar;
 import org.antlr.v4.tool.ast.GrammarAST;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * extended code gen pipeline for compiling
@@ -37,9 +44,14 @@ import java.util.List;
  */
 public class StringCodeGenPipeline extends CodeGenPipeline {
 
-    Grammar g;
-    String name;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CodeGenPipeline.class);
+
+    private Grammar g;
+    private String name;
+
     private ST parser, lexer, visitor, listener, baseListener, baseVisitor;
+    private ST tokenvocab;
+
 
     /**
      * constructor
@@ -157,6 +169,10 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
         return baseVisitor;
     }
 
+    public ST getTokenVocab() {
+        return this.tokenvocab;
+    }
+
     /**
      * check if visitor is set
      *
@@ -164,6 +180,11 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      */
     public boolean hasBaseVisitor() {
         return baseVisitor != null;
+    }
+
+
+    public boolean hasTokenVocab() {
+        return this.tokenvocab != null;
     }
 
     /**
@@ -188,33 +209,36 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * compile lexer and parser
      */
     public void process() {
-        CodeGenerator gen = new CodeGenerator(g);
+
+        CodeGenerator cgen = new CodeGenerator(g);
         IntervalSet idTypes = new IntervalSet();
         idTypes.add(ANTLRParser.ID);
         idTypes.add(ANTLRParser.RULE_REF);
         idTypes.add(ANTLRParser.TOKEN_REF);
+
         List<GrammarAST> idNodes = g.ast.getNodesWithType(idTypes);
         idNodes.stream()
-                .filter(idNode -> gen.getTarget().grammarSymbolCausesIssueInGeneratedCode(idNode))
+                .filter(idNode -> cgen.getTarget()
+                        .grammarSymbolCausesIssueInGeneratedCode(idNode))
                 .forEach(idNode -> g.tool.errMgr.grammarError(ErrorType.USE_OF_BAD_WORD,
                         g.fileName, idNode.getToken(),
                         idNode.getText()));
 
         if (g.isLexer()) {
-            lexer = gen.generateLexer();
+            lexer = cgen.generateLexer();
         } else {
-            parser = gen.generateParser();
+            parser = cgen.generateParser();
 
             if (g.tool.gen_listener) {
-                listener = gen.generateListener();
-                if (gen.getTarget().wantsBaseListener()) {
-                    baseListener = gen.generateBaseListener();
+                listener = cgen.generateListener();
+                if (cgen.getTarget().wantsBaseListener()) {
+                    baseListener = cgen.generateBaseListener();
                 }
             }
             if (g.tool.gen_visitor) {
-                visitor = gen.generateVisitor();
-                if (gen.getTarget().wantsBaseVisitor()) {
-                    baseVisitor = gen.generateBaseVisitor();
+                visitor = cgen.generateVisitor();
+                if (cgen.getTarget().wantsBaseVisitor()) {
+                    baseVisitor = cgen.generateBaseVisitor();
                 }
             }
 
@@ -224,7 +248,34 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
                 lexer = lgcg.generateLexer();
             }
         }
+        tokenvocab = getTokenVocabOutput();
     }
+
+    ST getTokenVocabOutput() {
+        ST vocabFileST = new ST(CodeGenerator.vocabFilePattern);
+        Map<String,Integer> tokens = new LinkedHashMap<String,Integer>();
+        // make constants for the token names
+        for (String t : g.tokenNameToTypeMap.keySet()) {
+            int tokenType = g.tokenNameToTypeMap.get(t);
+            if ( tokenType>= Token.MIN_USER_TOKEN_TYPE) {
+                tokens.put(t, tokenType);
+            }
+        }
+        vocabFileST.add("tokenvocab", tokens);
+
+        // now dump the strings
+        Map<String,Integer> literals = new LinkedHashMap<String,Integer>();
+        for (String literal : g.stringLiteralToTypeMap.keySet()) {
+            int tokenType = g.stringLiteralToTypeMap.get(literal);
+            if ( tokenType>=Token.MIN_USER_TOKEN_TYPE) {
+                literals.put(literal, tokenType);
+            }
+        }
+        vocabFileST.add("literals", literals);
+
+        return vocabFileST;
+    }
+
 
     /**
      * get parser name
@@ -232,7 +283,9 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return parser name
      */
     public String getParserName() {
-        return name + "Parser";
+        ParserFile f = (ParserFile)this.parser.getAttributes().get("file");
+        LOGGER.debug("parser name {}", modFile(f));
+        return modFile(f);
     }
 
     /**
@@ -241,7 +294,9 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return lexer name
      */
     public String getLexerName() {
-        return name + "Lexer";
+        LexerFile f = (LexerFile)this.lexer.getAttributes().get("lexerFile");
+        LOGGER.debug("lexer name {}", modFile(f));
+        return modFile(f);
     }
 
     /**
@@ -250,7 +305,10 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return visitor name
      */
     public String getVisitorName() {
-        return name + "Visitor";
+        VisitorFile f = (VisitorFile) this.listener.getAttributes().get
+                ("file");
+        LOGGER.debug("listener name {}", modFile(f));
+        return modFile(f);
     }
 
     /**
@@ -259,7 +317,10 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return base visitor name
      */
     public String getBaseVisitorName() {
-        return name + "BaseVisitor";
+        BaseVisitorFile f = (BaseVisitorFile)this.listener.getAttributes().get
+                ("file");
+        LOGGER.debug("listener name {}", modFile(f));
+        return modFile(f);
     }
 
     /**
@@ -268,7 +329,10 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return listener name
      */
     public String getListenerName() {
-        return name + "Listener";
+        ListenerFile f = (ListenerFile)this.listener.getAttributes().get
+                ("file");
+        LOGGER.debug("listener name {}", modFile(f));
+        return modFile(f);
     }
 
     /**
@@ -277,6 +341,17 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * @return base listener name
      */
     public String getBaseListenerName() {
-        return name + "BaseListener";
+        BaseListenerFile f = (BaseListenerFile)this.baseListener.getAttributes().get("file");
+        LOGGER.debug("base listener name {}", modFile(f));
+        return modFile(f);
+    }
+
+
+    public String getTokenVocabFileName() {
+        return this.g.name + CodeGenerator.VOCAB_FILE_EXTENSION;
+    }
+
+    private String modFile(OutputFile f) {
+        return FilenameUtils.removeExtension(f.fileName);
     }
 }

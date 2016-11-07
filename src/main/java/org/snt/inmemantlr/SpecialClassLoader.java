@@ -68,4 +68,5 @@ class SpecialClassLoader extends ClassLoader {
     public void addClass(MemoryByteCode mbc) {
         m.put(mbc.getClassName(), mbc);
     }
+
 }

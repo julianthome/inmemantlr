@@ -26,10 +26,7 @@ import org.antlr.v4.runtime.Parser;
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.memobjects.MemoryByteCode;
-import org.snt.inmemantlr.memobjects.MemorySource;
-import org.snt.inmemantlr.memobjects.MemoryTuple;
-import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.memobjects.*;
 
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -39,6 +36,9 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 
 /**
@@ -74,69 +74,45 @@ public class StringCompiler {
         }
     }
 
+    private static final Class[] parameters = new Class[]{URL.class};
+
     /**
      * do the compilation for the antlr artifacts
      *
-     * @param scgp string code generation pipeline
+     * @param scgps string code generation pipeline
      * @return true if compilation was successful, false otherwise
      */
-    public boolean compile(StringCodeGenPipeline scgp) {
+    public boolean compile(List<StringCodeGenPipeline> scgps) {
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
         SpecialJavaFileManager fileManager = new SpecialJavaFileManager(sjfm, cl);
 
-        List<MemorySource> compilationUnits = new ArrayList<>();
-        Set<MemorySource> mset = new HashSet<>();
+        List<MemorySource> cunit = new ArrayList();
+        Set<MemorySource> mset = new HashSet();
 
-        if (scgp.hasLexer()) {
-            MemorySource ms = new MemorySource(scgp.getLexerName(), scgp.getLexer().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
+        for(StringCodeGenPipeline sc : scgps) {
+            cunit.addAll(getCompilationUnits(sc));
         }
-        if (scgp.hasBaseListener()) {
-            MemorySource ms = new MemorySource(scgp.getBaseListenerName(), scgp.getBaseListener().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
-        }
-        if (scgp.hasBaseVisitor()) {
-            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
-        }
-        if (scgp.hasParser()) {
-            MemorySource ms = new MemorySource(scgp.getParserName(), scgp.getParser().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
-        }
-        if (scgp.hasListener()) {
-            MemorySource ms = new MemorySource(scgp.getListenerName(), scgp.getListener().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
-        }
-        if (scgp.hasVisitor()) {
-            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-            mset.add(ms);
-        }
+
+        mset.addAll(cunit);
 
         DiagnosticListener<? super JavaFileObject> dianosticListener = null;
         Iterable<String> classes = null;
+
         Writer out = new PrintWriter(System.out);
 
         List<String> optionList = new ArrayList<>();
 
-        JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager, dianosticListener, optionList, classes, compilationUnits);
+        JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
+                dianosticListener, optionList, classes, cunit);
+
+
 
         boolean ret = compile.call();
 
         for (MemorySource ms : mset) {
+            LOGGER.debug("get {} from file manager ", ms.getClassName());
             Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
             assert mb != null;
             // book keeping of source-bytecode tuples
@@ -144,6 +120,73 @@ public class StringCompiler {
         }
 
         return ret;
+    }
+
+    /**
+     * do the compilation for the antlr artifacts
+     *
+     * @param scgp string code generation pipeline
+     * @return true if compilation was successful, false otherwise
+     */
+    public boolean compile(StringCodeGenPipeline scgp) {
+        return compile(Collections.singletonList(scgp));
+    }
+
+
+    private List<MemorySource> getCompilationUnits(StringCodeGenPipeline
+                                                           scgp) {
+
+
+        List<MemorySource> compilationUnits = new ArrayList<>();
+
+        if (scgp.hasLexer()) {
+            MemorySource ms = new MemorySource(scgp.getLexerName(), scgp.getLexer().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if (scgp.hasBaseListener()) {
+            MemorySource ms = new MemorySource(scgp.getBaseListenerName(), scgp.getBaseListener().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if (scgp.hasBaseVisitor()) {
+            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if (scgp.hasParser()) {
+            MemorySource ms = new MemorySource(scgp.getParserName(), scgp.getParser().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if (scgp.hasListener()) {
+            MemorySource ms = new MemorySource(scgp.getListenerName(), scgp.getListener().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if (scgp.hasVisitor()) {
+            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
+            LOGGER.debug("add memory source {}", ms.getClassName());
+            compilationUnits.add(ms);
+        }
+        if(scgp.hasTokenVocab()) {
+            MemoryTokenFile tok = new MemoryTokenFile(scgp.getG().name,
+                    scgp.getTokenVocab().render());
+
+            URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Class sysclass = URLClassLoader.class;
+
+            try {
+                Method method = sysclass.getDeclaredMethod("addURL", parameters);
+                method.setAccessible(true);
+                method.invoke(sysloader, new Object[]{tok.toUri().toURL()});
+            } catch (Throwable t) {
+                t.printStackTrace();
+                assert false;
+            }//end try catch
+        }
+
+        return compilationUnits;
     }
 
     /**
@@ -183,22 +226,22 @@ public class StringCompiler {
      * instanciate new lexer
      *
      * @param input lexer class content as character stream
-     * @param cname class name
+     * @param lexerClassName class name
      * @param useCached true to used cached lexers, otherwise false
      * @return antlr lexer
      */
-    public Lexer instanciateLexer(CharStream input, String cname, boolean useCached) {
+    public Lexer instanciateLexer(CharStream input, String lexerClassName, boolean
+            useCached) {
         Lexer elexer;
-        String name = cname + "Lexer";
 
-        if (useCached && lexer.containsKey(name)) {
-            elexer = lexer.get(name);
+        if (useCached && lexer.containsKey(lexerClassName)) {
+            elexer = lexer.get(lexerClassName);
             elexer.reset();
             elexer.setInputStream(input);
             return elexer;
         }
 
-        Class<?> elex = findClass(name);
+        Class<?> elex = findClass(lexerClassName);
         if (elex == null)
             return null;
 
@@ -207,7 +250,7 @@ public class StringCompiler {
 
         try {
             elexer = (Lexer) cstr[0].newInstance(input);
-            lexer.put(name, elexer);
+            lexer.put(lexerClassName, elexer);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;
@@ -220,20 +263,19 @@ public class StringCompiler {
      * instanciate new parser
      *
      * @param tstream parser class content as character stream
-     * @param cname class name
+     * @param parserClassName class name
      * @return antlr parser
      */
-    public Parser instanciateParser(CommonTokenStream tstream, String cname) {
-        String name = cname + "Parser";
+    public Parser instanciateParser(CommonTokenStream tstream, String parserClassName) {
         Parser eparser;
-        Class<?> elex = findClass(name);
+        Class<?> elex = findClass(parserClassName);
         assert elex != null;
         Constructor<?>[] cstr = elex.getConstructors();
         assert cstr.length == 1;
 
         try {
             eparser = (Parser) cstr[0].newInstance(tstream);
-            parser.put(name, eparser);
+            parser.put(parserClassName, eparser);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             return null;

@@ -33,7 +33,8 @@ public class GenericParserSerialize implements Serializable {
     private String gcontent;
     private File gfile;
     private MemoryTupleSet mset;
-    private String cname;
+    private String lexerName;
+    private String parserName;
 
     /**
      * constructor
@@ -41,26 +42,19 @@ public class GenericParserSerialize implements Serializable {
      * @param gfile grammar file
      * @param gcontent grammar file content
      * @param mset set of source/byte code tuples
-     * @param cname grammar name
      */
     public GenericParserSerialize(File gfile,
                                   String gcontent,
-                                  MemoryTupleSet mset,
-                                  String cname) {
+                                  MemoryTupleSet mset) {
         assert mset != null && mset.size() > 0;
         assert gfile != null || gcontent != null;
         this.mset = mset;
-        this.cname = cname;
         this.gfile = gfile;
         this.gcontent = gcontent;
     }
 
     public MemoryTupleSet getMemoryTupleSet() {
         return mset;
-    }
-
-    public String getCname() {
-        return cname;
     }
 
     public String getGrammarContent() {
