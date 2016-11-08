@@ -44,7 +44,7 @@ public class TestGenericParser {
 
     @Test
     public void testParser() {
-        GenericParser gp = new GenericParser(grammar, "Java");
+        GenericParser gp = new GenericParser(grammar,null);
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
         // Incorrect workflows
@@ -111,7 +111,7 @@ public class TestGenericParser {
         boolean thrown = false;
         GenericParser genericParser0 = null;
         try {
-            genericParser0 = new GenericParser((File) null, "xyz", (ToolCustomizer) null);
+            genericParser0 = new GenericParser((File) null, (ToolCustomizer) null);
             fail("Expecting exception: NullPointerException");
         } catch (NullPointerException e) {
             thrown = true;
@@ -124,7 +124,7 @@ public class TestGenericParser {
         boolean thrown = false;
         GenericParser genericParser0 = null;
         try {
-            genericParser0 = new GenericParser("xyz", "abc");
+            genericParser0 = new GenericParser("xyz");
             fail("Expecting exception: Error");
         } catch (NullPointerException | Error e) {
            thrown = true;
@@ -136,7 +136,7 @@ public class TestGenericParser {
     public void testIndepenedentInstanceException() {
         boolean thrown = false;
         try {
-            GenericParser.independentInstance("Jayi,3c29V@fo?BF@_", "", (ToolCustomizer) null);
+            GenericParser.independentInstance("Jayi,3c29V@fo?BF@_", (ToolCustomizer) null);
             fail("Expecting exception: Error");
         } catch(NullPointerException | Error e) {
             thrown = true;
@@ -148,7 +148,7 @@ public class TestGenericParser {
     public void testInstanceException() {
         boolean thrown = false;
         try {
-            GenericParser.instance("Jayi,3c29V@fo?BF@_", "", (ToolCustomizer) null);
+            GenericParser.instance("Jayi,3c29V@fo?BF@_", (ToolCustomizer) null);
             fail("Expecting exception: Error");
         } catch(NullPointerException | Error e) {
             thrown = true;

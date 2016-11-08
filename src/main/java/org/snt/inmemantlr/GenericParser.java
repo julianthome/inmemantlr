@@ -43,7 +43,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -66,56 +65,67 @@ public class GenericParser {
     private String lexerName = "";
     private String parserName = "";
 
-    /**
-     * constructor
-     *
-     * @param grammarFile path to grammar file
-     * @param name parser name
-     */
-    public GenericParser(File grammarFile, String name) {
-        this(grammarFile, name, null);
-    }
 
     /**
      * constructor
      *
      * @param content grammar file content
-     * @param name parser name
      */
-    public GenericParser(String content, String name) {
-        this(content, name, null);
+    public GenericParser(String content) {
+        this(content, null);
     }
 
 
-    public GenericParser(String fpath) {
+    /**public GenericParser(String fpath) {
         this(Collections.singletonList(fpath));
-    }
+    }**/
 
 
-    private StringCodeGenPipeline getPipeline(String content, String gname) {
-
-        Grammar g = loadGrammarFromString(content, gname);
-
+    /**
+     * create an antlr grammar based on a string and the grammar name
+     *
+     * @param content antlr grammar content
+     * @return codegen pipeline object
+     */
+    private StringCodeGenPipeline getPipeline(String content) {
+        Grammar g = loadGrammarFromString(content);
         if(g.isParser()) {
             parserName = g.name;
         } else if (g.isLexer()) {
             lexerName = g.name;
         } else {
-            parserName = gname + "Parser";
-            lexerName = gname + "Lexer";
+            parserName = g.name + "Parser";
+            lexerName = g.name + "Lexer";
         }
-
-        return new StringCodeGenPipeline(g, gname);
+        return new StringCodeGenPipeline(g, g.name);
     }
 
+    /**
+     * constructor for multi grammar files
+     *
+     * @param files List of antlr grammar files
+     */
     public GenericParser(List<String> files) {
+        this(files, null);
+    }
+
+    /**
+     * constructor for multi grammar files
+     *
+     * @param files List of antlr grammar files
+     * @param tlc a ToolCustomizer
+     */
+    public GenericParser(List<String> files, ToolCustomizer tlc) {
         antlr = new InmemantlrTool();
+        if (tlc != null) {
+            tlc.customize(antlr);
+        }
         List<GrammarRootAST> ast = antlr.sortGrammarByTokenVocab(files);
         for (GrammarRootAST gast : ast) {
             String gname = gast.getGrammarName();
             LOGGER.debug("Add {}", gname);
             String content = FileUtils.loadFileContent(gast.fileName);
-            StringCodeGenPipeline pip = getPipeline(content, gname);
+            StringCodeGenPipeline pip = getPipeline(content);
             gen.add(pip);
         }
         sc = new StringCompiler();
@@ -125,11 +135,10 @@ public class GenericParser {
      * constructor
      *
      * @param grammarFile grammar file
-     * @param name grammar name
      * @param tlc a ToolCustomizer
      */
-    public GenericParser(File grammarFile, String name, ToolCustomizer tlc) {
-        this(FileUtils.loadFileContent(grammarFile.getAbsolutePath()), name, tlc);
+    public GenericParser(File grammarFile, ToolCustomizer tlc) {
+        this(FileUtils.loadFileContent(grammarFile.getAbsolutePath()), tlc);
         gfile = grammarFile;
     }
 
@@ -137,15 +146,15 @@ public class GenericParser {
      * constructor
      *
      * @param content grammar file content
-     * @param name grammar
      * @param tlc a ToolCustomizer
      */
-    public GenericParser(String content, String name, ToolCustomizer tlc) {
+    public GenericParser(String content, ToolCustomizer tlc) {
         antlr = new InmemantlrTool();
         if (tlc != null) {
             tlc.customize(antlr);
         }
-        gen.add(getPipeline(content,name));
+        gconent = content;
+        gen.add(getPipeline(content));
         sc = new StringCompiler();
     }
 
@@ -153,21 +162,27 @@ public class GenericParser {
      * constructor
      *
      * @param content grammar file content
-     * @param name grammar
      * @param tlc a ToolCustomizer
      * @param useCached true to used cached lexers, otherwise false
      */
-    public GenericParser(String content, String name, ToolCustomizer tlc, boolean useCached) {
-        this(content, name, tlc);
+    public GenericParser(String content, ToolCustomizer tlc, boolean useCached) {
+        this(content, tlc);
         this.useCached = useCached;
     }
 
-    public static GenericParser instance(String content, String name, ToolCustomizer tlc) {
-        return new GenericParser(content, name, tlc);
+    /**
+     * a signle instance of a generic parser
+     *
+     * @param content grammar content
+     * @param tlc a ToolCustomizer
+     * @return grammar object
+     */
+    public static GenericParser instance(String content, ToolCustomizer tlc) {
+        return new GenericParser(content, tlc);
     }
 
-    public static GenericParser independentInstance(String content, String name, ToolCustomizer tlc) {
-        return new GenericParser(content, name, tlc, false);
+    public static GenericParser independentInstance(String content, ToolCustomizer tlc) {
+        return new GenericParser(content, tlc, false);
     }
 
     /**
@@ -220,14 +235,12 @@ public class GenericParser {
      * load antlr grammar from string
      *
      * @param content string content from antlr grammar
-     * @param cname name of antlr grammar
      * @return grammar object
      */
-    public Grammar loadGrammarFromString(String content, String cname) {
+    public Grammar loadGrammarFromString(String content) {
         GrammarRootAST grammarRootAST = antlr.parseGrammarFromString(content);
         final Grammar g = antlr.createGrammar(grammarRootAST);
-        g.fileName = cname;
-        //process(g);
+        g.fileName = g.name;
         return g;
     }
 
@@ -431,9 +444,9 @@ public class GenericParser {
 
         GenericParser gp;
 
-        if (gin.getGrammarFile() != null && gin.getGrammarFile().exists()) {
-            gp = new GenericParser(gin.getGrammarFile().toString());
-        } else if (gin.getGrammarContent() != null && !gin.getGrammarContent().isEmpty()) {
+        //if (gin.getGrammarFile() != null && gin.getGrammarFile().exists()) {
+        //    gp = new GenericParser(gin.getGrammarFile().toString());
+        if (gin.getGrammarContent() != null) {
             gp = new GenericParser(gin.getGrammarContent(), null);
         } else {
             throw new DeserializationException("cannot deserialize " + file);

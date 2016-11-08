@@ -60,7 +60,7 @@ public class TestMemObjects {
 
     @Test
     public void testAntlrObjectAccess() {
-        GenericParser gp = new GenericParser(grammar, "Java");
+        GenericParser gp = new GenericParser(grammar, null);
 
         assertTrue(gp.compile());
 
@@ -92,7 +92,7 @@ public class TestMemObjects {
 
     @Test
     public void testStoreAndLoad() {
-        GenericParser gp = new GenericParser(grammar, "Java");
+        GenericParser gp = new GenericParser(grammar, null);
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
