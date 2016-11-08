@@ -17,6 +17,7 @@
 * limitations under the Licence.
 */
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
-public class TestMultiFileParsing {
+public class TestMultiFileGrammar {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestMultiFileParsing.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestMultiFileGrammar.class);
 
     @Test
     public void testParserLexer() throws IOException {
@@ -63,7 +64,7 @@ public class TestMultiFileParsing {
             Ast ast;
             gp.parse("select a from b;");
             ast = t.getAst();
-            //Assert.assertEquals(ast.getNodes().size(), 13);
+            Assert.assertEquals(ast.getNodes().size(), 13);
             LOGGER.debug(ast.toDot());
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage(), e);

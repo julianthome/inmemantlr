@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.ToolCustomizer;
+import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.utils.FileUtils;

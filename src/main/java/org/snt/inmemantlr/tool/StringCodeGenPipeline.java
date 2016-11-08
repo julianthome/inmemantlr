@@ -17,7 +17,7 @@
 * limitations under the Licence.
 */
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.tool;
 
 import org.antlr.v4.codegen.CodeGenPipeline;
 import org.antlr.v4.codegen.CodeGenerator;
@@ -32,6 +32,7 @@ import org.antlr.v4.tool.ast.GrammarAST;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.grammar.InmemantlrGrammar;
 import org.stringtemplate.v4.ST;
 
 import java.util.LinkedHashMap;
@@ -44,7 +45,7 @@ import java.util.Map;
  */
 public class StringCodeGenPipeline extends CodeGenPipeline {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CodeGenPipeline.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringCodeGenPipeline.class);
 
     private Grammar g;
     private String name;
@@ -201,7 +202,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      *
      * @param g grammar
      */
-    public void setG(Grammar g) {
+    public void setG(InmemantlrGrammar g) {
         this.g = g;
     }
 
@@ -247,7 +248,9 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
                 CodeGenerator lgcg = new CodeGenerator(lg);
                 lexer = lgcg.generateLexer();
             }
+
         }
+
         tokenvocab = getTokenVocabOutput();
     }
 
@@ -349,6 +352,27 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
 
     public String getTokenVocabFileName() {
         return this.g.name + CodeGenerator.VOCAB_FILE_EXTENSION;
+    }
+
+    public String getTokenVocabString() {
+
+
+        Map<String,Integer> vocab = (Map<String,Integer>)tokenvocab.getAttribute
+                ("tokenvocab");
+        Map<String,Integer> lit = (Map<String,Integer>)tokenvocab.getAttribute
+                ("literals");
+
+        StringBuilder sb = new StringBuilder();
+
+        vocab.forEach(
+                (s,i) -> sb.append(s.toString() + "=" + i.toString() +  "\n")
+        );
+
+        lit.forEach(
+                (s,i) -> sb.append(s.toString() + "=" + i.toString() +  "\n")
+        );
+
+        return sb.toString();
     }
 
     private String modFile(OutputFile f) {

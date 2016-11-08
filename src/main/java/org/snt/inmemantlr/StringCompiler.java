@@ -26,7 +26,11 @@ import org.antlr.v4.runtime.Parser;
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.memobjects.*;
+import org.snt.inmemantlr.memobjects.MemoryByteCode;
+import org.snt.inmemantlr.memobjects.MemorySource;
+import org.snt.inmemantlr.memobjects.MemoryTuple;
+import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.tool.StringCodeGenPipeline;
 
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -36,9 +40,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 
 /**
@@ -168,22 +170,6 @@ public class StringCompiler {
             MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
             LOGGER.debug("add memory source {}", ms.getClassName());
             compilationUnits.add(ms);
-        }
-        if(scgp.hasTokenVocab()) {
-            MemoryTokenFile tok = new MemoryTokenFile(scgp.getG().name,
-                    scgp.getTokenVocab().render());
-
-            URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Class sysclass = URLClassLoader.class;
-
-            try {
-                Method method = sysclass.getDeclaredMethod("addURL", parameters);
-                method.setAccessible(true);
-                method.invoke(sysloader, new Object[]{tok.toUri().toURL()});
-            } catch (Throwable t) {
-                t.printStackTrace();
-                assert false;
-            }//end try catch
         }
 
         return compilationUnits;

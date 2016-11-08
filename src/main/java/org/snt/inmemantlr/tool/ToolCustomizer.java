@@ -1,4 +1,4 @@
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.tool;
 
 import org.antlr.v4.Tool;
 

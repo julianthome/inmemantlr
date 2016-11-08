@@ -19,7 +19,6 @@
 
 package org.snt.inmemantlr;
 
-import org.antlr.v4.Tool;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -31,8 +30,13 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.SerializationException;
+import org.snt.inmemantlr.grammar.InmemantlrGrammar;
+import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.tool.InmemantlrTool;
+import org.snt.inmemantlr.tool.StringCodeGenPipeline;
+import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.*;
@@ -52,7 +56,7 @@ public class GenericParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericParser.class);
 
-    private Tool antlr;
+    private InmemantlrTool antlr;
     private List<StringCodeGenPipeline> gen = new Vector();
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc;
@@ -105,7 +109,7 @@ public class GenericParser {
     }
 
     public GenericParser(List<String> files) {
-        antlr = new Tool();
+        antlr = new InmemantlrTool();
         List<GrammarRootAST> ast = antlr.sortGrammarByTokenVocab(files);
         for (GrammarRootAST gast : ast) {
             String gname = gast.getGrammarName();
@@ -137,7 +141,7 @@ public class GenericParser {
      * @param tlc a ToolCustomizer
      */
     public GenericParser(String content, String name, ToolCustomizer tlc) {
-        antlr = new Tool();
+        antlr = new InmemantlrTool();
         if (tlc != null) {
             tlc.customize(antlr);
         }
@@ -177,18 +181,40 @@ public class GenericParser {
         if (antrlObjectsAvailable())
             return false;
 
+        String tokvoc = "";
+
+
+        StringCodeGenPipeline last = null;
         for(StringCodeGenPipeline p : gen) {
-            // process grammar first
-            process(p.getG());
+
+            Grammar g = p.getG();
+
+            if(last != null && last.hasTokenVocab()) {
+                tokvoc = last.getTokenVocabString();
+                if(g instanceof InmemantlrGrammar) {
+                    ((InmemantlrGrammar) g).setTokenVocab(tokvoc);
+                    tokvoc = "";
+                }
+                else if (g instanceof InmemantlrLexerGrammar) {
+                    ((InmemantlrLexerGrammar) g).setTokenVocab(tokvoc);
+                    tokvoc = "";
+                }
+            }
+
+            // process grammar
+            antlr.process(g);
             // process string code gen pipeline afterwards
             p.process();
             if(!sc.compile(gen))
                 return false;
+
+            last = p;
         }
 
         LOGGER.debug("compile {} elements", gen.size());
         return true;
     }
+
 
     /**
      * load antlr grammar from string
@@ -205,15 +231,6 @@ public class GenericParser {
         return g;
     }
 
-
-    private void process(Grammar g){
-        LOGGER.debug("process grammar {}", g.name);
-        if(g.isCombined()) {
-            antlr.process(g,false);
-        } else {
-            antlr.processNonCombinedGrammar(g,false);
-        }
-    }
 
     /**
      * parse string an create a context

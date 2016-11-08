@@ -69,7 +69,6 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
         MemoryByteCode mbc = new MemoryByteCode(name);
         // bookkeeping of memory bytecode
         mb.put(mbc.getClassName(), mbc);
-        LOGGER.debug("add bytecode " + name + " " + mbc.getName());
         xcl.addClass(mbc);
         return mbc;
     }
@@ -92,7 +91,6 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      * @return the bytecode of class cname
      */
     public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
-        LOGGER.debug("get cname " + cname);
         assert mb.containsKey(cname);
 
         return mb.values().stream()
