@@ -17,7 +17,7 @@ inmemantlr is intended to assist you in the process of developing your context-f
   * [Simple parsing](#simple-parsing)
   * [AST generation](#ast-generation)
   * [Incremental parsing](#incremental-parsing)
-  * [Combined grammars](#combined-grammars)
+  * [Non-combined grammars](#non-combined-grammars)
   * [Accessing ANTLR objects](#accessing-antlr-objects)
   * [Parser serialization](#parser-serialization)
 
@@ -117,7 +117,7 @@ try {
 }
 ```
 
-## Combined grammars
+## Non-combined grammars
 
 ```java
 // define array of ANTLR files to consider -- inmemantlr will automatically
