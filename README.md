@@ -123,10 +123,8 @@ try {
 // define array of ANTLR files to consider -- inmemantlr will automatically
 // analyses their interdependencies
 File files [] = {
-  new File(getClass().getClassLoader().getResource
-  ("MySQLLexer.g4").getFile()),
-  new File(getClass().getClassLoader().getResource
-  ("MySQLParser.g4").getFile())
+  new File("MySQLLexer.g4"),
+  new File("MySQLParser.g4")
 };
 // simply pass files to constructor
 GenericParser gp = new GenericParser(files);
