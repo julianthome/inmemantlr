@@ -29,9 +29,9 @@ import org.snt.inmemantlr.tree.Ast;
 import java.io.File;
 import java.io.IOException;
 
-public class TestMultiFileGrammar {
+public class TestCombinedGrammar {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestMultiFileGrammar.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCombinedGrammar.class);
 
     @Test
     public void testParserLexer() throws IOException {
