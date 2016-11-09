@@ -18,7 +18,7 @@ inmemantlr is intended to assist you in the process of developing your context-f
   * [AST generation](#ast-generation)
   * [Incremental parsing](#incremental-parsing)
   * [Combined grammars](#combined-grammars)
-  * [Accessing ANTLR objects](#accesing-antlr-objects)
+  * [Accessing ANTLR objects](#accessing-antlr-objects)
   * [Parser serialization](#parser-serialization)
 
 [Licence](#licence)
