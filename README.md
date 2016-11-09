@@ -9,6 +9,21 @@ inmemantlr is intended to assist you in the process of developing your context-f
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
 
+# TOC
+
+[Integration](#integration)
+
+[Usage Scenarios](#usage-scenarios)
+  * [Simple parsing](#simple-parsing)
+  * [AST generation](#ast-generation)
+  * [Incremental parsing](#incremental-parsing)
+  * [Combined grammars](#combined-grammars)
+  * [Accessing ANTLR objects](#accesing-antlr-objects)
+  * [Parser serialization](#parser-serialization)
+
+[Licence](#licence)
+
+
 # Integration
 
 inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases).
@@ -21,7 +36,7 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 </dependency>
 ```
 
-# Usage
+# Usage Scenarios
 
 The following code snippet shows an example how to use inmemantlr. The descriptions are provided as source code comments.
 
@@ -83,7 +98,7 @@ If you have multiple strings to parse one after another, the following code snip
 File f = new File("Simple.g4");
 GenericParser gp = new GenericParser(f);
 
-// Note that the listener should always be set before
+// note that the listener should always be set before
 // the compilation. Otherwise, the listener cannot
 // capture the parsing information.
 gp.setListener(new DefaultTreeListener());
@@ -92,7 +107,7 @@ try {
   Ast ast;
   gp.parse("PRINT a+b");
   ast = t.getAst();
-  // so something with parsing result
+  // do something with parsing result
   gp.parse("PRINT \"test\"");
   ast = t.getAst();
   // do something with parsing resulting
@@ -102,6 +117,21 @@ try {
 }
 ```
 
+## Combined grammars
+
+```java
+// define array of ANTLR files to consider -- inmemantlr will automatically
+// analyses their interdependencies
+File files [] = {
+  new File(getClass().getClassLoader().getResource
+  ("MySQLLexer.g4").getFile()),
+  new File(getClass().getClassLoader().getResource
+  ("MySQLParser.g4").getFile())
+};
+// simply pass files to constructor
+GenericParser gp = new GenericParser(files);
+// parser is ready to use
+```
 
 ## Accessing ANTLR objects
 
@@ -122,7 +152,7 @@ for(MemoryTuple tup : set) {
 }
 ```
 
-## Serializing a generic parser
+## Parser serialization
 
 For avoiding unnecessary compilation and for enabling
 the re-use of a generic parser across different Java applications or runs, it is possible to serialize a generic parser.
