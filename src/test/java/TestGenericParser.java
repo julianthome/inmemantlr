@@ -21,12 +21,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.DefaultListener;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static org.junit.Assert.*;
 
@@ -44,34 +43,32 @@ public class TestGenericParser {
 
     @Test
     public void testParser() {
-        GenericParser gp = new GenericParser(grammar,null);
-        String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
+        GenericParser gp = new GenericParser(grammar);
 
         // Incorrect workflows
         boolean thrown = false;
         try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
+            gp.parse(sfile);
+        } catch (IllegalWorkflowException | FileNotFoundException e) {
             thrown = true;
         }
 
         assertTrue(thrown);
         gp.compile();
-        assertTrue(s != null && !s.isEmpty());
 
         // Incorrect workflows
         thrown = false;
         try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
+            gp.parse(sfile);
+        } catch (IllegalWorkflowException | FileNotFoundException e) {
             thrown = true;
         }
 
         gp.compile();
         thrown = false;
         try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
+            gp.parse(sfile);
+        } catch (IllegalWorkflowException | FileNotFoundException e) {
             thrown = true;
         }
 
@@ -85,8 +82,8 @@ public class TestGenericParser {
         gp.compile();
 
         try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
+            gp.parse(sfile);
+        } catch (IllegalWorkflowException | FileNotFoundException e) {
             thrown = true;
         }
 
@@ -111,7 +108,7 @@ public class TestGenericParser {
         boolean thrown = false;
         GenericParser genericParser0 = null;
         try {
-            genericParser0 = new GenericParser((File) null, (ToolCustomizer) null);
+            genericParser0 = new GenericParser((File) null);
             fail("Expecting exception: NullPointerException");
         } catch (NullPointerException e) {
             thrown = true;
@@ -136,7 +133,7 @@ public class TestGenericParser {
     public void testIndepenedentInstanceException() {
         boolean thrown = false;
         try {
-            GenericParser.independentInstance("Jayi,3c29V@fo?BF@_", (ToolCustomizer) null);
+            GenericParser.independentInstance(null,"Jayi,3c29V@fo?BF@_");
             fail("Expecting exception: Error");
         } catch(NullPointerException | Error e) {
             thrown = true;
@@ -148,7 +145,7 @@ public class TestGenericParser {
     public void testInstanceException() {
         boolean thrown = false;
         try {
-            GenericParser.instance("Jayi,3c29V@fo?BF@_", (ToolCustomizer) null);
+            GenericParser.instance(null,"Jayi,3c29V@fo?BF@_");
             fail("Expecting exception: Error");
         } catch(NullPointerException | Error e) {
             thrown = true;

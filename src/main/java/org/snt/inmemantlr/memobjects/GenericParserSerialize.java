@@ -19,7 +19,6 @@
 
 package org.snt.inmemantlr.memobjects;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -30,38 +29,42 @@ public class GenericParserSerialize implements Serializable {
 
     private static final long serialVersionUID = -8824622790097111310L;
 
-    private String gcontent;
-    private File gfile;
     private MemoryTupleSet mset;
-    private String lexerName;
     private String parserName;
+    private String lexerName;
+
 
     /**
      * constructor
      *
-     * @param gfile grammar file
-     * @param gcontent grammar file content
      * @param mset set of source/byte code tuples
      */
-    public GenericParserSerialize(File gfile,
-                                  String gcontent,
-                                  MemoryTupleSet mset) {
+    public GenericParserSerialize(MemoryTupleSet mset, String parserName,
+                                  String lexerName) {
         assert mset != null && mset.size() > 0;
-        assert gfile != null || gcontent != null;
         this.mset = mset;
-        this.gfile = gfile;
-        this.gcontent = gcontent;
+        this.parserName = parserName;
+        this.lexerName = lexerName;
     }
 
     public MemoryTupleSet getMemoryTupleSet() {
         return mset;
     }
 
-    public String getGrammarContent() {
-        return gcontent;
+    public String getParserName() {
+        return parserName;
     }
 
-    public File getGrammarFile() {
-        return gfile;
+    public void setParserName(String parserName) {
+        this.parserName = parserName;
     }
+
+    public String getLexerName() {
+        return lexerName;
+    }
+
+    public void setLexerName(String lexerName) {
+        this.lexerName = lexerName;
+    }
+
 }

@@ -49,9 +49,9 @@ public class TestDoubleParse {
 
     @Test
     public void testProcessor() {
-        GenericParser gp1 = new GenericParser(sgrammarcontent, null);
+        GenericParser gp1 = new GenericParser(sgrammarcontent);
         gp1.compile();
-        GenericParser gp2 = new GenericParser(sgrammarcontent, null);
+        GenericParser gp2 = new GenericParser(sgrammarcontent);
         gp2.compile();
 
         DefaultTreeListener l1 = new DefaultTreeListener();

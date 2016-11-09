@@ -49,7 +49,7 @@ public class TestAstProcessor {
 
     @Test
     public void testProcessor() {
-        GenericParser gp = new GenericParser(sgrammarcontent, null);
+        GenericParser gp = new GenericParser(sgrammarcontent);
         gp.compile();
 
         assertTrue(s != null && !s.isEmpty());

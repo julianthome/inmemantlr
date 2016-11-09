@@ -28,8 +28,6 @@ import org.snt.inmemantlr.tree.Ast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
 
 public class TestMultiFileGrammar {
 
@@ -41,18 +39,15 @@ public class TestMultiFileGrammar {
 
         LOGGER.debug("Test multi file parsing");
 
-        File lexer = new File(getClass().getClassLoader().getResource
-                ("MySQLLexer.g4").getFile());
+        File files [] = {
+                new File(getClass().getClassLoader().getResource
+                        ("MySQLLexer.g4").getFile()),
+                new File(getClass().getClassLoader().getResource
+                        ("MySQLParser.g4").getFile())
+        };
 
-        File parser = new File(getClass().getClassLoader().getResource
-                ("MySQLParser.g4").getFile());
 
-        List<String> fs = new Vector<String>();
-
-        fs.add(parser.toString());
-        fs.add(lexer.toString());
-
-        GenericParser gp = new GenericParser(fs);
+        GenericParser gp = new GenericParser(files);
         DefaultTreeListener t = new DefaultTreeListener();
         gp.setListener(t);
 
@@ -60,6 +55,7 @@ public class TestMultiFileGrammar {
             LOGGER.error("Compilation error");
             return;
         }
+
         try {
             Ast ast;
             gp.parse("select a from b;");

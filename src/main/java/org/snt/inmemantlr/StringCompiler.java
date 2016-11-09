@@ -84,7 +84,7 @@ public class StringCompiler {
      * @param scgps string code generation pipeline
      * @return true if compilation was successful, false otherwise
      */
-    public boolean compile(List<StringCodeGenPipeline> scgps) {
+    public boolean compile(Set<StringCodeGenPipeline> scgps) {
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
@@ -131,7 +131,7 @@ public class StringCompiler {
      * @return true if compilation was successful, false otherwise
      */
     public boolean compile(StringCodeGenPipeline scgp) {
-        return compile(Collections.singletonList(scgp));
+        return compile(Collections.singleton(scgp));
     }
 
 

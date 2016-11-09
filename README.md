@@ -30,7 +30,7 @@ The following code snippet shows an example how to use inmemantlr. The descripti
 ``` java
 // 1. load grammar
 File f = new File("Java.g4");
-GenericParser gp = new GenericParser(f, "Java");
+GenericParser gp = new GenericParser(f);
 // 2. load file content into string
 String s = FileUtils.loadFileContent("HelloWorld.java");
 // 3. set listener for checking parse tree elements. Here you could use any ParseTreeListener implementation. The default listener is used per default
@@ -51,7 +51,7 @@ If you would like to get the derived AST from a parsed file, the following snipp
 
 ``` java
 File f = new File("Java.g4");
-GenericParser gp = new GenericParser(f, "Java");
+GenericParser gp = new GenericParser(f);
 String s = FileUtils.loadFileContent("HelloWorld.java");
 
 // this listener will create an AST from the java file
@@ -81,9 +81,9 @@ If you have multiple strings to parse one after another, the following code snip
 
 ```java
 File f = new File("Simple.g4");
-GenericParser gp = new GenericParser(f, "Simple");
+GenericParser gp = new GenericParser(f);
 
-// Note that the listener should alsways be set before
+// Note that the listener should always be set before
 // the compilation. Otherwise, the listener cannot
 // capture the parsing information.
 gp.setListener(new DefaultTreeListener());
