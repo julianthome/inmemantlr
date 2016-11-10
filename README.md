@@ -16,6 +16,7 @@ inmemantlr is intended to assist you in the process of developing your context-f
 [Usage Scenarios](#usage-scenarios)
   * [Simple parsing](#simple-parsing)
   * [AST generation](#ast-generation)
+  * [AST processing](#ast-processing)
   * [Incremental parsing](#incremental-parsing)
   * [Non-combined grammars](#non-combined-grammars)
   * [Accessing ANTLR objects](#accessing-antlr-objects)
@@ -90,6 +91,86 @@ System.out.println(ast.toDot());
 By providing the output of `ast.toDot()` to graphviz, one could visualize the AST as illustrated in the picture below.
 
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
+
+## Ast processing
+
+With inmemantlr, one can easily process or translate a given AST by means of an `AstProcessor`. The following example illustrates how one can process a simple AST that represents a mathematical expression. Given the grammar definition below, parsing the string `'3+100'` would yield this parse tree:
+
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="Ast derived from simple expressoin '3+100'" width="200px" align="second">
+
+```
+grammar Ops;
+
+Plus: '+';
+Minus: '-';
+Number: '-'?([0-9]|[1-9][0-9]+);
+
+s: (expression)* EOF;
+plus: Plus;
+minus: Minus;
+operation: plus | minus;
+expression: operand operation operand;
+operand: Number;
+
+WS  :  [ \t\r\n]+ -> skip;
+```
+
+The following code example illustrates how one could compute the result of a mathematical expression based on the above-mentioned grammar.
+
+
+```java
+// ...
+gp.compile();
+// this example shows you how one could use inmemantlr for incremental parsing
+Ast ast;
+gp.parse("3+100");
+ast = t.getAst();
+// Process the AST bottom-up starting from the leafs up to the root node
+AstProcessor<String, String> processor = new AstProcessor<String, String>(ast) {
+  @Override
+  public String getResult() {
+    // when all nodes have been processed, the result is available in the smap
+    // value of the root node which is returned here
+    return smap.get(ast.getRoot());
+  }
+  @Override
+  protected void initialize() {
+    // initialize smap - a data structure that keeps track of the intermediate
+    // values for every node
+    ast.getNodes().forEach(n -> smap.put(n, n.getLabel()));
+  }
+  // This operation is executed for each and every node in left to right and
+  // bottom up order. Non-leaf nodes are processed only if all of their siblings
+  // have been already processed
+  @Override
+  protected void process(AstNode n) {
+    if(n.getRule().equals("expression")){
+      int n0 = Integer.parseInt(smap.get(n.getChild(0)));
+      int n1 = Integer.parseInt(smap.get(n.getChild(2)));
+      int result = 0;
+      switch(smap.get(n.getChild(1))) {
+        case "+":
+          result = n0 + n1;
+        break;
+        case "-":
+          result = n0 - n1;
+        break;
+      }
+      // store computation result of addition subtraction for current node
+      smap.put(n, String.valueOf(result));
+    } else {
+      // when node is no expression NT, propate child node value 1:1
+      // to parent
+      simpleProp(n);
+    }
+  }
+};
+// compute the result
+processor.process();
+// print the computation results which is 103
+System.out.println(processor.getResult());
+```
+
 
 ## Incremental parsing
 If you have multiple strings to parse one after another, the following code snippet might be useful:
