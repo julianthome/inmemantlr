@@ -2,9 +2,9 @@
 
 inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the manual generation and compilation steps that have to be done when using vanilla ANTLR. Instead, inmemantlr does all of these steps automatically in-memory while keeping all of the original ANTLR objects accessible through its `GenericParser` class which is serializable, and hence, can be reused at a later point in time or across different applications.
 
-Moreover, one can easily generate an abstract syntax tree (AST) from a parsed file that can be both visualized using [graphviz](http://www.graphviz.org/) and processed/translated by means of the `AstProcessor` class.
+Moreover, one can easily generate an abstract syntax tree (AST) from a parsed file that can be both visualized using [graphviz](http://www.graphviz.org/) and processed/translated by means of inmemantlr's `AstProcessor` class.
 
-All of the inmemantlr features are illustrated by [examples](#toc)
+All of the above-mentioned inmemantlr features are illustrated by [examples](#toc).
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
