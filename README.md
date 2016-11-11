@@ -1,10 +1,10 @@
 # inmemantlr
-With inmemantlr you can test your
-ANTLR grammars directly without the need to generate and compile `.java` files first, which is done automatically and in-memory by the tool.
 
-Moreover, it automatically generates an abstract syntax tree (AST) from a parsed file that can be easily visualized using graphviz.
+inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the manual generation and compilation steps that have to be done when using vanilla ANTLR. Instead, inmemantlr does all of these steps automatically in-memory while keeping all of the original ANTLR objects accessible through its `GenericParser` class which is serializable, and hence, can be reused at a later point in time or across different applications.
 
-inmemantlr is intended to assist you in the process of developing your context-free grammar by providing automated (re-)generation of Parser and Lexer, and by allowing you to visualize the resulting AST. Note that inmemantlr is using ANTLR v4.
+Moreover, one can easily generate an abstract syntax tree (AST) from a parsed file that can be both visualized using [graphviz](http://www.graphviz.org/) and processed/translated by means of the `AstProcessor` class.
+
+All of the inmemantlr features are illustrated by [examples](#toc)
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
