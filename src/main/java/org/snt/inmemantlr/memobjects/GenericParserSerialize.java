@@ -55,16 +55,8 @@ public class GenericParserSerialize implements Serializable {
         return parserName;
     }
 
-    public void setParserName(String parserName) {
-        this.parserName = parserName;
-    }
-
     public String getLexerName() {
         return lexerName;
-    }
-
-    public void setLexerName(String lexerName) {
-        this.lexerName = lexerName;
     }
 
 }

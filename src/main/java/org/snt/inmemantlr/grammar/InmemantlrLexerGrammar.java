@@ -19,9 +19,7 @@
 
 package org.snt.inmemantlr.grammar;
 
-import org.antlr.runtime.RecognitionException;
 import org.antlr.v4.Tool;
-import org.antlr.v4.tool.ANTLRToolListener;
 import org.antlr.v4.tool.LexerGrammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.slf4j.Logger;
@@ -40,19 +38,6 @@ public class InmemantlrLexerGrammar extends LexerGrammar {
     public InmemantlrLexerGrammar(Tool tool, GrammarRootAST ast) {
         super(tool, ast);
     }
-
-    public InmemantlrLexerGrammar(String grammarText) throws RecognitionException {
-        super(grammarText);
-    }
-
-    public InmemantlrLexerGrammar(String grammarText, ANTLRToolListener listener) throws RecognitionException {
-        super(grammarText, listener);
-    }
-
-    public InmemantlrLexerGrammar(String fileName, String grammarText, ANTLRToolListener listener) throws RecognitionException {
-        super(fileName, grammarText, listener);
-    }
-
 
     public void setTokenVocab(String tokenVocab) {
         LOGGER.debug("set token vocab {} {}", this.name, tokenVocab);

@@ -51,7 +51,7 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
         Tool tool = g.tool;
         String vocabName = g.getOptionString("tokenVocab");
 
-        if(!tv.hasNextLine())
+        if (!tv.hasNextLine())
             return tokens;
 
         Pattern tokenDefPattern = Pattern.compile("([^\n]+?)[ \\t]*?=[ \\t]*?([0-9]+)");

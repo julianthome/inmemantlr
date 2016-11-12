@@ -42,7 +42,6 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     private static final long serialVersionUID = 898401600890559769L;
 
 
-
     public void process(Grammar g) {
         LOGGER.debug("process {}", g.name);
         this.process(g, false);
@@ -54,7 +53,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         final Grammar g;
 
         LOGGER.debug("ast " + ast.getGrammarName());
-        if ( ast.grammarType == ANTLRParser.LEXER )
+        if (ast.grammarType == ANTLRParser.LEXER)
             g = new InmemantlrLexerGrammar(this, ast);
         else
             g = new InmemantlrGrammar(this, ast);
@@ -70,16 +69,20 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         List<GrammarRootAST> roots = new ArrayList<GrammarRootAST>();
         for (String gc : gcs) {
             GrammarAST t = parseGrammarFromString(gc);
-            if ( t==null || t instanceof GrammarASTErrorNode) continue; // came back as error node
-            if ( ((GrammarRootAST)t).hasErrors ) continue;
-            GrammarRootAST root = (GrammarRootAST)t;
+            if (t == null || t instanceof GrammarASTErrorNode)
+                continue;
+
+            if (((GrammarRootAST) t).hasErrors)
+                continue;
+
+            GrammarRootAST root = (GrammarRootAST) t;
             roots.add(root);
             root.fileName = root.getGrammarName();
             String grammarName = root.getChild(0).getText();
 
             GrammarAST tokenVocabNode = findOptionValueAST(root, "tokenVocab");
             // Make grammars depend on any tokenVocab options
-            if ( tokenVocabNode!=null ) {
+            if (tokenVocabNode != null) {
                 String vocabName = tokenVocabNode.getText();
                 g.addEdge(grammarName, vocabName);
             }
@@ -89,12 +92,11 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         }
 
         List<String> sortedGrammarNames = g.sort();
-//		System.out.println("sortedGrammarNames="+sortedGrammarNames);
 
         LinkedHashSet<GrammarRootAST> sortedRoots = new LinkedHashSet<GrammarRootAST>();
         for (String grammarName : sortedGrammarNames) {
             for (GrammarRootAST root : roots) {
-                if ( root.getGrammarName().equals(grammarName) ) {
+                if (root.getGrammarName().equals(grammarName)) {
                     sortedRoots.add(root);
                     break;
                 }

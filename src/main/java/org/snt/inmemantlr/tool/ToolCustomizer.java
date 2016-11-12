@@ -26,6 +26,5 @@ import org.antlr.v4.Tool;
  * before use: For example, to add an error listener
  */
 public interface ToolCustomizer {
-
     void customize(Tool t);
 }

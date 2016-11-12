@@ -19,11 +19,8 @@
 
 package org.snt.inmemantlr.grammar;
 
-import org.antlr.runtime.RecognitionException;
 import org.antlr.v4.Tool;
-import org.antlr.v4.tool.ANTLRToolListener;
 import org.antlr.v4.tool.Grammar;
-import org.antlr.v4.tool.LexerGrammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,31 +40,6 @@ public class InmemantlrGrammar extends Grammar {
     public InmemantlrGrammar(Tool tool, GrammarRootAST ast) {
         super(tool, ast);
     }
-
-    public InmemantlrGrammar(String grammarText) throws RecognitionException {
-        super(grammarText);
-    }
-
-    public InmemantlrGrammar(String grammarText, LexerGrammar tokenVocabSource) throws RecognitionException {
-        super(grammarText, tokenVocabSource);
-    }
-
-    public InmemantlrGrammar(String grammarText, ANTLRToolListener listener) throws RecognitionException {
-        super(grammarText, listener);
-    }
-
-    public InmemantlrGrammar(String fileName, String grammarText) throws RecognitionException {
-        super(fileName, grammarText);
-    }
-
-    public InmemantlrGrammar(String fileName, String grammarText, ANTLRToolListener listener) throws RecognitionException {
-        super(fileName, grammarText, listener);
-    }
-
-    public InmemantlrGrammar(String fileName, String grammarText, Grammar tokenVocabSource, ANTLRToolListener listener) throws RecognitionException {
-        super(fileName, grammarText, tokenVocabSource, listener);
-    }
-
 
     public void setTokenVocab(String tokenVocab) {
         this.tokenVocab = tokenVocab;
