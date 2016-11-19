@@ -31,7 +31,7 @@ All of the above-mentioned inmemantlr features are illustrated by [examples](#to
 For building a standalone `jar` file that can be integrated into your Java project, one can simply invoke `mvn package`. Afterwards, one will find the self-contained `inmemantlr-<version>-jar-with-dependencies.jar` Java archive within the `target/` directory of the project directory.
 
 ## Maven
-inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases). The API documentation for every release is avalable [here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However, the content of this documentation, in particular the code examples and usage scenarios, is always aligned with the master branch of this repository. Hence, it might be that the latest inmemeantlr features are not yet available in the maven package.
+inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases). The API documentation for every release is avalable [here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However, the content of this documentation, in particular the code examples and usage scenarios, is always aligned with the master branch of this repository. Hence, it might be that the latest inmemantlr features are not yet available through the maven package.
 
 ```xml
 <dependency>
@@ -43,7 +43,7 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 
 # Usage Scenarios
 
-The following code snippet shows an example how to use inmemantlr. The descriptions are provided as source code comments.
+The following code snippet shows an example how to use inmemantlr. The descriptions are provided as source code comments. For the sake of simplicity, exception handling is omitted for all of the following examples.
 
 ## Simple parsing
 
@@ -57,12 +57,8 @@ String s = FileUtils.loadFileContent("HelloWorld.java");
 gp.setListener(new DefaultListener());
 // 4. compile Lexer and parser in-memory
 gp.compile();
-try {
-  // 5. parse the string that represents the content of HelloWorld.java
-  ctx = gp.parse(s);
-} catch (IllegalWorkflowException e) {
-// ...
-}
+// 5. parse the string that represents the content of HelloWorld.java
+ctx = gp.parse(s);
 ```
 
 ## AST generation
@@ -80,10 +76,7 @@ DefaultTreeListener dlist = new DefaultTreeListener();
 gp.setListener(dlist);
 gp.compile();
 
-ParserRuleContext ctx = null;
-try {
-  ctx = gp.parse(s);
-} catch (IllegalWorkflowException e) {}
+ParserRuleContext ctx = gp.parse(s);
 
 // get access to AST
 Ast ast = dlist.getAst();
@@ -188,18 +181,15 @@ GenericParser gp = new GenericParser(f);
 // capture the parsing information.
 gp.setListener(new DefaultTreeListener());
 gp.compile();
-try {
-  Ast ast;
-  gp.parse("PRINT a+b");
-  ast = t.getAst();
-  // do something with parsing result
-  gp.parse("PRINT \"test\"");
-  ast = t.getAst();
-  // do something with parsing resulting
-  // ...
-} catch (IllegalWorkflowException e) {
-// ...
-}
+
+Ast ast;
+gp.parse("PRINT a+b");
+ast = t.getAst();
+// do something with parsing result
+
+gp.parse("PRINT \"test\"");
+ast = t.getAst();
+// do something with parsing result
 ```
 
 ## Non-combined grammars
@@ -242,26 +232,17 @@ the re-use of a generic parser across different Java applications or runs, it is
 
 A generic parser could be serialized to a file with the following code:
 ```java
-try {
-  // store a generic parser in the file "/tmp/gp.out" and
-  // overwrite the file if it already exists
-  gp.store("/tmp/gp.out", true);
-} catch (SerializationException e) {
-  // ...
-}
+// store a generic parser in the file "/tmp/gp.out" and
+// overwrite the file if it already exists
+gp.store("/tmp/gp.out", true);
 ```
 
 A generic parser can be loaded from a file with the following
 code:
 
 ```java
-GenericParser gp = null;
-try {
-  // load generic parser from file /tmp/gp.out
-  gp = GenericParser.load("/tmp/gp.out");
-} catch (DeserializationException e) {
-  // ...
-}
+// load generic parser from file /tmp/gp.out
+GenericParser gp = GenericParser.load("/tmp/gp.out");
 ```
 
 # Licence
