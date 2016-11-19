@@ -171,10 +171,13 @@ public class TestExternalGrammars {
 
     @Test
     public void testGeneration() {
-        for (Subject s : subjects) {
-            //LOGGER.debug(s.toString());
-            if(s.hasExamples())
-                testSubject(s);
+
+        if(subjects != null) {
+            for (Subject s : subjects) {
+                //LOGGER.debug(s.toString());
+                if (s.hasExamples())
+                    testSubject(s);
+            }
         }
     }
 }
