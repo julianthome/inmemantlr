@@ -28,6 +28,8 @@ jdk:
   - oraclejdk8
 
 install:
+  - git submodule init
+  - git submodule update
   - mvn clean package
 
 after_success:

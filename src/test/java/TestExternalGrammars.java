@@ -51,7 +51,8 @@ public class TestExternalGrammars {
     private static String [] exclude = {
         "antlr3", "antlr4", "aspectj", "csharp", "ecmascript",
             "objc", "oncrpc", "php" , "sqlite" , "sparql",
-            "stringtemplate", "swift", "swift-fin", "xml"
+            "stringtemplate", "swift", "swift-fin", "xml",
+            "pgn"
     };
 
     static File grammar = null;
