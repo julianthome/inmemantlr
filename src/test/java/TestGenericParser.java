@@ -50,7 +50,14 @@ public class TestGenericParser {
 
     @Test
     public void testParser() {
-        GenericParser gp = new GenericParser(grammar);
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(grammar);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(gp);
 
         // Incorrect workflows
         boolean thrown = false;
@@ -117,7 +124,7 @@ public class TestGenericParser {
         try {
             genericParser0 = new GenericParser((File) null);
             fail("Expecting exception: NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | FileNotFoundException e) {
             thrown = true;
         }
         assertTrue(thrown);

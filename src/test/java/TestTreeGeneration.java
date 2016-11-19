@@ -35,6 +35,7 @@ import org.snt.inmemantlr.tree.AstNode;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -53,7 +54,13 @@ public class TestTreeGeneration {
 
     @Test
     public void testGeneration() {
-        GenericParser gp = new GenericParser(grammar);
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(grammar);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        assertNotNull(gp);
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 

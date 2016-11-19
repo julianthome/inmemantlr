@@ -151,9 +151,14 @@ public class GenericParser {
      *
      * @param gfile List of antlr grammar files
      */
-    public GenericParser(File ... gfile) {
+    public GenericParser(File ... gfile) throws FileNotFoundException {
         Set<String> gcontent = new HashSet();
         for(File f : gfile) {
+
+            if(!f.exists() || !f.canRead())
+                throw new FileNotFoundException("file " + f.getAbsolutePath()
+                        + " does not exist or is not readable");
+
             gcontent.add(FileUtils.loadFileContent(f.getAbsolutePath()));
         }
         init(gcontent,null);
@@ -273,7 +278,7 @@ public class GenericParser {
     public ParserRuleContext parse(File toParse, String production) throws
             IllegalWorkflowException, FileNotFoundException {
         if(!toParse.exists()) {
-            throw new FileNotFoundException("cound not find file " + toParse
+            throw new FileNotFoundException("could not find file " + toParse
                     .getAbsolutePath());
         }
         return parse(FileUtils.loadFileContent(toParse.getAbsolutePath()), production);

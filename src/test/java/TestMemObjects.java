@@ -41,9 +41,11 @@ import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestMemObjects {
@@ -67,7 +69,14 @@ public class TestMemObjects {
 
     @Test
     public void testAntlrObjectAccess() {
-        GenericParser gp = new GenericParser(grammar);
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(grammar);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(gp);
 
         assertTrue(gp.compile());
 
@@ -99,7 +108,15 @@ public class TestMemObjects {
 
     @Test
     public void testStoreAndLoad() {
-        GenericParser gp = new GenericParser(grammar);
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(grammar);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(gp);
+
         gp.compile();
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
