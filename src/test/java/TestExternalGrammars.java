@@ -52,7 +52,7 @@ public class TestExternalGrammars {
         "antlr3", "antlr4", "aspectj", "csharp", "ecmascript",
             "objc", "oncrpc", "php" , "sqlite" , "sparql",
             "stringtemplate", "swift", "swift-fin", "xml",
-            "pgn", "ucb-logo"
+            "pgn", "ucb-logo" , "agc"
     };
 
     static File grammar = null;
