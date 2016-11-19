@@ -47,7 +47,7 @@ public class TestSimple {
     @Test
     public void testInterpreter() throws IOException {
 
-        try (InputStream sgrammar = getClass().getClassLoader().getResourceAsStream("Simple.g4")) {
+        try (InputStream sgrammar = getClass().getClassLoader().getResourceAsStream("inmemantlr/Simple.g4")) {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 

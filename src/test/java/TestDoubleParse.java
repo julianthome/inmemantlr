@@ -45,9 +45,10 @@ public class TestDoubleParse {
     @Before
     public void init() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream sgrammar = classLoader.getResourceAsStream("Java.g4");
-             InputStream sfile1 = classLoader.getResourceAsStream("HelloWorld.java");
-             InputStream sfile2 = classLoader.getResourceAsStream("HelloUniverse.java")) {
+        try (InputStream sgrammar = classLoader.getResourceAsStream
+                ("inmemantlr/Java.g4");
+             InputStream sfile1 = classLoader.getResourceAsStream("inmemantlr//HelloWorld.java");
+             InputStream sfile2 = classLoader.getResourceAsStream("inmemantlr/HelloUniverse.java")) {
             sgrammarcontent = getStringFromStream(sgrammar);
             s1 = getStringFromStream(sfile1);
             s2 = getStringFromStream(sfile2);

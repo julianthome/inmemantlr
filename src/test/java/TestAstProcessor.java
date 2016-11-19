@@ -47,8 +47,8 @@ public class TestAstProcessor {
     @Before
     public void init() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream sgrammar = classLoader.getResourceAsStream("Java.g4");
-             InputStream sfile = classLoader.getResourceAsStream("HelloWorld.java")) {
+        try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
+             InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
             s = FileUtils.getStringFromStream(sfile);
         }

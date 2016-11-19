@@ -48,9 +48,9 @@ public class TestNonCombinedGrammar {
 
         File files [] = {
                 new File(getClass().getClassLoader().getResource
-                        ("MySQLLexer.g4").getFile()),
+                        ("inmemantlr/MySQLLexer.g4").getFile()),
                 new File(getClass().getClassLoader().getResource
-                        ("MySQLParser.g4").getFile())
+                        ("inmemantlr/MySQLParser.g4").getFile())
         };
 
 

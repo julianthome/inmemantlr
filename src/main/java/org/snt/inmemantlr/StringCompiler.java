@@ -264,7 +264,7 @@ public class StringCompiler {
         Class<?> elex = findClass(parserClassName);
         assert elex != null;
         Constructor<?>[] cstr = elex.getConstructors();
-        assert cstr.length == 1;
+        assert cstr.length >= 1;
 
         try {
             eparser = (Parser) cstr[0].newInstance(tstream);

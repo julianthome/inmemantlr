@@ -50,7 +50,7 @@ public class TestAstProcessorEvaluation {
     public void testInterpreter() throws IOException {
 
         try (InputStream sgrammar = getClass().getClassLoader()
-                .getResourceAsStream("Ops.g4")) {
+                .getResourceAsStream("inmemantlr/Ops.g4")) {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 

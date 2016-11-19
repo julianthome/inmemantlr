@@ -63,8 +63,8 @@ public class TestMemObjects {
     @Before
     public void init() {
         ClassLoader classLoader = getClass().getClassLoader();
-        grammar = new File(classLoader.getResource("Java.g4").getFile());
-        sfile = new File(classLoader.getResource("HelloWorld.java").getFile());
+        grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
+        sfile = new File(classLoader.getResource("inmemantlr/HelloWorld.java").getFile());
     }
 
     @Test
