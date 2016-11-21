@@ -35,11 +35,8 @@ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestExternalGrammars {
@@ -48,6 +45,7 @@ public class TestExternalGrammars {
 
 
     // @TODO: add distinct test cases for test modules
+    // antlr3 grammar seems to be broken
     private static String [] exclude = {
         "antlr3", "antlr4", "aspectj", "csharp", "ecmascript",
             "objc", "oncrpc", "php" , "sqlite" , "sparql",
@@ -98,7 +96,7 @@ public class TestExternalGrammars {
     }
 
 
-    private Subject [] subjects = null;
+    private Map<String, Subject> subjects = null;
 
     @Before
     public void init() {
@@ -112,12 +110,11 @@ public class TestExternalGrammars {
                 .getFile());
 
 
-        File [] files = grammar.listFiles(pathname -> pathname.isDirectory() &&
-                !blacklist.contains(pathname.getName()));
+        File [] files = grammar.listFiles(pathname -> pathname.isDirectory());
 
         Arrays.stream(files);
 
-        subjects = new Subject[files.length];
+        subjects = new HashMap();
 
         int idx = 0;
 
@@ -130,14 +127,18 @@ public class TestExternalGrammars {
             File examples = new File(f.getAbsolutePath() + "/examples");
             subject.examples = examples.listFiles(pathname -> !pathname
                     .isDirectory());
-            subjects[idx++] = subject;
+            subjects.put(subject.name, subject);
         }
-
-        assertEquals(idx, subjects.length);
     }
 
     private void testSubject(Subject s) {
 
+
+        if(blacklist.contains(s.name)) {
+            LOGGER.debug("skip {}", s.name);
+            return;
+        }
+        
         LOGGER.debug("test {}", s.name);
         GenericParser gp = null;
         try {
@@ -171,13 +172,42 @@ public class TestExternalGrammars {
 
     @Test
     public void testGeneration() {
-
-        if(subjects != null) {
-            for (Subject s : subjects) {
-                //LOGGER.debug(s.toString());
-                if (s.hasExamples())
-                    testSubject(s);
-            }
-        }
+        subjects.values().stream().filter(Subject::hasExamples).
+                forEach(s -> testSubject(s));
     }
+
+
+    /**@Test
+    public void testAntlr4() {
+
+        Subject s = subjects.get("antlr4");
+        Assert.assertNotNull(s);
+
+        List<File> filtered = Arrays.stream(s.g4).filter(
+                f -> f.getName().matches("(ANTLRv4(Lexer|Parser)|LexBasic).g4")
+        ).collect(Collectors.toList());
+
+
+        File [] in = filtered.toArray(new File [filtered.size()]);
+
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        gp.compile();
+
+        Assert.assertEquals(s.examples.length,1);
+
+        try {
+            gp.parse(s.examples[0]);
+        } catch (IllegalWorkflowException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }**/
+
 }

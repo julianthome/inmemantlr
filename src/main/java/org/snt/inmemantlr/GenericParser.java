@@ -73,11 +73,13 @@ public class GenericParser {
 
 
     private void init(Set<String> gcontent, ToolCustomizer tlc) {
+        antlr.gen_dependencies = true;
         if (tlc != null) {
             tlc.customize(antlr);
         }
         Set<GrammarRootAST> ast = antlr.sortGrammarByTokenVocab(gcontent);
         for (GrammarRootAST gast : ast) {
+            LOGGER.debug("gast {}", gast.getGrammarName());
             StringCodeGenPipeline pip = getPipeline(gast);
             gen.add(pip);
         }
@@ -98,16 +100,20 @@ public class GenericParser {
      * @return codegen pipeline object
      */
     private StringCodeGenPipeline getPipeline(GrammarRootAST ast) {
+        LOGGER.debug("create grammar {}", ast.getGrammarName());
         final Grammar g = antlr.createGrammar(ast);
         if(g.isParser()) {
+            LOGGER.debug("parser {}", g.name);
             parserName = g.name;
         } else if (g.isLexer()) {
+            LOGGER.debug("lexer {}", g.name);
             lexerName = g.name;
         } else {
             parserName = g.name + "Parser";
             lexerName = g.name + "Lexer";
         }
         g.fileName = g.name;
+
         return new StringCodeGenPipeline(g, g.name);
     }
 

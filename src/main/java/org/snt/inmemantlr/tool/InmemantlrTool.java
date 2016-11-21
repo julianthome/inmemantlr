@@ -28,6 +28,7 @@ package org.snt.inmemantlr.tool;
 
 import org.antlr.v4.misc.Graph;
 import org.antlr.v4.parse.ANTLRParser;
+import org.antlr.v4.tool.BuildDependencyGenerator;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.GrammarTransformPipeline;
 import org.antlr.v4.tool.ast.GrammarAST;
@@ -51,7 +52,13 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     public void process(Grammar g) {
         LOGGER.debug("process {}", g.name);
+        BuildDependencyGenerator dep =
+                new BuildDependencyGenerator(this, g);
+        System.out.println(dep.getDependencies().render());
+
         this.process(g, false);
+
+
     }
 
 
@@ -60,11 +67,12 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         final Grammar g;
 
         LOGGER.debug("ast " + ast.getGrammarName());
-        if (ast.grammarType == ANTLRParser.LEXER)
-            g = new InmemantlrLexerGrammar(this, ast);
-        else
-            g = new InmemantlrGrammar(this, ast);
 
+        if (ast.grammarType == ANTLRParser.LEXER) {
+            g = new InmemantlrLexerGrammar(this, ast);
+        } else {
+            g = new InmemantlrGrammar(this, ast);
+        }
         // ensure each node has pointer to surrounding grammar
         GrammarTransformPipeline.setGrammarPtr(g, ast);
         return g;
@@ -111,5 +119,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         }
         return sortedRoots;
     }
+
+
 
 }

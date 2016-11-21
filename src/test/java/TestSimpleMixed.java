@@ -24,30 +24,47 @@
  * SOFTWARE.
  **/
 
+import org.junit.Assert;
 import org.junit.Test;
-import org.snt.inmemantlr.utils.EscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.DefaultTreeListener;
+import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.utils.FileUtils;
 
-import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import java.io.InputStream;
 
-public class TestUtils {
+public class TestSimpleMixed {
 
-    @Test
-    public void testEscapeUtils() {
-        String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
-        String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
-        String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
-        assertEquals(suesc, sorig);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestSimple.class);
 
-        assertEquals(EscapeUtils.escapeSpecialCharacters(null), "");
-        assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "");
-    }
+    String sgrammarcontent = "";
 
     @Test
-    public void testFileUtils() {
-        assertEquals(FileUtils.loadFileContent(""), null);
-        assertEquals(FileUtils.getStringFromStream(null), null);
+    public void testInterpreter() throws IOException {
+
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/SimpleMixed.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        }
+
+        GenericParser gp = new GenericParser(sgrammarcontent);
+        DefaultTreeListener t = new DefaultTreeListener();
+
+        gp.setListener(t);
+        gp.compile();
+
+        // this example shows you how one could use inmemantlr for incremental parsing
+        try {
+            Ast ast;
+            gp.parse("jan 1999 12");
+            ast = t.getAst();
+            Assert.assertEquals(ast.getNodes().size(),6);
+        } catch (IllegalWorkflowException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
-    
 }
