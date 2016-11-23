@@ -34,25 +34,26 @@ import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.comp.CunitProvider;
+import org.snt.inmemantlr.comp.FileProvider;
+import org.snt.inmemantlr.comp.StringCompiler;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.SerializationException;
 import org.snt.inmemantlr.grammar.InmemantlrGrammar;
 import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
+import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.tool.InmemantlrTool;
-import org.snt.inmemantlr.tool.StringCodeGenPipeline;
+import org.snt.inmemantlr.comp.StringCodeGenPipeline;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -64,25 +65,24 @@ public class GenericParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericParser.class);
 
     private InmemantlrTool antlr = new InmemantlrTool();
-    private Set<StringCodeGenPipeline> gen = new LinkedHashSet<>();
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc = new StringCompiler();
+    private FileProvider fp = new FileProvider();
     private boolean useCached = true;
     private String lexerName = "";
     private String parserName = "";
 
 
     private void init(Set<String> gcontent, ToolCustomizer tlc) {
-        antlr.gen_dependencies = true;
         if (tlc != null) {
             tlc.customize(antlr);
         }
         Set<GrammarRootAST> ast = antlr.sortGrammarByTokenVocab(gcontent);
         for (GrammarRootAST gast : ast) {
             LOGGER.debug("gast {}", gast.getGrammarName());
-            StringCodeGenPipeline pip = getPipeline(gast);
-            gen.add(pip);
+            antlr.createPipeline(gast);
         }
+        finalize(antlr.getMainPipeline().getG());
     }
 
     private GenericParser(MemoryTupleSet mset, String parserName, String
@@ -93,15 +93,17 @@ public class GenericParser {
         this.lexerName = lexerName;
     }
 
+
+    public void addUtiltyJavaFiles(File ... f) throws FileNotFoundException {
+        fp.addFiles(f);
+    }
+
     /**
      * create an antlr grammar based on a string and the grammar name
      *
-     * @param ast grammar ast
-     * @return codegen pipeline object
+     * @param g grammar
      */
-    private StringCodeGenPipeline getPipeline(GrammarRootAST ast) {
-        LOGGER.debug("create grammar {}", ast.getGrammarName());
-        final Grammar g = antlr.createGrammar(ast);
+    private void finalize(Grammar g) {
         if(g.isParser()) {
             LOGGER.debug("parser {}", g.name);
             parserName = g.name;
@@ -112,9 +114,6 @@ public class GenericParser {
             parserName = g.name + "Parser";
             lexerName = g.name + "Lexer";
         }
-        g.fileName = g.name;
-
-        return new StringCodeGenPipeline(g, g.name);
     }
 
     /**
@@ -201,11 +200,11 @@ public class GenericParser {
         return new GenericParser(tlc, false, content);
     }
 
-    /**
-     * compile grammar file
-     *
-     * @return true if compilation was successful, false otherwise
-     */
+    public void setClassPath(List cp) {
+        this.sc.setClassPath(cp);
+    }
+
+
     public boolean compile() {
         LOGGER.debug("compile");
         // the antlr objects are already compiled
@@ -213,12 +212,22 @@ public class GenericParser {
             return false;
 
         String tokvoc = "";
-
-
         StringCodeGenPipeline last = null;
-        for(StringCodeGenPipeline p : gen) {
+
+        Set<StringCodeGenPipeline> pip = antlr.getPipelines();
+        Set<CunitProvider> cu = new LinkedHashSet();
+
+        if(!fp.getItems().isEmpty()) {
+            cu.add(fp);
+        }
+
+        LOGGER.debug("imported {}", antlr.getImported());
+
+        for(StringCodeGenPipeline p : pip) {
 
             Grammar g = p.getG();
+
+            LOGGER.debug("process {}", g.name);
 
             if(last != null && last.hasTokenVocab()) {
                 tokvoc = last.getTokenVocabString();
@@ -232,17 +241,19 @@ public class GenericParser {
                 }
             }
 
-            // process grammar
-            antlr.process(g);
-            // process string code gen pipeline afterwards
-            p.process();
-            if(!sc.compile(gen))
-                return false;
-
-            last = p;
+            if(!antlr.isImported(g.name)) {
+                antlr.process(g);
+                p.process();
+                cu.add(p);
+                last = p;
+            }
         }
 
-        LOGGER.debug("compile {} elements", gen.size());
+
+        if(!sc.compile(cu)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -388,6 +399,7 @@ public class GenericParser {
     public boolean antrlObjectsAvailable() {
         return getAllCompiledObjects().size() > 0;
     }
+
 
     public void store(String file, boolean overwrite) throws SerializationException {
         File loc = new File(file);

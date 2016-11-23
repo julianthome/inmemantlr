@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.comp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

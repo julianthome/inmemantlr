@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.listener;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;

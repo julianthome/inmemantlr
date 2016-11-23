@@ -29,13 +29,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.DefaultTreeListener;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -177,10 +178,12 @@ public class TestExternalGrammars {
     }
 
 
-    /**@Test
+    @Test
     public void testAntlr4() {
 
         Subject s = subjects.get("antlr4");
+
+        LOGGER.debug(s.toString());
         Assert.assertNotNull(s);
 
         List<File> filtered = Arrays.stream(s.g4).filter(
@@ -188,17 +191,32 @@ public class TestExternalGrammars {
         ).collect(Collectors.toList());
 
 
+
+        // Antlr4 requires an extra file
+        File additionalFile = new File(grammar.getAbsoluteFile() +
+        "/antlr4/src/main/java/org/antlr/parser/antlr4/LexerAdaptor.java");
+
+        assert filtered.size() == 3;
+
         File [] in = filtered.toArray(new File [filtered.size()]);
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(in);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Assert.assertTrue(false);
         }
+
+        try {
+            gp.addUtiltyJavaFiles(additionalFile);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("file not found");
+            Assert.assertTrue(false);
+        }
+
         gp.compile();
 
-        Assert.assertEquals(s.examples.length,1);
+        Assert.assertEquals(s.examples.length,3);
 
         try {
             gp.parse(s.examples[0]);
@@ -208,6 +226,6 @@ public class TestExternalGrammars {
             e.printStackTrace();
         }
 
-    }**/
+    }
 
 }

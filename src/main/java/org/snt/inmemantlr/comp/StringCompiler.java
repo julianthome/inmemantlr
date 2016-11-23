@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.comp;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -37,7 +37,6 @@ import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTuple;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
-import org.snt.inmemantlr.tool.StringCodeGenPipeline;
 
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -61,7 +60,16 @@ public class StringCompiler {
     private MemoryTupleSet mt = null;
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
-    private Map<String, Class<?>> classes = new HashMap<>();
+    private Map<String, Class<?>> classes = new HashMap();
+    private List cp = new ArrayList();
+
+    public List getClassPath() {
+        return cp;
+    }
+
+    public void setClassPath(List cp) {
+        this.cp.addAll(cp);
+    }
 
     /**
      * constructors
@@ -85,13 +93,17 @@ public class StringCompiler {
 
     private static final Class[] parameters = new Class[]{URL.class};
 
+
     /**
      * do the compilation for the antlr artifacts
      *
-     * @param scgps string code generation pipeline
+     * @param units string code generation pipeline
      * @return true if compilation was successful, false otherwise
      */
-    public boolean compile(Set<StringCodeGenPipeline> scgps) {
+    public boolean compile(Set<CunitProvider> units) {
+
+        LOGGER.debug("compile {} units", units.size());
+
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
@@ -100,8 +112,9 @@ public class StringCompiler {
         List<MemorySource> cunit = new ArrayList();
         Set<MemorySource> mset = new HashSet();
 
-        for(StringCodeGenPipeline sc : scgps) {
-            cunit.addAll(getCompilationUnits(sc));
+        for(CunitProvider sc : units) {
+            LOGGER.debug("unit {}", sc.getItems().toArray());
+            cunit.addAll(sc.getItems());
         }
 
         mset.addAll(cunit);
@@ -112,11 +125,10 @@ public class StringCompiler {
         Writer out = new PrintWriter(System.out);
 
         List<String> optionList = new ArrayList<>();
+        optionList.addAll(cp);
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
                 dianosticListener, optionList, classes, cunit);
-
-
 
         boolean ret = compile.call();
 
@@ -131,56 +143,6 @@ public class StringCompiler {
         return ret;
     }
 
-    /**
-     * do the compilation for the antlr artifacts
-     *
-     * @param scgp string code generation pipeline
-     * @return true if compilation was successful, false otherwise
-     */
-    public boolean compile(StringCodeGenPipeline scgp) {
-        return compile(Collections.singleton(scgp));
-    }
-
-
-    private List<MemorySource> getCompilationUnits(StringCodeGenPipeline
-                                                           scgp) {
-
-
-        List<MemorySource> compilationUnits = new ArrayList<>();
-
-        if (scgp.hasLexer()) {
-            MemorySource ms = new MemorySource(scgp.getLexerName(), scgp.getLexer().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-        if (scgp.hasBaseListener()) {
-            MemorySource ms = new MemorySource(scgp.getBaseListenerName(), scgp.getBaseListener().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-        if (scgp.hasBaseVisitor()) {
-            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-        if (scgp.hasParser()) {
-            MemorySource ms = new MemorySource(scgp.getParserName(), scgp.getParser().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-        if (scgp.hasListener()) {
-            MemorySource ms = new MemorySource(scgp.getListenerName(), scgp.getListener().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-        if (scgp.hasVisitor()) {
-            MemorySource ms = new MemorySource(scgp.getBaseVisitorName(), scgp.getBaseVisitor().render());
-            LOGGER.debug("add memory source {}", ms.getClassName());
-            compilationUnits.add(ms);
-        }
-
-        return compilationUnits;
-    }
 
     /**
      * find class based on class name
@@ -285,4 +247,6 @@ public class StringCompiler {
     public MemoryTupleSet getAllCompiledObjects() {
         return mt;
     }
+
+
 }

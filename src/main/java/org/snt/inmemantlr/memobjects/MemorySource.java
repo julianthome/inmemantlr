@@ -89,4 +89,9 @@ public class MemorySource extends MemoryFile implements Serializable {
     public InputStream openInputStream() {
         return new ByteArrayInputStream(src.getBytes());
     }
+
+    @Override
+    public String toString() {
+        return cname;
+    }
 }

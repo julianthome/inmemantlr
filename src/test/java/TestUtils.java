@@ -49,5 +49,5 @@ public class TestUtils {
         assertEquals(FileUtils.loadFileContent(""), null);
         assertEquals(FileUtils.getStringFromStream(null), null);
     }
-    
+
 }

@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.DefaultTreeListener;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;

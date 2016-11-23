@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.DefaultTreeListener;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.tree.Ast;

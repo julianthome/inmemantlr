@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr;
+package org.snt.inmemantlr.listener;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -74,7 +74,7 @@ public class DefaultListener implements ParseTreeListener, Serializable {
      *
      * @param p parser
      */
-    protected void setParser(Parser p) {
+    public void setParser(Parser p) {
         parser = p;
         rmap.clear();
         rmap.putAll(parser.getRuleIndexMap());

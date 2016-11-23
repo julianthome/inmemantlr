@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr.tool;
+package org.snt.inmemantlr.comp;
 
 import org.antlr.v4.codegen.CodeGenPipeline;
 import org.antlr.v4.codegen.CodeGenerator;
@@ -40,17 +40,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.grammar.InmemantlrGrammar;
+import org.snt.inmemantlr.memobjects.MemorySource;
 import org.stringtemplate.v4.ST;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * extended code gen pipeline for compiling
  * antlr grammars in-memory
  */
-public class StringCodeGenPipeline extends CodeGenPipeline {
+public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringCodeGenPipeline.class);
 
@@ -65,12 +64,11 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
      * constructor
      *
      * @param g antlr grammar object
-     * @param name grammar name
      */
-    public StringCodeGenPipeline(Grammar g, String name) {
+    public StringCodeGenPipeline(Grammar g) {
         super(g);
         this.g = g;
-        this.name = name;
+        this.name = g.name;
         lexer = null;
         listener = null;
         visitor = null;
@@ -384,5 +382,47 @@ public class StringCodeGenPipeline extends CodeGenPipeline {
 
     private String modFile(OutputFile f) {
         return FilenameUtils.removeExtension(f.fileName);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public int hashCode(){
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof StringCodeGenPipeline))
+            return false;
+
+        return name.equals(((StringCodeGenPipeline)o).name);
+    }
+
+    @Override
+    public Collection<MemorySource> getItems() {
+        List<MemorySource> ret = new Vector();
+        if (hasLexer()) {
+            ret.add(new MemorySource(getLexerName(), getLexer().render()));
+        }
+        if (hasBaseListener()) {
+            ret.add(new MemorySource(getBaseListenerName(), getBaseListener().render()));
+        }
+        if (hasBaseVisitor()) {
+            ret.add(new MemorySource(getBaseVisitorName(), getBaseVisitor().render()));
+        }
+        if (hasParser()) {
+            ret.add(new MemorySource(getParserName(), getParser().render()));
+        }
+        if (hasListener()) {
+            ret.add(new MemorySource(getListenerName(), getListener().render()));
+        }
+        if (hasVisitor()) {
+            ret.add(new MemorySource(getVisitorName(), getVisitor().render()));
+        }
+        return ret;
     }
 }
