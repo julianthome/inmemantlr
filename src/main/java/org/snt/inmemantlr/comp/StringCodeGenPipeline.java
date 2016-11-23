@@ -425,4 +425,9 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
         }
         return ret;
     }
+
+    @Override
+    public boolean hasItems() {
+        return getItems().size() > 0;
+    }
 }

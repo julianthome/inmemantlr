@@ -102,7 +102,7 @@ public class StringCompiler {
      */
     public boolean compile(Set<CunitProvider> units) {
 
-        LOGGER.debug("compile {} units", units.size());
+        LOGGER.debug("compile {} units", units.toString());
 
         JavaCompiler javac = new EclipseCompiler();
 
@@ -113,7 +113,6 @@ public class StringCompiler {
         Set<MemorySource> mset = new HashSet();
 
         for(CunitProvider sc : units) {
-            LOGGER.debug("unit {}", sc.getItems().toArray());
             cunit.addAll(sc.getItems());
         }
 

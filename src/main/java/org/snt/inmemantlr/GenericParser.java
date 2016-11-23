@@ -32,10 +32,12 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.comp.CunitProvider;
 import org.snt.inmemantlr.comp.FileProvider;
+import org.snt.inmemantlr.comp.StringCodeGenPipeline;
 import org.snt.inmemantlr.comp.StringCompiler;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
@@ -44,9 +46,9 @@ import org.snt.inmemantlr.grammar.InmemantlrGrammar;
 import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
 import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
+import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.tool.InmemantlrTool;
-import org.snt.inmemantlr.comp.StringCodeGenPipeline;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
 
@@ -81,8 +83,8 @@ public class GenericParser {
         for (GrammarRootAST gast : ast) {
             LOGGER.debug("gast {}", gast.getGrammarName());
             antlr.createPipeline(gast);
+            setParserLexer(gast.g);
         }
-        finalize(antlr.getMainPipeline().getG());
     }
 
     private GenericParser(MemoryTupleSet mset, String parserName, String
@@ -94,8 +96,15 @@ public class GenericParser {
     }
 
 
-    public void addUtiltyJavaFiles(File ... f) throws FileNotFoundException {
-        fp.addFiles(f);
+    public void addUtilityJavaFile(File f) throws
+            FileNotFoundException {
+
+        String name = FilenameUtils.removeExtension(f
+                        .getName());
+        String content = FileUtils.loadFileContent(f);
+        assert f.exists();
+        LOGGER.debug("add utiltiy {}", name);
+        fp.addFiles(new MemorySource(name, content));
     }
 
     /**
@@ -103,7 +112,7 @@ public class GenericParser {
      *
      * @param g grammar
      */
-    private void finalize(Grammar g) {
+    private void setParserLexer(Grammar g) {
         if(g.isParser()) {
             LOGGER.debug("parser {}", g.name);
             parserName = g.name;
@@ -217,7 +226,7 @@ public class GenericParser {
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
         Set<CunitProvider> cu = new LinkedHashSet();
 
-        if(!fp.getItems().isEmpty()) {
+        if(fp.hasItems()) {
             cu.add(fp);
         }
 
@@ -248,7 +257,6 @@ public class GenericParser {
                 last = p;
             }
         }
-
 
         if(!sc.compile(cu)) {
             return false;

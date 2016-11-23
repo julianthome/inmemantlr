@@ -7,7 +7,7 @@ Moreover, one can easily generate an abstract syntax tree (AST) from a parsed fi
 All of the above-mentioned inmemantlr features are illustrated by [examples](#toc).
 
 # Status
-[![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)
+[![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # TOC
 
