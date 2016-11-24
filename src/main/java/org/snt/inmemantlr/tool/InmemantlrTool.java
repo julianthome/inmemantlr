@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.comp.StringCodeGenPipeline;
 import org.snt.inmemantlr.grammar.InmemantlrGrammar;
 import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
+import org.snt.inmemantlr.utils.Tuple;
 
 import java.io.IOException;
 import java.util.*;
@@ -53,6 +54,9 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private List<String> order = new Vector();
     private Set<String> imported = new HashSet();
+    
+    private String parserName = "";
+    private String lexerName ="";
 
     public InmemantlrTool() {
         //gen_dependencies = true;
@@ -194,8 +198,27 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
                 .name)).collect(Collectors.toSet());
 
     }
+    
 
-    public void process() {
+    private void setParserLexer(Grammar g) {
+        String pfx = getPackagePrefix();
+        if(g.isParser()) {
+            LOGGER.debug("parser {}", g.name);
+            parserName = pfx + g.name;
+        } else if (g.isLexer()) {
+            LOGGER.debug("lexer {}", g.name);
+            lexerName = pfx + g.name;
+        } else {
+            parserName = pfx + g.name + "Parser";
+            lexerName = pfx + g.name + "Lexer";
+        }
+    }
+
+    public Tuple<String,String> process() {
+    	
+    	String parser = "";
+    	String lexer = "";
+    	
         String tokvoc = "";
         StringCodeGenPipeline last = null;
         // order is important here
@@ -214,16 +237,24 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
                     tokvoc = "";
                 }
             }
-            process(g);
-            p.process();
-            last = p;
+            
+            if(!isImported(g.name) || last == null) {
+            	process(p.getG());
+	            p.process();
+	            last = p;
+	            setParserLexer(p.getG());
+            }
         }
+        
+        assert parserName.length() > 0;
+        assert lexerName.length() > 0;
+        
+        return new Tuple(parserName, lexerName);
     }
 
     public Set<StringCodeGenPipeline> getCompilationUnits() {
         return getPipelines().stream().filter(p -> !isImported
-                (p.getG()
-                .name))
+                (p.getG().name))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

@@ -49,6 +49,7 @@ import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.tool.InmemantlrTool;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
+import org.snt.inmemantlr.utils.Tuple;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -81,14 +82,15 @@ public class GenericParser {
         for (GrammarRootAST gast : ast) {
             LOGGER.debug("gast {}", gast.getGrammarName());
             antlr.createPipeline(gast);
-            setParserLexer(gast.g);
-        }
+        }        
     }
 
     private GenericParser(MemoryTupleSet mset, String parserName, String
             lexerName){
         assert mset != null && mset.size() > 0;
         sc.load(mset);
+        LOGGER.debug("parser ", parserName);
+        LOGGER.debug("parser ", lexerName);
         this.parserName = parserName;
         this.lexerName = lexerName;
     }
@@ -110,24 +112,6 @@ public class GenericParser {
         fp.addFiles(new MemorySource(name, content));
     }
 
-    /**
-     * create an antlr grammar based on a string and the grammar name
-     *
-     * @param g grammar
-     */
-    private void setParserLexer(Grammar g) {
-        String pfx = antlr.getPackagePrefix();
-        if(g.isParser()) {
-            LOGGER.debug("parser {}", g.name);
-            parserName = pfx + g.name;
-        } else if (g.isLexer()) {
-            LOGGER.debug("lexer {}", g.name);
-            lexerName = pfx + g.name;
-        } else {
-            parserName = pfx + g.name + "Parser";
-            lexerName = pfx + g.name + "Lexer";
-        }
-    }
 
     /**
      * constructor
@@ -227,8 +211,11 @@ public class GenericParser {
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
         // process all grammar objects
-        antlr.process();
+        Tuple<String,String> parserLexer = antlr.process();
 
+        parserName = parserLexer.getFirst();
+        lexerName = parserLexer.getSecond();
+        
         Set<CunitProvider> cu = new LinkedHashSet();
 
         if(fp.hasItems()) {
