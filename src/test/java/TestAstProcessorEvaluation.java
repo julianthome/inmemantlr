@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -81,11 +81,11 @@ public class TestAstProcessorEvaluation {
                 @Override
                 protected void process(AstNode n) {
                     LOGGER.debug("id " + n.getId());
-                    if(n.getRule().equals("expression")){
+                    if (n.getRule().equals("expression")) {
                         int n0 = Integer.parseInt(smap.get(n.getChild(0)));
                         int n1 = Integer.parseInt(smap.get(n.getChild(2)));
                         int result = 0;
-                        switch(smap.get(n.getChild(1))) {
+                        switch (smap.get(n.getChild(1))) {
                             case "+":
                                 result = n0 + n1;
                                 break;

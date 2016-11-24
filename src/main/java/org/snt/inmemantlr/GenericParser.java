@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -81,11 +81,11 @@ public class GenericParser {
         for (GrammarRootAST gast : ast) {
             LOGGER.debug("gast {}", gast.getGrammarName());
             antlr.createPipeline(gast);
-        }        
+        }
     }
 
     private GenericParser(MemoryTupleSet mset, String parserName, String
-            lexerName){
+            lexerName) {
         assert mset != null && mset.size() > 0;
         sc.load(mset);
         LOGGER.debug("parser ", parserName);
@@ -99,10 +99,10 @@ public class GenericParser {
             FileNotFoundException {
 
         String name = FilenameUtils.removeExtension(f
-                        .getName());
+                .getName());
         String content = FileUtils.loadFileContent(f);
 
-        if(!f.exists()) {
+        if (!f.exists()) {
             throw new FileNotFoundException("File " + f.getName() + " does " +
                     "not exist");
         }
@@ -116,9 +116,9 @@ public class GenericParser {
      * constructor
      *
      * @param gcontent List of antlr grammar content
-     * @param tlc a ToolCustomizer
+     * @param tlc      a ToolCustomizer
      */
-    public GenericParser(ToolCustomizer tlc, String ... gcontent) {
+    public GenericParser(ToolCustomizer tlc, String... gcontent) {
         init(new HashSet(Arrays.asList(gcontent)), tlc);
     }
 
@@ -127,60 +127,60 @@ public class GenericParser {
      *
      * @param gcontent List of antlr grammar content
      */
-    public GenericParser(String ... gcontent) {
+    public GenericParser(String... gcontent) {
         init(new HashSet(Arrays.asList(gcontent)), null);
     }
 
 
-
     /**
      * constructor
      *
      * @param gfile List of antlr grammar files
-     * @param tlc a ToolCustomizer
+     * @param tlc   a ToolCustomizer
+     * @throws FileNotFoundException file not found
      */
-    public GenericParser(ToolCustomizer tlc, File ... gfile) throws FileNotFoundException {
+    public GenericParser(ToolCustomizer tlc, File... gfile) throws FileNotFoundException {
         Set<String> gcontent = new HashSet();
-        for(File f : gfile) {
-            if(!f.exists() || !f.canRead())
+        for (File f : gfile) {
+            if (!f.exists() || !f.canRead())
                 throw new FileNotFoundException("file " + f.getAbsolutePath()
                         + " does not exist or is not readable");
 
             gcontent.add(FileUtils.loadFileContent(f.getAbsolutePath()));
         }
-        init(gcontent,tlc);
+        init(gcontent, tlc);
     }
 
     /**
-     * constructor
+     * File was not found
      *
      * @param gfile List of antlr grammar files
+     * @throws FileNotFoundException file not found
      */
-    public GenericParser(File ... gfile) throws FileNotFoundException {
+    public GenericParser(File... gfile) throws FileNotFoundException {
         Set<String> gcontent = new HashSet();
-        for(File f : gfile) {
+        for (File f : gfile) {
 
-            if(!f.exists() || !f.canRead())
+            if (!f.exists() || !f.canRead())
                 throw new FileNotFoundException("file " + f.getAbsolutePath()
                         + " does not exist or is not readable");
 
             gcontent.add(FileUtils.loadFileContent(f.getAbsolutePath()));
         }
-        init(gcontent,null);
+        init(gcontent, null);
     }
-
 
 
     /**
      * constructor
      *
-     * @param content grammar file content
-     * @param tlc a ToolCustomizer
+     * @param content   grammar file content
+     * @param tlc       a ToolCustomizer
      * @param useCached true to used cached lexers, otherwise false
      */
-    public GenericParser(ToolCustomizer tlc, boolean useCached, String ...
+    public GenericParser(ToolCustomizer tlc, boolean useCached, String...
             content) {
-        this(tlc,content);
+        this(tlc, content);
         this.useCached = useCached;
     }
 
@@ -188,7 +188,7 @@ public class GenericParser {
      * a signle instance of a generic parser
      *
      * @param content grammar content
-     * @param tlc a ToolCustomizer
+     * @param tlc     a ToolCustomizer
      * @return grammar object
      */
     public static GenericParser instance(ToolCustomizer tlc, String content) {
@@ -214,14 +214,14 @@ public class GenericParser {
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
 
-        for(StringCodeGenPipeline p : pip) {
-            for(MemorySource ms : p.getItems()) {
+        for (StringCodeGenPipeline p : pip) {
+            for (MemorySource ms : p.getItems()) {
                 LOGGER.debug(ms.getName() + " " + ms.toString());
             }
         }
 
         // process all grammar objects
-        Tuple<String,String> parserLexer = antlr.process();
+        Tuple<String, String> parserLexer = antlr.process();
 
         parserName = parserLexer.getFirst();
         lexerName = parserLexer.getSecond();
@@ -231,14 +231,14 @@ public class GenericParser {
 
         Set<CunitProvider> cu = new LinkedHashSet();
 
-        if(fp.hasItems()) {
+        if (fp.hasItems()) {
             cu.add(fp);
         }
 
         cu.addAll(antlr.getCompilationUnits());
 
 
-        if(!sc.compile(cu)) {
+        if (!sc.compile(cu)) {
             return false;
         }
 
@@ -251,13 +251,12 @@ public class GenericParser {
      * @param toParse string to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
-     * @throws FileNotFoundException if input file cannot be found
+     * @throws FileNotFoundException    if input file cannot be found
      */
     public ParserRuleContext parse(File toParse) throws
             IllegalWorkflowException, FileNotFoundException {
         return parse(toParse, null);
     }
-
 
 
     /**
@@ -275,14 +274,15 @@ public class GenericParser {
     /**
      * parse in fresh
      *
-     * @param toParse string to parse
-     * @param production Production name to parse
+     * @param toParse    file to parse
+     * @param production production name to parse
      * @return context
-     * @throws IllegalWorkflowException if compilation did not take place
+     * @throws IllegalWorkflowException sources are not compiled
+     * @throws FileNotFoundException    file not found
      */
     public ParserRuleContext parse(File toParse, String production) throws
             IllegalWorkflowException, FileNotFoundException {
-        if(!toParse.exists()) {
+        if (!toParse.exists()) {
             throw new FileNotFoundException("could not find file " + toParse
                     .getAbsolutePath());
         }
@@ -292,8 +292,8 @@ public class GenericParser {
     /**
      * parse in fresh
      *
-     * @param toParse string to parse
-     * @param production Production name to parse
+     * @param toParse    string to parse
+     * @param production production name to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      */

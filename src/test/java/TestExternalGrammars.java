@@ -105,7 +105,7 @@ public class TestExternalGrammars {
     private GenericParser getParserForSubject(Subject s, ToolCustomizer tc) {
         GenericParser gp = null;
         try {
-            gp = new GenericParser(tc,s.g4.toArray(new File[s.g4.size()]));
+            gp = new GenericParser(tc, s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
             Assert.assertTrue(false);
         }
@@ -120,7 +120,7 @@ public class TestExternalGrammars {
         p.setListener(dt);
         toParse.forEach(e -> {
             try {
-                LOGGER.debug("parse {}", e.getName());
+                LOGGER.info("parse {}", e.getName());
                 p.parse(e);
             } catch (IllegalWorkflowException e1) {
                 LOGGER.error(e1.getMessage());
@@ -159,19 +159,19 @@ public class TestExternalGrammars {
             Subject subject = new Subject();
             subject.name = f.getName();
 
-            File [] gs = f.listFiles(pathname -> pathname
-                            .getName()
-                            .endsWith(".g4"));
+            File[] gs = f.listFiles(pathname -> pathname
+                    .getName()
+                    .endsWith(".g4"));
 
-            if( gs != null && gs.length > 0)
+            if (gs != null && gs.length > 0)
                 subject.g4.addAll(Arrays.asList(gs));
 
             File examples = new File(f.getAbsolutePath() + "/examples");
 
-            File [] xamples = examples.listFiles(pathname
-                            -> !pathname.isDirectory());
+            File[] xamples = examples.listFiles(pathname
+                    -> !pathname.isDirectory());
 
-            if(xamples != null && xamples.length > 0)
+            if (xamples != null && xamples.length > 0)
                 subject.examples.addAll(Arrays.asList(xamples));
 
             subjects.put(subject.name, subject);
@@ -186,7 +186,7 @@ public class TestExternalGrammars {
             return;
         }
 
-        LOGGER.debug("test {}", s.name);
+        LOGGER.info("test {}", s.name);
         GenericParser gp = getParserForSubject(s, null);
         Assert.assertTrue(gp.compile());
         LOGGER.debug("successfully compiled grammar");
@@ -201,7 +201,7 @@ public class TestExternalGrammars {
     @Test
     public void testGeneration() {
         subjects.values().stream().filter(Subject::hasExamples).
-                forEach(s -> testSubject(s,true));
+                forEach(s -> testSubject(s, true));
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TestExternalGrammars {
 
         GenericParser gp = null;
         try {
-            gp = new GenericParser(tc,files.toArray(new File[files
+            gp = new GenericParser(tc, files.toArray(new File[files
                     .size()]));
         } catch (FileNotFoundException e) {
             Assert.assertTrue(false);
@@ -264,7 +264,7 @@ public class TestExternalGrammars {
             }
         };
 
-        GenericParser gp = getParserForSubject(s,tc);
+        GenericParser gp = getParserForSubject(s, tc);
 
         DefaultTreeListener dt = new DefaultTreeListener();
 

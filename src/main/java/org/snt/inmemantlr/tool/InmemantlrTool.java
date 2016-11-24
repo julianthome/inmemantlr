@@ -12,7 +12,7 @@
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
  * <p>
- * The above copyright notice and this permission notice shall be imported in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -56,14 +56,18 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private List<String> order = new Vector();
     private Set<String> imported = new HashSet();
-    
+
     private String parserName = "";
-    private String lexerName ="";
+    private String lexerName = "";
 
     public InmemantlrTool() {
         gen_dependencies = true;
     }
 
+    /**
+     * process a grammar
+     * @param g grammar
+     */
     public void process(Grammar g) {
         super.process(g, false);
     }
@@ -86,6 +90,11 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     }
 
 
+    /**
+     * wrapper for sorting grammars based on the imported token vocab
+     * @param gcs grammar content collection
+     * @return set of grammar asts
+     */
     public Set<GrammarRootAST> sortGrammarByTokenVocab(Set<String> gcs) {
         Graph<String> g = new Graph<String>();
         List<GrammarRootAST> roots = new ArrayList<GrammarRootAST>();
@@ -121,7 +130,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             for (GrammarRootAST root : roots) {
                 if (root.getGrammarName().equals(grammarName)) {
                     LOGGER.debug("add to ast buffer {}", grammarName);
-                    ast.put(grammarName,root);
+                    ast.put(grammarName, root);
                     order.add(grammarName);
                     sortedRoots.add(root);
                     break;
@@ -141,26 +150,31 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
         assert pip.containsKey(name);
 
-        if(pip.containsKey(name))
+        if (pip.containsKey(name))
             return pip.get(name).getG();
 
         return null;
 
     }
 
+    /**
+     * return package prefix if configured by user
+     * @return package prefix
+     */
     public String getPackagePrefix() {
         return genPackage != null && genPackage.length() > 0 ? genPackage + "" +
                 "." :
                 "";
     }
 
-    public String getFilePrefix() {
-        return getPackagePrefix().replaceAll("\\.","/");
-    }
-
+    /**
+     * create code generation pipeline from grammar ast
+     * @param ast grammar ast
+     * @return string code generation pipeline
+     */
     public StringCodeGenPipeline createPipeline(GrammarRootAST ast) {
 
-        if(pip.containsKey(ast.getGrammarName()))
+        if (pip.containsKey(ast.getGrammarName()))
             pip.get(ast.getGrammarName());
 
         LOGGER.debug("create grammar {}", ast.getGrammarName());
@@ -173,45 +187,41 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
         LOGGER.debug("put grammar {}", g.name);
 
-        pip.put(g.name,spip);
+        pip.put(g.name, spip);
 
         return spip;
     }
 
+    /**
+     * get string code generation pipelines in-order (based on imported
+     * token vocab)
+     * @return ordered set of string code gen pipelines
+     */
     public Set<StringCodeGenPipeline> getPipelines() {
         Set<StringCodeGenPipeline> ret = new LinkedHashSet<>();
-        order.stream().filter( s -> pip.containsKey(s)).forEach( s -> ret.add
+        order.stream().filter(s -> pip.containsKey(s)).forEach(s -> ret.add
                 (pip.get(s)));
         return ret;
     }
 
-    public StringCodeGenPipeline getMainPipeline() {
 
-        assert order.size() == ast.size();
-        assert order.size() > 0;
-
-        StringCodeGenPipeline scp = pip.get(order.get(order.size()-1));
-
-        LOGGER.debug("Main pipeline {}", scp.getG().name);
-        return scp;
-    }
-
+    /**
+     * check whether grammar is imported
+     * @param name grammar name
+     * @return true if grammar is imported, false otherwise
+     */
     public boolean isImported(String name) {
         return imported.contains(name);
     }
 
-    public Set<StringCodeGenPipeline> getImported() {
-        return pip.values().stream().filter(v ->
-                imported
-                .contains(v.getG()
-                .name)).collect(Collectors.toSet());
 
-    }
-    
-
+    /**
+     * set parser and lexer variables internally
+     * @param g grammar
+     */
     private void setParserLexer(Grammar g) {
         String pfx = getPackagePrefix();
-        if(g.isParser()) {
+        if (g.isParser()) {
             LOGGER.debug("parser {}", g.name);
             parserName = pfx + g.name;
         } else if (g.isLexer()) {
@@ -223,7 +233,13 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         }
     }
 
-    public Tuple<String,String> process() {
+    /**
+     * process all code generation pipeline and return the 'main'
+     * grammar and lexer names which are used to load the right classes
+     * afterwards
+     * @return tuple of lexer and parser names
+     */
+    public Tuple<String, String> process() {
 
         LOGGER.debug("process grammars");
         StringCodeGenPipeline last = null;
@@ -232,51 +248,54 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
         assert pip.size() > 0;
 
-        for(StringCodeGenPipeline p : pip) {
+        for (StringCodeGenPipeline p : pip) {
             Grammar g = p.getG();
             LOGGER.debug("process {}", g.name);
 
             String s = getDepTokVocName(g);
 
-            if(s != null && !s.isEmpty()) {
+            if (s != null && !s.isEmpty()) {
                 LOGGER.debug("get {}", s);
                 String tokvoc = tokvok.get(s);
 
-                if(g instanceof InmemantlrGrammar) {
+                if (g instanceof InmemantlrGrammar) {
                     LOGGER.debug("import from {}", tokvoc);
                     ((InmemantlrGrammar) g).setTokenVocab(tokvoc);
-                }
-                else if (g instanceof InmemantlrLexerGrammar) {
+                } else if (g instanceof InmemantlrLexerGrammar) {
                     LOGGER.debug("2");
                     ((InmemantlrLexerGrammar) g).setTokenVocab(tokvoc);
                 }
             }
 
-            if(!isImported(g.name)) {
-            	    process(p.getG());
-	            p.process();
-	            setParserLexer(p.getG());
+            if (!isImported(g.name)) {
+                process(p.getG());
+                p.process();
+                setParserLexer(p.getG());
 
-                if(p.hasTokenVocab()) {
+                if (p.hasTokenVocab()) {
                     LOGGER.debug("put tokvok {}", g.name);
                     tokvok.put(g.name, p.getTokenVocabString());
                 }
             }
         }
-        
+
         assert parserName.length() > 0;
         assert lexerName.length() > 0;
-        
+
         return new Tuple(parserName, lexerName);
     }
 
-
+    /**
+     * return name of token vocab if imported by grammar g
+     * @param g grammar
+     * @return name of token vocab
+     */
     public String getDepTokVocName(Grammar g) {
 
         String ret = "";
         GrammarAST tokenVocabNode = findOptionValueAST(g.ast, "tokenVocab");
 
-        if(tokenVocabNode != null) {
+        if (tokenVocabNode != null) {
             ret = tokenVocabNode.getText();
             LOGGER.debug("TOKENVOC {}", ret);
         }
@@ -284,12 +303,16 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         return ret;
     }
 
+    /**
+     * get compilation units, i.e. all string code generation pipelines that
+     * are not imported
+     * @return ordered set of string code pipelines
+     */
     public Set<StringCodeGenPipeline> getCompilationUnits() {
         return getPipelines().stream().filter(p -> !isImported
                 (p.getG().name))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
 
 
 }

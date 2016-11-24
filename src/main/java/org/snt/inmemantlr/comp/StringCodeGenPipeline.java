@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -262,21 +262,21 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
 
     ST getTokenVocabOutput() {
         ST vocabFileST = new ST(CodeGenerator.vocabFilePattern);
-        Map<String,Integer> tokens = new LinkedHashMap<String,Integer>();
+        Map<String, Integer> tokens = new LinkedHashMap<String, Integer>();
         // make constants for the token names
         for (String t : g.tokenNameToTypeMap.keySet()) {
             int tokenType = g.tokenNameToTypeMap.get(t);
-            if ( tokenType>= Token.MIN_USER_TOKEN_TYPE) {
+            if (tokenType >= Token.MIN_USER_TOKEN_TYPE) {
                 tokens.put(t, tokenType);
             }
         }
         vocabFileST.add("tokenvocab", tokens);
 
         // now dump the strings
-        Map<String,Integer> literals = new LinkedHashMap<String,Integer>();
+        Map<String, Integer> literals = new LinkedHashMap<String, Integer>();
         for (String literal : g.stringLiteralToTypeMap.keySet()) {
             int tokenType = g.stringLiteralToTypeMap.get(literal);
-            if ( tokenType>=Token.MIN_USER_TOKEN_TYPE) {
+            if (tokenType >= Token.MIN_USER_TOKEN_TYPE) {
                 literals.put(literal, tokenType);
             }
         }
@@ -292,7 +292,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return parser name
      */
     public String getParserName() {
-        ParserFile f = (ParserFile)this.parser.getAttributes().get("file");
+        ParserFile f = (ParserFile) this.parser.getAttributes().get("file");
         LOGGER.debug("parser name {}", modFile(f));
         return modFile(f);
     }
@@ -303,7 +303,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return lexer name
      */
     public String getLexerName() {
-        LexerFile f = (LexerFile)this.lexer.getAttributes().get("lexerFile");
+        LexerFile f = (LexerFile) this.lexer.getAttributes().get("lexerFile");
         LOGGER.debug("lexer name {}", modFile(f));
         return modFile(f);
     }
@@ -326,7 +326,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return base visitor name
      */
     public String getBaseVisitorName() {
-        BaseVisitorFile f = (BaseVisitorFile)this.listener.getAttributes().get
+        BaseVisitorFile f = (BaseVisitorFile) this.listener.getAttributes().get
                 ("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
@@ -338,7 +338,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return listener name
      */
     public String getListenerName() {
-        ListenerFile f = (ListenerFile)this.listener.getAttributes().get
+        ListenerFile f = (ListenerFile) this.listener.getAttributes().get
                 ("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
@@ -350,7 +350,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return base listener name
      */
     public String getBaseListenerName() {
-        BaseListenerFile f = (BaseListenerFile)this.baseListener.getAttributes().get("file");
+        BaseListenerFile f = (BaseListenerFile) this.baseListener.getAttributes().get("file");
         LOGGER.debug("base listener name {}", modFile(f));
         return modFile(f);
     }
@@ -363,19 +363,19 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
     public String getTokenVocabString() {
 
 
-        Map<String,Integer> vocab = (Map<String,Integer>)tokenvocab.getAttribute
+        Map<String, Integer> vocab = (Map<String, Integer>) tokenvocab.getAttribute
                 ("tokenvocab");
-        Map<String,Integer> lit = (Map<String,Integer>)tokenvocab.getAttribute
+        Map<String, Integer> lit = (Map<String, Integer>) tokenvocab.getAttribute
                 ("literals");
 
         StringBuilder sb = new StringBuilder();
 
         vocab.forEach(
-                (s,i) -> sb.append(s.toString() + "=" + i.toString() +  "\n")
+                (s, i) -> sb.append(s.toString() + "=" + i.toString() + "\n")
         );
 
         lit.forEach(
-                (s,i) -> sb.append(s.toString() + "=" + i.toString() +  "\n")
+                (s, i) -> sb.append(s.toString() + "=" + i.toString() + "\n")
         );
 
 
@@ -392,16 +392,16 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return name.hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof StringCodeGenPipeline))
+        if (!(o instanceof StringCodeGenPipeline))
             return false;
 
-        return name.equals(((StringCodeGenPipeline)o).name);
+        return name.equals(((StringCodeGenPipeline) o).name);
     }
 
     @Override
