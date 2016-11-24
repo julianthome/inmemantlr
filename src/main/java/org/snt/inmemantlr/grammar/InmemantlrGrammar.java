@@ -27,6 +27,7 @@
 package org.snt.inmemantlr.grammar;
 
 import org.antlr.v4.Tool;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.slf4j.Logger;
@@ -58,9 +59,18 @@ public class InmemantlrGrammar extends Grammar {
         if(!tokenVocab.isEmpty()) {
             MemoryTokenVocabParser vparser = new MemoryTokenVocabParser(this, tokenVocab);
             Map<String,Integer> tokens = vparser.load();
+
+            int ret = 0;
             for (String t : tokens.keySet()) {
-                if ( t.charAt(0)=='\'' ) defineStringLiteral(t, tokens.get(t));
-                else defineTokenName(t, tokens.get(t));
+                if ( t.charAt(0)=='\'' ) {
+                    ret = defineStringLiteral(t, tokens.get(t));
+                    assert ret !=  Token.INVALID_TYPE;
+                } else {
+                    ret = defineTokenName(t, tokens.get(t));
+                    assert ret !=  Token.INVALID_TYPE;
+                }
+                LOGGER.debug("token " + t + " " + tokens.get(t));
+
             }
         }
     }

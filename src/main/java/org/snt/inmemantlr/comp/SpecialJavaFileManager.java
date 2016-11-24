@@ -75,7 +75,6 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
                                                FileObject sibling) throws IOException {
         MemoryByteCode mbc = new MemoryByteCode(name);
         // bookkeeping of memory bytecode
-        //LOGGER.debug("put class {}", mbc.getClassName());
         mb.put(mbc.getClassName(), mbc);
         xcl.addClass(mbc);
         return mbc;

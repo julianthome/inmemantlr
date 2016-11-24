@@ -63,9 +63,9 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
 
         Pattern tokenDefPattern = Pattern.compile("([^\n]+?)[ \\t]*?=[ \\t]*?([0-9]+)");
 
-        String tokenDef = tv.nextLine();
         int lineNum = 1;
         while (tv.hasNextLine()) {
+            String tokenDef = tv.nextLine();
             Matcher matcher = tokenDefPattern.matcher(tokenDef);
             if (matcher.find()) {
                 String tokenID = matcher.group(1);
@@ -78,6 +78,8 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
                             " bad token type: " + tokenTypeS,
                             lineNum);
                     tokenType = Token.INVALID_TOKEN_TYPE;
+                    assert false;
+                    System.exit(-1);
                 }
                 tokens.put(tokenID, tokenType);
                 maxTokenType = Math.max(maxTokenType, tokenType);
@@ -87,9 +89,10 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
                     LOGGER.error(vocabName + CodeGenerator.VOCAB_FILE_EXTENSION,
                             " bad token def: " + tokenDef,
                             lineNum);
+                    assert false;
+                    System.exit(-1);
                 }
             }
-            tokenDef = tv.nextLine();
         }
 
         return tokens;

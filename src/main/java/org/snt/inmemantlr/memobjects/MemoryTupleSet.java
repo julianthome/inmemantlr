@@ -89,4 +89,21 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
         assert mset != null;
         mts.addAll(mset.mts);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        mts.stream().forEach(
+                t -> {
+                    MemorySource s = t.getSource();
+                    Set<MemoryByteCode> bs = t.getByteCodeObjects();
+                    sb.append(s.getClassName() + ":\n");
+                    bs.forEach(b -> sb.append(b.getClassName() + " "));
+                    sb.append("\n");
+                }
+        );
+
+        return sb.toString();
+    }
 }

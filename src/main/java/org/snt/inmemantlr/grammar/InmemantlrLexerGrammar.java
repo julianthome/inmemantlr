@@ -61,11 +61,14 @@ public class InmemantlrLexerGrammar extends LexerGrammar {
         if(!tokenVocab.isEmpty()) {
             MemoryTokenVocabParser vparser = new MemoryTokenVocabParser(this, tokenVocab);
             Map<String,Integer> tokens = vparser.load();
-            LOGGER.debug("Tokens: {}", tokens);
             for (String t : tokens.keySet()) {
-                if ( t.charAt(0)=='\'' ) defineStringLiteral(t, tokens.get(t));
-                else defineTokenName(t, tokens.get(t));
+                if ( t.charAt(0)=='\'' )
+                    defineStringLiteral(t, tokens.get(t));
+                else
+                    defineTokenName(t, tokens.get(t));
             }
+        } else {
+            LOGGER.debug("token vocab emtpy");
         }
     }
 }

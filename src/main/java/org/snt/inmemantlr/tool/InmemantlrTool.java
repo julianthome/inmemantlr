@@ -52,6 +52,8 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     private Map<String, StringCodeGenPipeline> pip = new HashMap();
     private Map<String, GrammarRootAST> ast = new HashMap();
 
+    private Map<String, String> tokvok = new HashMap();
+
     private List<String> order = new Vector();
     private Set<String> imported = new HashSet();
     
@@ -59,7 +61,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     private String lexerName ="";
 
     public InmemantlrTool() {
-        //gen_dependencies = true;
+        gen_dependencies = true;
     }
 
     public void process(Grammar g) {
@@ -119,7 +121,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             for (GrammarRootAST root : roots) {
                 if (root.getGrammarName().equals(grammarName)) {
                     LOGGER.debug("add to ast buffer {}", grammarName);
-                    ast.put( grammarName,root);
+                    ast.put(grammarName,root);
                     order.add(grammarName);
                     sortedRoots.add(root);
                     break;
@@ -135,15 +137,15 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             IOException {
         String name = nameNode.getText();
 
-        LOGGER.debug("LOAD " + name);
+        imported.add(name);
 
         assert pip.containsKey(name);
-        imported.add(name);
 
         if(pip.containsKey(name))
             return pip.get(name).getG();
 
         return null;
+
     }
 
     public String getPackagePrefix() {
@@ -158,14 +160,21 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     public StringCodeGenPipeline createPipeline(GrammarRootAST ast) {
 
-        if(this.pip.containsKey(ast.getGrammarName()))
-            return pip.get(ast.getGrammarName());
+        if(pip.containsKey(ast.getGrammarName()))
+            pip.get(ast.getGrammarName());
 
         LOGGER.debug("create grammar {}", ast.getGrammarName());
+
         final Grammar g = createGrammar(ast);
         g.fileName = g.name;
+
+
         StringCodeGenPipeline spip = new StringCodeGenPipeline(g);
+
+        LOGGER.debug("put grammar {}", g.name);
+
         pip.put(g.name,spip);
+
         return spip;
     }
 
@@ -215,34 +224,43 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     }
 
     public Tuple<String,String> process() {
-    	
-    	String parser = "";
-    	String lexer = "";
-    	
-        String tokvoc = "";
+
+        LOGGER.debug("process grammars");
         StringCodeGenPipeline last = null;
         // order is important here
         Set<StringCodeGenPipeline> pip = getPipelines();
+
+        assert pip.size() > 0;
+
         for(StringCodeGenPipeline p : pip) {
             Grammar g = p.getG();
             LOGGER.debug("process {}", g.name);
-            if(last != null && last.hasTokenVocab()) {
-                tokvoc = last.getTokenVocabString();
+
+            String s = getDepTokVocName(g);
+
+            if(s != null && !s.isEmpty()) {
+                LOGGER.debug("get {}", s);
+                String tokvoc = tokvok.get(s);
+
                 if(g instanceof InmemantlrGrammar) {
+                    LOGGER.debug("import from {}", tokvoc);
                     ((InmemantlrGrammar) g).setTokenVocab(tokvoc);
-                    tokvoc = "";
                 }
                 else if (g instanceof InmemantlrLexerGrammar) {
+                    LOGGER.debug("2");
                     ((InmemantlrLexerGrammar) g).setTokenVocab(tokvoc);
-                    tokvoc = "";
                 }
             }
-            
-            if(!isImported(g.name) || last == null) {
-            	process(p.getG());
+
+            if(!isImported(g.name)) {
+            	    process(p.getG());
 	            p.process();
-	            last = p;
 	            setParserLexer(p.getG());
+
+                if(p.hasTokenVocab()) {
+                    LOGGER.debug("put tokvok {}", g.name);
+                    tokvok.put(g.name, p.getTokenVocabString());
+                }
             }
         }
         
@@ -250,6 +268,20 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         assert lexerName.length() > 0;
         
         return new Tuple(parserName, lexerName);
+    }
+
+
+    public String getDepTokVocName(Grammar g) {
+
+        String ret = "";
+        GrammarAST tokenVocabNode = findOptionValueAST(g.ast, "tokenVocab");
+
+        if(tokenVocabNode != null) {
+            ret = tokenVocabNode.getText();
+            LOGGER.debug("TOKENVOC {}", ret);
+        }
+
+        return ret;
     }
 
     public Set<StringCodeGenPipeline> getCompilationUnits() {

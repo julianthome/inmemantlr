@@ -55,6 +55,9 @@ import java.util.*;
 public class StringCompiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringCompiler.class);
+    private static final String CONSTRUCTOR_ARG = "interface org.antlr" +
+            ".v4.runtime.TokenStream";
+
 
     private SpecialClassLoader cl = null;
     private MemoryTupleSet mt = null;
@@ -104,8 +107,6 @@ public class StringCompiler {
      */
     public boolean compile(Set<CunitProvider> units) {
 
-        LOGGER.debug("compile {} units", units.toString());
-
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
@@ -116,6 +117,9 @@ public class StringCompiler {
 
         for(CunitProvider sc : units) {
             cunit.addAll(sc.getItems());
+            for(MemorySource ms : sc.getItems()) {
+                LOGGER.debug(ms.toString());
+            }
         }
 
         mset.addAll(cunit);
@@ -136,14 +140,11 @@ public class StringCompiler {
         // note that for the memory-source -- we just store the class name
         // the corresponding yte code
         for (MemorySource ms : mset) {
-            LOGGER.debug("get {} from file manager ", ms.getClassName());
-            Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms
-                    .getClassName());
-            assert mb != null;
+            Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
+            assert mb != null && mb.size() > 0;
             // book keeping of source-bytecode tuples
             mt.addMemoryTuple(ms, mb);
         }
-
         return ret;
     }
 
@@ -230,13 +231,26 @@ public class StringCompiler {
         Class<?> elex = findClass(parserClassName);
         assert elex != null;
         Constructor<?>[] cstr = elex.getConstructors();
+
         assert cstr.length >= 1;
 
+        int cidx = 0;
+
+        for(Constructor c : cstr) {
+            LOGGER.debug(c.getParameters()[0].getType().toString());
+            if(c.getParameterCount() == 1 && c.getParameters()[0].getType()
+                    .toString().equals(CONSTRUCTOR_ARG)) {
+                break;
+            }
+            cidx ++;
+        }
+
         try {
-            eparser = (Parser) cstr[0].newInstance(tstream);
+            eparser = (Parser) cstr[cidx].newInstance(tstream);
             parser.put(parserClassName, eparser);
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
+            LOGGER.error(e.getMessage());
             return null;
         }
 

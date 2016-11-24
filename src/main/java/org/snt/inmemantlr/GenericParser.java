@@ -30,7 +30,6 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -140,9 +139,13 @@ public class GenericParser {
      * @param gfile List of antlr grammar files
      * @param tlc a ToolCustomizer
      */
-    public GenericParser(ToolCustomizer tlc, File ... gfile) {
+    public GenericParser(ToolCustomizer tlc, File ... gfile) throws FileNotFoundException {
         Set<String> gcontent = new HashSet();
         for(File f : gfile) {
+            if(!f.exists() || !f.canRead())
+                throw new FileNotFoundException("file " + f.getAbsolutePath()
+                        + " does not exist or is not readable");
+
             gcontent.add(FileUtils.loadFileContent(f.getAbsolutePath()));
         }
         init(gcontent,tlc);
@@ -210,12 +213,22 @@ public class GenericParser {
 
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
+
+        for(StringCodeGenPipeline p : pip) {
+            for(MemorySource ms : p.getItems()) {
+                LOGGER.debug(ms.getName() + " " + ms.toString());
+            }
+        }
+
         // process all grammar objects
         Tuple<String,String> parserLexer = antlr.process();
 
         parserName = parserLexer.getFirst();
         lexerName = parserLexer.getSecond();
-        
+
+        assert !lexerName.isEmpty();
+        assert !parserName.isEmpty();
+
         Set<CunitProvider> cu = new LinkedHashSet();
 
         if(fp.hasItems()) {
