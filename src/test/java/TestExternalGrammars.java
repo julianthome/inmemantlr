@@ -215,7 +215,10 @@ public class TestExternalGrammars {
         gp.setListener(dt);
 
         try {
-            File util = new File(getClass().getResource("grammars-v4/antlr4/src/main/java/org/antlr/parser/antlr4/LexerAdaptor.java").getFile());
+            File util = new File
+                    ("src/test/resources/grammars-v4/antlr4/src/main/java" +
+                            "/org" +
+                            "/antlr/parser/antlr4/LexerAdaptor.java");
             gp.addUtilityJavaFile(util);
         } catch (FileNotFoundException e) {
             Assert.assertFalse(true);
@@ -239,8 +242,6 @@ public class TestExternalGrammars {
             Assert.assertNotNull(ast);
             Assert.assertTrue(ast.getNodes().size() > 1);
         });
-
-
     }
 
 
