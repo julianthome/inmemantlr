@@ -54,6 +54,9 @@ class SpecialClassLoader extends ClassLoader {
      * @throws ClassNotFoundException if the class could not be found
      */
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+
+        LOGGER.debug("find class {}", name);
+
         MemoryByteCode mbc = m.get(name);
         if (mbc == null) {
             mbc = m.get(name.replace(".", "/"));
@@ -62,7 +65,6 @@ class SpecialClassLoader extends ClassLoader {
                 return super.findClass(name);
             }
         }
-
         byte[] bseq = mbc.getBytes();
         return defineClass(name, bseq, 0, bseq.length);
     }

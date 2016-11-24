@@ -74,6 +74,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
         visitor = null;
         baseListener = null;
         baseVisitor = null;
+
     }
 
     /**

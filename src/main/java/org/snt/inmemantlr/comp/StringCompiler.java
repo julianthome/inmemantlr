@@ -71,6 +71,8 @@ public class StringCompiler {
         this.cp.addAll(cp);
     }
 
+
+
     /**
      * constructors
      */
@@ -131,9 +133,12 @@ public class StringCompiler {
 
         boolean ret = compile.call();
 
+        // note that for the memory-source -- we just store the class name
+        // the corresponding yte code
         for (MemorySource ms : mset) {
             LOGGER.debug("get {} from file manager ", ms.getClassName());
-            Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
+            Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms
+                    .getClassName());
             assert mb != null;
             // book keeping of source-bytecode tuples
             mt.addMemoryTuple(ms, mb);

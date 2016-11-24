@@ -99,10 +99,17 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      * @return the bytecode of class cname
      */
     public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
-        assert mb.containsKey(cname);
 
-        return mb.values().stream()
-                .filter(m -> m.getClassName().equals(cname) || m.getClassName().matches(cname + "\\$.*"))
-                .collect(toSet());
+        Set<MemoryByteCode> ret = mb.values().stream()
+                .filter(m -> m.getClassName().matches("(([a-zA-Z_0-9]+)/)*" + cname + "(\\$.*)?")).collect(toSet());
+
+        assert ret.size() > 0;
+
+        return ret;
     }
+
+    public Set<MemoryByteCode> getCompiledObjects() {
+        return mb.values().stream().collect(toSet());
+    }
+
 }

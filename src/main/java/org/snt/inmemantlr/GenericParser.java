@@ -42,8 +42,6 @@ import org.snt.inmemantlr.comp.StringCompiler;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.SerializationException;
-import org.snt.inmemantlr.grammar.InmemantlrGrammar;
-import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
 import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemorySource;
@@ -102,7 +100,12 @@ public class GenericParser {
         String name = FilenameUtils.removeExtension(f
                         .getName());
         String content = FileUtils.loadFileContent(f);
-        assert f.exists();
+
+        if(!f.exists()) {
+            throw new FileNotFoundException("File " + f.getName() + " does " +
+                    "not exist");
+        }
+
         LOGGER.debug("add utiltiy {}", name);
         fp.addFiles(new MemorySource(name, content));
     }
@@ -113,15 +116,16 @@ public class GenericParser {
      * @param g grammar
      */
     private void setParserLexer(Grammar g) {
+        String pfx = antlr.getPackagePrefix();
         if(g.isParser()) {
             LOGGER.debug("parser {}", g.name);
-            parserName = g.name;
+            parserName = pfx + g.name;
         } else if (g.isLexer()) {
             LOGGER.debug("lexer {}", g.name);
-            lexerName = g.name;
+            lexerName = pfx + g.name;
         } else {
-            parserName = g.name + "Parser";
-            lexerName = g.name + "Lexer";
+            parserName = pfx + g.name + "Parser";
+            lexerName = pfx + g.name + "Lexer";
         }
     }
 
@@ -220,43 +224,19 @@ public class GenericParser {
         if (antrlObjectsAvailable())
             return false;
 
-        String tokvoc = "";
-        StringCodeGenPipeline last = null;
-
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
+
+        // process all grammar objects
+        antlr.process();
+
         Set<CunitProvider> cu = new LinkedHashSet();
 
         if(fp.hasItems()) {
             cu.add(fp);
         }
 
-        LOGGER.debug("imported {}", antlr.getImported());
+        cu.addAll(antlr.getCompilationUnits());
 
-        for(StringCodeGenPipeline p : pip) {
-
-            Grammar g = p.getG();
-
-            LOGGER.debug("process {}", g.name);
-
-            if(last != null && last.hasTokenVocab()) {
-                tokvoc = last.getTokenVocabString();
-                if(g instanceof InmemantlrGrammar) {
-                    ((InmemantlrGrammar) g).setTokenVocab(tokvoc);
-                    tokvoc = "";
-                }
-                else if (g instanceof InmemantlrLexerGrammar) {
-                    ((InmemantlrLexerGrammar) g).setTokenVocab(tokvoc);
-                    tokvoc = "";
-                }
-            }
-
-            if(!antlr.isImported(g.name)) {
-                antlr.process(g);
-                p.process();
-                cu.add(p);
-                last = p;
-            }
-        }
 
         if(!sc.compile(cu)) {
             return false;

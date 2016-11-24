@@ -115,7 +115,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             for (GrammarRootAST root : roots) {
                 if (root.getGrammarName().equals(grammarName)) {
                     LOGGER.debug("add to ast buffer {}", grammarName);
-                    ast.put(grammarName,root);
+                    ast.put( grammarName,root);
                     order.add(grammarName);
                     sortedRoots.add(root);
                     break;
@@ -140,6 +140,16 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             return pip.get(name).getG();
 
         return null;
+    }
+
+    public String getPackagePrefix() {
+        return genPackage != null && genPackage.length() > 0 ? genPackage + "" +
+                "." :
+                "";
+    }
+
+    public String getFilePrefix() {
+        return getPackagePrefix().replaceAll("\\.","/");
     }
 
     public StringCodeGenPipeline createPipeline(GrammarRootAST ast) {
@@ -178,12 +188,43 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     }
 
     public Set<StringCodeGenPipeline> getImported() {
-
         return pip.values().stream().filter(v ->
                 imported
                 .contains(v.getG()
                 .name)).collect(Collectors.toSet());
 
+    }
+
+    public void process() {
+        String tokvoc = "";
+        StringCodeGenPipeline last = null;
+        // order is important here
+        Set<StringCodeGenPipeline> pip = getPipelines();
+        for(StringCodeGenPipeline p : pip) {
+            Grammar g = p.getG();
+            LOGGER.debug("process {}", g.name);
+            if(last != null && last.hasTokenVocab()) {
+                tokvoc = last.getTokenVocabString();
+                if(g instanceof InmemantlrGrammar) {
+                    ((InmemantlrGrammar) g).setTokenVocab(tokvoc);
+                    tokvoc = "";
+                }
+                else if (g instanceof InmemantlrLexerGrammar) {
+                    ((InmemantlrLexerGrammar) g).setTokenVocab(tokvoc);
+                    tokvoc = "";
+                }
+            }
+            process(g);
+            p.process();
+            last = p;
+        }
+    }
+
+    public Set<StringCodeGenPipeline> getCompilationUnits() {
+        return getPipelines().stream().filter(p -> !isImported
+                (p.getG()
+                .name))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 
