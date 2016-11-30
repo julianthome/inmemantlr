@@ -44,7 +44,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class InmemantlrTool extends org.antlr.v4.Tool {
+    public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InmemantlrTool.class);
     private static final long serialVersionUID = 898401600890559769L;

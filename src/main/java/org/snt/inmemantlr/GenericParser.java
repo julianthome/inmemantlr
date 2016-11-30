@@ -158,9 +158,11 @@ public class GenericParser {
      * @throws FileNotFoundException file not found
      */
     public GenericParser(File... gfile) throws FileNotFoundException {
+
+        assert gfile.length > 0;
+
         Set<String> gcontent = new HashSet();
         for (File f : gfile) {
-
             if (!f.exists() || !f.canRead())
                 throw new FileNotFoundException("file " + f.getAbsolutePath()
                         + " does not exist or is not readable");
@@ -207,12 +209,15 @@ public class GenericParser {
 
     public boolean compile() {
         LOGGER.debug("compile");
+
         // the antlr objects are already compiled
         if (antrlObjectsAvailable())
             return false;
 
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
+        if (pip.isEmpty())
+            return false;
 
         for (StringCodeGenPipeline p : pip) {
             for (MemorySource ms : p.getItems()) {
