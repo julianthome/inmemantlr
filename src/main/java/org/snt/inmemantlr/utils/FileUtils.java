@@ -57,7 +57,7 @@ public final class FileUtils {
     public static String loadFileContent(String path) {
         byte[] bytes;
         try {
-            RandomAccessFile f = new RandomAccessFile(path, "r");
+            RandomAccessFile f = new RandomAccessFile(path,"r");
             bytes = new byte[(int) f.length()];
             f.read(bytes);
         } catch (Exception e) {
