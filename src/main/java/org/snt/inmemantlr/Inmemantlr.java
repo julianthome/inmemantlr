@@ -28,11 +28,16 @@
 package org.snt.inmemantlr;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
+import org.snt.inmemantlr.tree.Ast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class Inmemantlr {
@@ -44,6 +49,16 @@ public class Inmemantlr {
     private static List<File> getListOfFiles(String file) {
         List<File> ret = new Vector();
         ret.add(new File(file));
+        return ret;
+    }
+
+    private static Set<File> getFileForOption(CommandLine cmd, String opt){
+        Set<File> ret = new HashSet();
+        if(cmd.hasOption(opt)) {
+            Set<String> us = new HashSet();
+            us.addAll(Arrays.asList(cmd.getOptionValues(opt)));
+            us.stream().map(File::new).map(ret::add);
+        }
         return ret;
     }
 
@@ -125,40 +140,38 @@ public class Inmemantlr {
         }
 
         // input files
-        Set<String> ins = new HashSet();
-        ins.addAll(Arrays.asList(cmd.getOptionValues("in")));
-        Set<File> infs = new HashSet();
-        ins.stream().map(v -> getListOfFiles(v)).forEach(infs::addAll);
+        Set<File> ins = getFileForOption(cmd, "in");
 
-        assert infs.size() > 0;
+        if(ins.size() <= 0) {
+            LOGGER.error("No input files were specified");
+            System.exit(-1);
+        }
 
         // grammar files
-        Set<String> gs = new HashSet();
-        gs.addAll(Arrays.asList(cmd.getOptionValues("grmr")));
-        Set<File> gfs = new HashSet();
-        gs.stream().map(v -> getListOfFiles(v)).forEach(gfs::addAll);
+        Set<File> gs = getFileForOption(cmd, "grmr");
 
-
-        assert gfs.size() > 0;
+        if(gs.size() <= 0) {
+            LOGGER.error("No input files were specified");
+            System.exit(-1);
+        }
 
         // utility files
-        Set<File> uf = new HashSet();
-
-        if(cmd.hasOption("util")) {
-            Set<String> us = new HashSet();
-            us.addAll(Arrays.asList(cmd.getOptionValues("util")));
-            us.stream().map(v -> getListOfFiles(v)).forEach(uf::addAll);
-        }
+        Set<File> uf = getFileForOption(cmd, "util");
 
         // output dir
         String os = cmd.getOptionValue("odir");
         File ofs = new File(os);
 
+        if(!ofs.exists() || !ofs.isDirectory()) {
+            LOGGER.error("directory {} does not exist", os);
+            System.exit(-1);
+        }
+
         LOGGER.info("create generic parser");
 
         GenericParser gp = null;
         try {
-            gp = new GenericParser(gfs.toArray(new File[gfs.size()]));
+            gp = new GenericParser(gs.toArray(new File[gs.size()]));
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
             System.exit(-1);
@@ -166,7 +179,7 @@ public class Inmemantlr {
 
         for(File f : uf){
             try {
-                gp.addUtilityJavaFile(f);
+                gp.addUtilityJavaFiles(f);
             } catch (FileNotFoundException e) {
                 LOGGER.error(e.getMessage());
                 System.exit(-1);
@@ -181,6 +194,28 @@ public class Inmemantlr {
         if(!gp.compile()) {
             LOGGER.error("could not compile generic parser");
             System.exit(-1);
+        }
+
+        Ast ast = null;
+        for(File f : ins){
+            try {
+                gp.parse(f);
+            } catch (IllegalWorkflowException | FileNotFoundException e) {
+                LOGGER.error(e.getMessage());
+                System.exit(-1);
+            }
+            ast = dt.getAst();
+
+            String of = ofs.getAbsolutePath() + "/" +
+                    FilenameUtils.removeExtension(f.getName()) + ".dot";
+
+            try {
+                FileUtils.writeStringToFile(null, of, ast.toDot());
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage());
+                System.exit(-1);
+            }
+
         }
 
     }

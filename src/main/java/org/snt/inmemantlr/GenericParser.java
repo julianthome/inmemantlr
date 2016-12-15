@@ -94,8 +94,20 @@ public class GenericParser {
         this.lexerName = lexerName;
     }
 
+    public void addUtilityJavaFiles(File... fils) throws
+            FileNotFoundException {
+        for (File f : fils) {
+            addUtilityJavaFile(f);
+        }
+    }
 
-    public void addUtilityJavaFile(File f) throws
+    public void addUtilityJavaFiles(String... fils) throws FileNotFoundException {
+        for (String f : fils) {
+            addUtilityJavaFile(new File(f));
+        }
+    }
+
+    private void addUtilityJavaFile(File f) throws
             FileNotFoundException {
 
         String name = FilenameUtils.removeExtension(f

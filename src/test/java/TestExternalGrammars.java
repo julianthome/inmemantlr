@@ -241,7 +241,7 @@ public class TestExternalGrammars {
                     ("src/test/resources/grammars-v4/antlr4/src/main/java" +
                             "/org" +
                             "/antlr/parser/antlr4/LexerAdaptor.java");
-            gp.addUtilityJavaFile(util);
+            gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
             Assert.assertFalse(true);
         }
@@ -274,7 +274,7 @@ public class TestExternalGrammars {
             File util = new File
                     ("src/test/resources/grammars-v4/stringtemplate/" +
                             "src/main/java/org/antlr/parser/st4/LexerAdaptor.java");
-            gp.addUtilityJavaFile(util);
+            gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
             Assert.assertFalse(true);
         }
@@ -300,7 +300,7 @@ public class TestExternalGrammars {
             File util = new File
                     ("src/test/resources/grammars-v4/swift/src/main/java" +
                             "/SwiftSupport.java");
-            gp.addUtilityJavaFile(util);
+            gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
             Assert.assertFalse(true);
         }
@@ -328,7 +328,8 @@ public class TestExternalGrammars {
     public void testPHP() {
         Subject s = subjects.get("php");
 
-        s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4"));
+        s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4") ||
+        f.getName().equals("PHPLexer_Python.g4"));
 
 
         GenericParser gp = null;
