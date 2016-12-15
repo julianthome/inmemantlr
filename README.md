@@ -46,7 +46,7 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 
 # Command-line Tool
 
-Besides the inmemantlr API which is desribed in more detail below, there is also the inmemantlr command-line tool which is well suited for the simple task of generating a dot files based on ASTs that are derived from parsed text files.
+Besides the inmemantlr API which is desribed in more detail below, there is also an inmemantlr command-line tool which is well suited for the simple task of generating a dot files based on ASTs that are derived from parsed text files.
 
 After creating the Maven package, the file `inmemantlr-<version>.jar` can be found within the target directory. The standalone command line tool can be invoked with `java -jar inmemantlr-<version>.jar` with the following options:
 
@@ -63,7 +63,7 @@ usage: java -jar inmemantlr.jar
 
 If no output directory is specified, the generated dot content will be displayed on the console.
 
-The command `java -jar inmemantlr.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files /tmp/iri.dot and /tmp/postal.dot from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
+The command `java -jar inmemantlr.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files `/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
 
 
 
