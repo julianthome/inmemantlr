@@ -13,7 +13,9 @@ All of the above-mentioned inmemantlr features are illustrated by [examples](#to
 
 [Integration](#integration)
 
-[Usage Scenarios](#usage-scenarios)
+[Command-line Tool](#command-line-tool)
+
+[API Usage Scenarios](#api-usage-scenarios)
   * [Simple parsing](#simple-parsing)
   * [AST generation](#ast-generation)
   * [AST processing](#ast-processing)
@@ -42,9 +44,32 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 </dependency>
 ```
 
-# Usage Scenarios
+# Command-line Tool
 
-The following code snippet shows an example how to use inmemantlr. The descriptions are provided as source code comments. For the sake of simplicity, exception handling is omitted for all of the following examples.
+Besides the inmemantlr API which is desribed in more detail below, there is also the inmemantlr command-line tool which is well suited for the simple task of generating a dot files based on ASTs that are derived from parsed text files.
+
+After creating the Maven package, the file `inmemantlr-<version>.jar` can be found within the target directory. The standalone command line tool can be invoked with `java -jar inmemantlr-<version>.jar` with the following options:
+
+```bash
+usage: java -jar inmemantlr.jar
+    --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
+ -h                           print this message
+    --infiles <infiles>       comma-separated list of files to parse
+    --outdir <outdir>         output directory in which the dot files will
+                              be created
+    --utilfiles <utilfiles>   comma-separated list of utility files to be
+                              added for compilation
+```
+
+If no output directory is specified, the generated dot content will be displayed on the console.
+
+The command `java -jar inmemantlr.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files /tmp/iri.dot and /tmp/postal.dot from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
+
+
+
+# API Usage Scenarios
+
+The following code snippet shows an example how to use the API of inmemantlr. The descriptions are provided as source code comments. For the sake of simplicity, exception handling is omitted for all of the following examples.
 
 ## Simple parsing
 

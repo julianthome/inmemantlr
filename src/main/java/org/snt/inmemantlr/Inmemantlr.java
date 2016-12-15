@@ -39,28 +39,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Inmemantlr {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Inmemantlr.class);
 
-
-    // just in case we would add wildcard/regex support later on
-    private static List<File> getListOfFiles(String file) {
-        List<File> ret = new Vector();
-        ret.add(new File(file));
-        return ret;
-    }
-
-    private static Set<File> getFileForOption(CommandLine cmd, String opt){
+    private static Set<File> getFilesForOption(CommandLine cmd, String opt) {
         Set<File> ret = new HashSet();
         if(cmd.hasOption(opt)) {
             Set<String> us = new HashSet();
             us.addAll(Arrays.asList(cmd.getOptionValues(opt)));
-            us.stream().map(File::new).map(ret::add);
+            ret.addAll(us.stream().map(File::new).collect(Collectors.toSet()));
         }
         return ret;
     }
+
 
     public static void main(String[] args) {
 
@@ -73,55 +67,54 @@ public class Inmemantlr {
         // Binary arguments
         options.addOption("h", "print this message");
 
-        Option ufils = Option.builder("util")
-                .numberOfArgs(Option.UNLIMITED_VALUES)
-                .longOpt("utilility-files")
-                .desc("comma-separated list of utility files required for " +
-                        "compilation")
+        Option grmr = Option.builder()
+                .longOpt("grmrfiles")
+                .hasArgs()
+                .desc("comma-separated list of ANTLR files")
+                .required(true)
+                .argName("grmrfiles")
+                .type(String.class)
                 .valueSeparator(',')
-                .argName("util")
-                .required(false)
                 .build();
 
-        Option infiles = Option.builder("in")
-                .numberOfArgs(Option.UNLIMITED_VALUES)
-                .longOpt("input-files")
+        Option infiles = Option.builder()
+                .longOpt("infiles")
+                .hasArgs()
                 .desc("comma-separated list of files to parse")
-                .valueSeparator(',')
                 .required(true)
-                .build();
-
-        Option gfiles = Option.builder("grmr")
-                .numberOfArgs(Option.UNLIMITED_VALUES)
-                .longOpt("grammar-files")
-                .desc("comma-separated list of ANTLRv4 gramar files (.g4)")
+                .argName("infiles")
+                .type(String.class)
                 .valueSeparator(',')
-                .argName("grmr")
-                .required(true)
                 .build();
 
-        Option odir = Option.builder("odir")
-                .numberOfArgs(1)
-                .longOpt("output-dir")
-                .desc("output directory to which parse trees are saved")
+        Option utilfiles = Option.builder()
+                .longOpt("utilfiles")
+                .hasArgs()
+                .desc("comma-separated list of utility files to be added for " +
+                        "compilation")
                 .required(false)
-                .argName("odir")
-                .build();
-
-        Option force = Option.builder("f")
-                .numberOfArgs(0)
-                .longOpt("-force-overwrite")
-                .desc("force write")
+                .argName("utilfiles")
+                .type(String.class)
                 .valueSeparator(',')
-                .required(false)
                 .build();
 
 
-        options.addOption(ufils);
-        options.addOption(gfiles);
+        Option odir = Option.builder()
+                .longOpt("outdir")
+                .desc("output directory in which the dot files will be " +
+                        "created")
+                .required(false)
+                .hasArg(true)
+                .argName("outdir")
+                .type(String.class)
+                .build();
+
+
         options.addOption(infiles);
+        options.addOption(grmr);
+        options.addOption(utilfiles);
         options.addOption(odir);
-        options.addOption(force);
+
 
         CommandLineParser parser = new DefaultParser();
 
@@ -140,35 +133,28 @@ public class Inmemantlr {
         }
 
         // input files
-        Set<File> ins = getFileForOption(cmd, "in");
+        Set<File> ins = getFilesForOption(cmd, "infiles");
+        // grammar files
+        Set<File> gs = getFilesForOption(cmd, "grmrfiles");
+        // utility files
+        Set<File> uf = getFilesForOption(cmd, "utilfiles");
+        // output dir
+        Set<File> od = getFilesForOption(cmd, "outdir");
+
+        assert od.size() <= 1;
 
         if(ins.size() <= 0) {
-            LOGGER.error("No input files were specified");
+            LOGGER.error("no input files were specified");
             System.exit(-1);
         }
-
-        // grammar files
-        Set<File> gs = getFileForOption(cmd, "grmr");
 
         if(gs.size() <= 0) {
-            LOGGER.error("No input files were specified");
+            LOGGER.error("no grammar files were specified");
             System.exit(-1);
         }
 
-        // utility files
-        Set<File> uf = getFileForOption(cmd, "util");
-
-        // output dir
-        String os = cmd.getOptionValue("odir");
-        File ofs = new File(os);
-
-        if(!ofs.exists() || !ofs.isDirectory()) {
-            LOGGER.error("directory {} does not exist", os);
-            System.exit(-1);
-        }
 
         LOGGER.info("create generic parser");
-
         GenericParser gp = null;
         try {
             gp = new GenericParser(gs.toArray(new File[gs.size()]));
@@ -177,9 +163,9 @@ public class Inmemantlr {
             System.exit(-1);
         }
 
-        for(File f : uf){
+        if(!uf.isEmpty()){
             try {
-                gp.addUtilityJavaFiles(f);
+                gp.addUtilityJavaFiles(uf.toArray(new String[uf.size()]));
             } catch (FileNotFoundException e) {
                 LOGGER.error(e.getMessage());
                 System.exit(-1);
@@ -192,11 +178,23 @@ public class Inmemantlr {
 
         LOGGER.info("compile generic parser");
         if(!gp.compile()) {
-            LOGGER.error("could not compile generic parser");
+            LOGGER.error("cannot compile generic parser");
             System.exit(-1);
         }
 
-        Ast ast = null;
+
+        String fpfx = "";
+        for(File of : od){
+            if(!of.exists() || !of.isDirectory()) {
+                LOGGER.error("output directory does not exist or is not a " +
+                        "directory");
+                System.exit(-1);
+            }
+            fpfx = of.getAbsolutePath();
+        }
+
+
+        Ast ast;
         for(File f : ins){
             try {
                 gp.parse(f);
@@ -206,18 +204,27 @@ public class Inmemantlr {
             }
             ast = dt.getAst();
 
-            String of = ofs.getAbsolutePath() + "/" +
-                    FilenameUtils.removeExtension(f.getName()) + ".dot";
+            if(!fpfx.isEmpty()) {
+                String of = fpfx + "/" + FilenameUtils.removeExtension(f
+                        .getName()) + ".dot";
 
-            try {
-                FileUtils.writeStringToFile(null, of, ast.toDot());
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage());
-                System.exit(-1);
+                LOGGER.info("write file {}", of);
+
+                try {
+                    FileUtils.writeStringToFile(new File(of), ast.toDot(),
+                            "UTF-8");
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                    System.exit(-1);
+                }
+
+            } else {
+                LOGGER.info("Tree for {} \n {}", f.getName(), ast.toDot());
             }
 
         }
 
+        System.exit(0);
     }
 
 }
