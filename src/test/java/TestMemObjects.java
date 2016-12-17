@@ -43,6 +43,7 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -94,7 +95,7 @@ public class TestMemObjects {
             LOGGER.debug("source {}", tup.getSource().getClassName());
             // for printing the byte code
             for (MemoryByteCode mc : tup.getByteCodeObjects()) {
-                assert mc != null;
+                Objects.requireNonNull(mc, "MemoryByteCode must not be null");
                 LOGGER.debug("bc name: {}", mc.getClassName());
 
                 if (!mc.isInnerClass()) {

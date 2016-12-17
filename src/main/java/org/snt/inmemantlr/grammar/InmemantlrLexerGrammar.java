@@ -49,7 +49,7 @@ public class InmemantlrLexerGrammar extends LexerGrammar {
     }
 
     public void setTokenVocab(String tokenVocab) {
-        LOGGER.debug("set token vocab {} {}", this.name, tokenVocab);
+        LOGGER.debug("set token vocab {} {}", name, tokenVocab);
         this.tokenVocab = tokenVocab;
     }
 

@@ -26,25 +26,20 @@
 
 package org.snt.inmemantlr.comp;
 
-
-import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.memobjects.MemorySource;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
 public class FileProvider implements CunitProvider {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(FileProvider.class);
-
-    private List<MemorySource> ret = new Vector();
+    private List<MemorySource> ret = new Vector<>();
 
     public void addFiles(MemorySource... ms) throws FileNotFoundException {
-        for (MemorySource f : ms) {
-            ret.add(f);
-        }
+        Arrays.stream(ms).forEach(f -> ret.add(f));
     }
 
     @Override
@@ -59,6 +54,6 @@ public class FileProvider implements CunitProvider {
 
     @Override
     public String toString() {
-        return this.ret.toString();
+        return ret.toString();
     }
 }

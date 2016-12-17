@@ -59,7 +59,6 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
     private ST parser, lexer, visitor, listener, baseListener, baseVisitor;
     private ST tokenvocab;
 
-
     /**
      * constructor
      *
@@ -68,13 +67,12 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
     public StringCodeGenPipeline(Grammar g) {
         super(g);
         this.g = g;
-        this.name = g.name;
+        name = g.name;
         lexer = null;
         listener = null;
         visitor = null;
         baseListener = null;
         baseVisitor = null;
-
     }
 
     /**
@@ -177,7 +175,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
     }
 
     public ST getTokenVocab() {
-        return this.tokenvocab;
+        return tokenvocab;
     }
 
     /**
@@ -189,9 +187,8 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
         return baseVisitor != null;
     }
 
-
     public boolean hasTokenVocab() {
-        return this.tokenvocab != null;
+        return tokenvocab != null;
     }
 
     /**
@@ -262,7 +259,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
 
     ST getTokenVocabOutput() {
         ST vocabFileST = new ST(CodeGenerator.vocabFilePattern);
-        Map<String, Integer> tokens = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> tokens = new LinkedHashMap<>();
         // make constants for the token names
         for (String t : g.tokenNameToTypeMap.keySet()) {
             int tokenType = g.tokenNameToTypeMap.get(t);
@@ -273,7 +270,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
         vocabFileST.add("tokenvocab", tokens);
 
         // now dump the strings
-        Map<String, Integer> literals = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> literals = new LinkedHashMap<>();
         for (String literal : g.stringLiteralToTypeMap.keySet()) {
             int tokenType = g.stringLiteralToTypeMap.get(literal);
             if (tokenType >= Token.MIN_USER_TOKEN_TYPE) {
@@ -285,14 +282,13 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
         return vocabFileST;
     }
 
-
     /**
      * get parser name
      *
      * @return parser name
      */
     public String getParserName() {
-        ParserFile f = (ParserFile) this.parser.getAttributes().get("file");
+        ParserFile f = (ParserFile) parser.getAttributes().get("file");
         LOGGER.debug("parser name {}", modFile(f));
         return modFile(f);
     }
@@ -303,7 +299,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return lexer name
      */
     public String getLexerName() {
-        LexerFile f = (LexerFile) this.lexer.getAttributes().get("lexerFile");
+        LexerFile f = (LexerFile) lexer.getAttributes().get("lexerFile");
         LOGGER.debug("lexer name {}", modFile(f));
         return modFile(f);
     }
@@ -314,8 +310,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return visitor name
      */
     public String getVisitorName() {
-        VisitorFile f = (VisitorFile) this.listener.getAttributes().get
-                ("file");
+        VisitorFile f = (VisitorFile) listener.getAttributes().get("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
     }
@@ -326,8 +321,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return base visitor name
      */
     public String getBaseVisitorName() {
-        BaseVisitorFile f = (BaseVisitorFile) this.listener.getAttributes().get
-                ("file");
+        BaseVisitorFile f = (BaseVisitorFile) listener.getAttributes().get("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
     }
@@ -338,8 +332,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return listener name
      */
     public String getListenerName() {
-        ListenerFile f = (ListenerFile) this.listener.getAttributes().get
-                ("file");
+        ListenerFile f = (ListenerFile) listener.getAttributes().get("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
     }
@@ -350,35 +343,25 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return base listener name
      */
     public String getBaseListenerName() {
-        BaseListenerFile f = (BaseListenerFile) this.baseListener.getAttributes().get("file");
+        BaseListenerFile f = (BaseListenerFile) baseListener.getAttributes().get("file");
         LOGGER.debug("base listener name {}", modFile(f));
         return modFile(f);
     }
 
-
     public String getTokenVocabFileName() {
-        return this.g.name + CodeGenerator.VOCAB_FILE_EXTENSION;
+        return g.name + CodeGenerator.VOCAB_FILE_EXTENSION;
     }
 
+    @SuppressWarnings("unchecked")
     public String getTokenVocabString() {
-
-
         Map<String, Integer> vocab = (Map<String, Integer>) tokenvocab.getAttribute
                 ("tokenvocab");
         Map<String, Integer> lit = (Map<String, Integer>) tokenvocab.getAttribute
                 ("literals");
 
         StringBuilder sb = new StringBuilder();
-
-        vocab.forEach(
-                (s, i) -> sb.append(s.toString() + "=" + i.toString() + "\n")
-        );
-
-        lit.forEach(
-                (s, i) -> sb.append(s.toString() + "=" + i.toString() + "\n")
-        );
-
-
+        vocab.forEach((s, i) -> sb.append(s).append("=").append(i.toString()).append("\n"));
+        lit.forEach((s, i) -> sb.append(s).append("=").append(i.toString()).append("\n"));
         return sb.toString();
     }
 
@@ -398,15 +381,12 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof StringCodeGenPipeline))
-            return false;
-
-        return name.equals(((StringCodeGenPipeline) o).name);
+        return o instanceof StringCodeGenPipeline && name.equals(((StringCodeGenPipeline) o).name);
     }
 
     @Override
     public Collection<MemorySource> getItems() {
-        List<MemorySource> ret = new Vector();
+        List<MemorySource> ret = new Vector<>();
         if (hasLexer()) {
             ret.add(new MemorySource(getLexerName(), getLexer().render()));
         }

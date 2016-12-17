@@ -27,7 +27,6 @@
 package org.snt.inmemantlr.tool;
 
 import org.antlr.runtime.Token;
-import org.antlr.v4.Tool;
 import org.antlr.v4.codegen.CodeGenerator;
 import org.antlr.v4.parse.TokenVocabParser;
 import org.antlr.v4.tool.Grammar;
@@ -55,9 +54,8 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
 
     @Override
     public Map<String, Integer> load() {
-        Map<String, Integer> tokens = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> tokens = new LinkedHashMap<>();
         int maxTokenType = -1;
-        Tool tool = g.tool;
         String vocabName = g.getOptionString("tokenVocab");
 
         if (!tv.hasNextLine())

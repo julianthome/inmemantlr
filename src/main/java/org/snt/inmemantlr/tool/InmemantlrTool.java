@@ -42,20 +42,20 @@ import org.snt.inmemantlr.utils.Tuple;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-    public class InmemantlrTool extends org.antlr.v4.Tool {
+import static java.util.stream.Collectors.toCollection;
+
+public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InmemantlrTool.class);
-    private static final long serialVersionUID = 898401600890559769L;
 
-    private Map<String, StringCodeGenPipeline> pip = new HashMap();
-    private Map<String, GrammarRootAST> ast = new HashMap();
+    private Map<String, StringCodeGenPipeline> pip = new HashMap<>();
+    private Map<String, GrammarRootAST> ast = new HashMap<>();
 
-    private Map<String, String> tokvok = new HashMap();
+    private Map<String, String> tokvok = new HashMap<>();
 
-    private List<String> order = new Vector();
-    private Set<String> imported = new HashSet();
+    private List<String> order = new Vector<>();
+    private Set<String> imported = new HashSet<>();
 
     private String parserName = "";
     private String lexerName = "";
@@ -66,12 +66,12 @@ import java.util.stream.Collectors;
 
     /**
      * process a grammar
+     *
      * @param g grammar
      */
     public void process(Grammar g) {
-        super.process(g, false);
+        process(g, false);
     }
-
 
     @Override
     public Grammar createGrammar(GrammarRootAST ast) {
@@ -89,18 +89,18 @@ import java.util.stream.Collectors;
         return g;
     }
 
-
     /**
      * wrapper for sorting grammars based on the imported token vocab
+     *
      * @param gcs grammar content collection
      * @return set of grammar asts
      */
     public Set<GrammarRootAST> sortGrammarByTokenVocab(Set<String> gcs) {
-        Graph<String> g = new Graph<String>();
-        List<GrammarRootAST> roots = new ArrayList<GrammarRootAST>();
+        Graph<String> g = new Graph<>();
+        List<GrammarRootAST> roots = new ArrayList<>();
         for (String gc : gcs) {
             GrammarAST t = parseGrammarFromString(gc);
-            if (t == null || t instanceof GrammarASTErrorNode)
+            if (t instanceof GrammarASTErrorNode)
                 continue;
 
             if (((GrammarRootAST) t).hasErrors)
@@ -125,7 +125,7 @@ import java.util.stream.Collectors;
 
         List<String> sortedGrammarNames = g.sort();
 
-        LinkedHashSet<GrammarRootAST> sortedRoots = new LinkedHashSet<GrammarRootAST>();
+        LinkedHashSet<GrammarRootAST> sortedRoots = new LinkedHashSet<>();
         for (String grammarName : sortedGrammarNames) {
             for (GrammarRootAST root : roots) {
                 if (root.getGrammarName().equals(grammarName)) {
@@ -142,23 +142,20 @@ import java.util.stream.Collectors;
     }
 
     @Override
-    public Grammar loadImportedGrammar(Grammar g, GrammarAST nameNode) throws
-            IOException {
+    public Grammar loadImportedGrammar(Grammar g, GrammarAST nameNode) throws IOException {
         String name = nameNode.getText();
 
         imported.add(name);
-
-        assert pip.containsKey(name);
 
         if (pip.containsKey(name))
             return pip.get(name).getG();
 
         return null;
-
     }
 
     /**
      * return package prefix if configured by user
+     *
      * @return package prefix
      */
     public String getPackagePrefix() {
@@ -169,11 +166,11 @@ import java.util.stream.Collectors;
 
     /**
      * create code generation pipeline from grammar ast
+     *
      * @param ast grammar ast
      * @return string code generation pipeline
      */
     public StringCodeGenPipeline createPipeline(GrammarRootAST ast) {
-
         if (pip.containsKey(ast.getGrammarName()))
             pip.get(ast.getGrammarName());
 
@@ -181,7 +178,6 @@ import java.util.stream.Collectors;
 
         final Grammar g = createGrammar(ast);
         g.fileName = g.name;
-
 
         StringCodeGenPipeline spip = new StringCodeGenPipeline(g);
 
@@ -195,18 +191,19 @@ import java.util.stream.Collectors;
     /**
      * get string code generation pipelines in-order (based on imported
      * token vocab)
+     *
      * @return ordered set of string code gen pipelines
      */
     public Set<StringCodeGenPipeline> getPipelines() {
-        Set<StringCodeGenPipeline> ret = new LinkedHashSet<>();
-        order.stream().filter(s -> pip.containsKey(s)).forEach(s -> ret.add
-                (pip.get(s)));
-        return ret;
+        return order.stream()
+                .filter(s -> pip.containsKey(s))
+                .map(s -> pip.get(s))
+                .collect(toCollection(LinkedHashSet::new));
     }
-
 
     /**
      * check whether grammar is imported
+     *
      * @param name grammar name
      * @return true if grammar is imported, false otherwise
      */
@@ -214,9 +211,9 @@ import java.util.stream.Collectors;
         return imported.contains(name);
     }
 
-
     /**
      * set parser and lexer variables internally
+     *
      * @param g grammar
      */
     private void setParserLexer(Grammar g) {
@@ -237,23 +234,23 @@ import java.util.stream.Collectors;
      * process all code generation pipeline and return the 'main'
      * grammar and lexer names which are used to load the right classes
      * afterwards
+     *
      * @return tuple of lexer and parser names
      */
     public Tuple<String, String> process() {
-
         LOGGER.debug("process grammars");
         StringCodeGenPipeline last = null;
         // order is important here
         Set<StringCodeGenPipeline> pip = getPipelines();
 
-        assert pip.size() > 0;
+        if (pip.isEmpty())
+            throw new IllegalArgumentException("pip must not be empty");
 
         for (StringCodeGenPipeline p : pip) {
             Grammar g = p.getG();
             LOGGER.debug("process {}", g.name);
 
             String s = getDepTokVocName(g);
-
             if (s != null && !s.isEmpty()) {
                 LOGGER.debug("get {}", s);
                 String tokvoc = tokvok.get(s);
@@ -279,19 +276,22 @@ import java.util.stream.Collectors;
             }
         }
 
-        assert parserName.length() > 0;
-        assert lexerName.length() > 0;
+        if (lexerName.isEmpty())
+            throw new IllegalArgumentException("lexerName must not be empty");
 
-        return new Tuple(parserName, lexerName);
+        if (parserName.isEmpty())
+            throw new IllegalArgumentException("parserName must not be empty");
+
+        return new Tuple<>(parserName, lexerName);
     }
 
     /**
      * return name of token vocab if imported by grammar g
+     *
      * @param g grammar
      * @return name of token vocab
      */
     public String getDepTokVocName(Grammar g) {
-
         String ret = "";
         GrammarAST tokenVocabNode = findOptionValueAST(g.ast, "tokenVocab");
 
@@ -306,13 +306,12 @@ import java.util.stream.Collectors;
     /**
      * get compilation units, i.e. all string code generation pipelines that
      * are not imported
+     *
      * @return ordered set of string code pipelines
      */
     public Set<StringCodeGenPipeline> getCompilationUnits() {
-        return getPipelines().stream().filter(p -> !isImported
-                (p.getG().name))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return getPipelines().stream()
+                .filter(p -> !isImported(p.getG().name))
+                .collect(toCollection(LinkedHashSet::new));
     }
-
-
 }

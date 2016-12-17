@@ -72,7 +72,6 @@ public class GenericParser {
     private String lexerName = "";
     private String parserName = "";
 
-
     private void init(Set<String> gcontent, ToolCustomizer tlc) {
         if (tlc != null) {
             tlc.customize(antlr);
@@ -86,7 +85,9 @@ public class GenericParser {
 
     private GenericParser(MemoryTupleSet mset, String parserName, String
             lexerName) {
-        assert mset != null && mset.size() > 0;
+        if (mset == null || mset.size() == 0)
+            throw new IllegalArgumentException("mset must not be null or empty");
+
         sc.load(mset);
         LOGGER.debug("parser ", parserName);
         LOGGER.debug("parser ", lexerName);
@@ -123,7 +124,6 @@ public class GenericParser {
         fp.addFiles(new MemorySource(name, content));
     }
 
-
     /**
      * constructor
      *
@@ -131,7 +131,7 @@ public class GenericParser {
      * @param tlc      a ToolCustomizer
      */
     public GenericParser(ToolCustomizer tlc, String... gcontent) {
-        init(new HashSet(Arrays.asList(gcontent)), tlc);
+        init(new HashSet<>(Arrays.asList(gcontent)), tlc);
     }
 
     /**
@@ -140,9 +140,8 @@ public class GenericParser {
      * @param gcontent List of antlr grammar content
      */
     public GenericParser(String... gcontent) {
-        init(new HashSet(Arrays.asList(gcontent)), null);
+        init(new HashSet<>(Arrays.asList(gcontent)), null);
     }
-
 
     /**
      * constructor
@@ -152,7 +151,7 @@ public class GenericParser {
      * @throws FileNotFoundException file not found
      */
     public GenericParser(ToolCustomizer tlc, File... gfile) throws FileNotFoundException {
-        Set<String> gcontent = new HashSet();
+        Set<String> gcontent = new HashSet<>();
         for (File f : gfile) {
             if (!f.exists() || !f.canRead())
                 throw new FileNotFoundException("file " + f.getAbsolutePath()
@@ -170,10 +169,10 @@ public class GenericParser {
      * @throws FileNotFoundException file not found
      */
     public GenericParser(File... gfile) throws FileNotFoundException {
+        if (gfile.length == 0)
+            throw new IllegalArgumentException("Antlr grammar files must not be empty");
 
-        assert gfile.length > 0;
-
-        Set<String> gcontent = new HashSet();
+        Set<String> gcontent = new HashSet<>();
         for (File f : gfile) {
             if (!f.exists() || !f.canRead())
                 throw new FileNotFoundException("file " + f.getAbsolutePath()
@@ -183,7 +182,6 @@ public class GenericParser {
         }
         init(gcontent, null);
     }
-
 
     /**
      * constructor
@@ -215,9 +213,8 @@ public class GenericParser {
     }
 
     public void setClassPath(List cp) {
-        this.sc.setClassPath(cp);
+        sc.setClassPath(cp);
     }
-
 
     public boolean compile() {
         LOGGER.debug("compile");
@@ -243,23 +240,20 @@ public class GenericParser {
         parserName = parserLexer.getFirst();
         lexerName = parserLexer.getSecond();
 
-        assert !lexerName.isEmpty();
-        assert !parserName.isEmpty();
+        if (lexerName.isEmpty())
+            throw new IllegalArgumentException("lexerName must not be empty");
 
-        Set<CunitProvider> cu = new LinkedHashSet();
+        if (parserName.isEmpty())
+            throw new IllegalArgumentException("parserName must not be empty");
 
-        if (fp.hasItems()) {
+        Set<CunitProvider> cu = new LinkedHashSet<>();
+
+        if (fp.hasItems())
             cu.add(fp);
-        }
 
         cu.addAll(antlr.getCompilationUnits());
 
-
-        if (!sc.compile(cu)) {
-            return false;
-        }
-
-        return true;
+        return sc.compile(cu);
     }
 
     /**
@@ -275,7 +269,6 @@ public class GenericParser {
         return parse(toParse, null);
     }
 
-
     /**
      * parse string an create a context
      *
@@ -286,7 +279,6 @@ public class GenericParser {
     public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
         return parse(toParse, null);
     }
-
 
     /**
      * parse in fresh
@@ -315,7 +307,6 @@ public class GenericParser {
      * @throws IllegalWorkflowException if compilation did not take place
      */
     public ParserRuleContext parse(String toParse, String production) throws IllegalWorkflowException {
-
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
@@ -326,8 +317,7 @@ public class GenericParser {
 
         LOGGER.debug("load lexer {}", lexerName);
         Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
-
-        assert lex != null;
+        Objects.requireNonNull(lex, "lex must not be null");
 
         CommonTokenStream tokens = new CommonTokenStream(lex);
 
@@ -336,7 +326,7 @@ public class GenericParser {
         LOGGER.debug("load parser {}", parserName);
         Parser parser = sc.instanciateParser(tokens, parserName);
 
-        assert parser != null;
+        Objects.requireNonNull(parser, "Parser must not be null");
 
         // make parser information available to listener
         listener.setParser(parser);
@@ -404,7 +394,6 @@ public class GenericParser {
     public boolean antrlObjectsAvailable() {
         return getAllCompiledObjects().size() > 0;
     }
-
 
     public void store(String file, boolean overwrite) throws SerializationException {
         File loc = new File(file);
@@ -481,7 +470,6 @@ public class GenericParser {
         }
 
         Object toread;
-
         try {
             toread = o_in.readObject();
         } catch (NotSerializableException e) {
@@ -495,7 +483,9 @@ public class GenericParser {
             closeQuietly(f_in);
         }
 
-        assert toread instanceof GenericParserSerialize;
+        if (!(toread instanceof GenericParserSerialize))
+            throw new IllegalArgumentException("toread must be an instance of GenericParserSerialize");
+
         GenericParserSerialize gin = (GenericParserSerialize) toread;
 
         GenericParser gp = new GenericParser(gin.getMemoryTupleSet(), gin
