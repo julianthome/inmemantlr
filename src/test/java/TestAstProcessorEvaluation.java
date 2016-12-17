@@ -106,6 +106,4 @@ public class TestAstProcessorEvaluation {
             LOGGER.error(e.getMessage(), e);
         }
     }
-
-
 }

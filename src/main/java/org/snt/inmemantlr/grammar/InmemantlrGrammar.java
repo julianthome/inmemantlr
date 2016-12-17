@@ -63,17 +63,18 @@ public class InmemantlrGrammar extends Grammar {
             MemoryTokenVocabParser vparser = new MemoryTokenVocabParser(this, tokenVocab);
             Map<String, Integer> tokens = vparser.load();
 
-            int ret = 0;
+            int ret;
             for (String t : tokens.keySet()) {
                 if (t.charAt(0) == '\'') {
                     ret = defineStringLiteral(t, tokens.get(t));
-                    assert ret != Token.INVALID_TYPE;
+                    if (ret == Token.INVALID_TYPE)
+                        throw new IllegalArgumentException("Token must not be INVAlID_TYPE");
                 } else {
                     ret = defineTokenName(t, tokens.get(t));
-                    assert ret != Token.INVALID_TYPE;
+                    if (ret == Token.INVALID_TYPE)
+                        throw new IllegalArgumentException("Token must not be INVAlID_TYPE");
                 }
-                LOGGER.debug("token " + t + " " + tokens.get(t));
-
+                LOGGER.debug("token {} {}", t, tokens.get(t));
             }
         }
     }

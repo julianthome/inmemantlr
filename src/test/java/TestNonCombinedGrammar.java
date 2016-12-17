@@ -24,7 +24,6 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +35,14 @@ import org.snt.inmemantlr.tree.Ast;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestNonCombinedGrammar {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestNonCombinedGrammar.class);
 
     @Test
     public void testParserLexer() throws IOException {
-
-
         LOGGER.debug("Test multi file parsing");
 
         File files[] = {
@@ -52,7 +51,6 @@ public class TestNonCombinedGrammar {
                 new File(getClass().getClassLoader().getResource
                         ("inmemantlr/MySQLParser.g4").getFile())
         };
-
 
         GenericParser gp = new GenericParser(files);
         DefaultTreeListener t = new DefaultTreeListener();
@@ -67,7 +65,7 @@ public class TestNonCombinedGrammar {
             Ast ast;
             gp.parse("select a from b;");
             ast = t.getAst();
-            Assert.assertEquals(ast.getNodes().size(), 13);
+            assertEquals(ast.getNodes().size(), 13);
             LOGGER.debug(ast.toDot());
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage(), e);

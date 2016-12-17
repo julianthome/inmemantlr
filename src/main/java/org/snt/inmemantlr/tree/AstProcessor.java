@@ -128,7 +128,9 @@ public abstract class AstProcessor<R, T> {
      * @return data mapped to n
      */
     public T getElement(AstNode n) {
-        assert smap.containsKey(n);
+        if (!smap.containsKey(n))
+            throw new IllegalArgumentException("smap must contain AstNode");
+
         return smap.get(n);
     }
 
