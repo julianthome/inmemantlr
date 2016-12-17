@@ -64,7 +64,7 @@ public class TestExternalGrammars {
 
     private Set<String> blacklist = new HashSet(Arrays.asList(special));
 
-    private Map<String, Subject> subjects = null;
+    private Map<String, Subject> subjects = new HashMap<>();
 
     private static class Subject {
 
@@ -140,8 +140,6 @@ public class TestExternalGrammars {
         grammar = new File(classLoader.getResource("grammars-v4").getFile());
 
         File[] files = grammar.listFiles(File::isDirectory);
-
-        subjects = new HashMap<>();
 
         for (File f : files) {
             assertTrue(f.isDirectory());
@@ -338,7 +336,7 @@ public class TestExternalGrammars {
     @Test
     public void testEcmaScript() {
 
-        if(!subjects.containsKey("ecmascript    "))
+        if(!subjects.containsKey("ecmascript"))
             return;
 
         Subject s = subjects.get("ecmascript");
