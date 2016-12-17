@@ -272,9 +272,9 @@ public class Ast {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Ast)) {
+        if (!(o instanceof Ast))
             return false;
-        }
+
         Ast ast = (Ast) o;
         // will recursively check AST nodes
         return root.equals(ast.getRoot());

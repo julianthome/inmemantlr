@@ -55,7 +55,9 @@ public class MemoryTuple implements Serializable {
      */
     public MemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {
         this();
-        assert bytecode != null && !bytecode.isEmpty();
+        if (bytecode == null || bytecode.isEmpty())
+            throw new IllegalArgumentException("bytecode set must not be null or empty");
+
         this.source = source;
         bytecodeObjects.addAll(bytecode);
         cname = source.getClassName();

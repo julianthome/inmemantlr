@@ -46,14 +46,7 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
     private static final long serialVersionUID = -1187957244085829285L;
     private static final Logger LOGGER = LoggerFactory.getLogger(MemoryTupleSet.class);
 
-    private Set<MemoryTuple> mts = null;
-
-    /**
-     * constructor
-     */
-    public MemoryTupleSet() {
-        mts = new HashSet<>();
-    }
+    private Set<MemoryTuple> mts = new HashSet<>();
 
     /**
      * add a memory (source, bytecode) tuple to the list
@@ -86,7 +79,6 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
     }
 
     public void addAll(MemoryTupleSet mset) {
-        assert mset != null;
         mts.addAll(mset.mts);
     }
 
@@ -98,8 +90,8 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
                 t -> {
                     MemorySource s = t.getSource();
                     Set<MemoryByteCode> bs = t.getByteCodeObjects();
-                    sb.append(s.getClassName() + ":\n");
-                    bs.forEach(b -> sb.append(b.getClassName() + " "));
+                    sb.append(s.getClassName()).append(":\n");
+                    bs.forEach(b -> sb.append(b.getClassName()).append(" "));
                     sb.append("\n");
                 }
         );

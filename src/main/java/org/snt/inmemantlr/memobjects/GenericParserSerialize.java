@@ -40,16 +40,17 @@ public class GenericParserSerialize implements Serializable {
     private String parserName;
     private String lexerName;
 
-
     /**
      * constructor
+     *
      * @param mset set of source/byte code tuples
      * @param parserName parser name
      * @param lexerName lexer name
      */
-    public GenericParserSerialize(MemoryTupleSet mset, String parserName,
-                                  String lexerName) {
-        assert mset != null && mset.size() > 0;
+    public GenericParserSerialize(MemoryTupleSet mset, String parserName, String lexerName) {
+        if (mset == null || mset.size() == 0)
+            throw new IllegalArgumentException("mset must not be null or empty");
+
         this.mset = mset;
         this.parserName = parserName;
         this.lexerName = lexerName;
@@ -66,5 +67,4 @@ public class GenericParserSerialize implements Serializable {
     public String getLexerName() {
         return lexerName;
     }
-
 }

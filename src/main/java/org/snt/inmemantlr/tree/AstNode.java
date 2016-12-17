@@ -94,7 +94,9 @@ public class AstNode {
      * @return child with index i
      */
     public AstNode getChild(int i) {
-        assert 0 <= i && i < children.size();
+        if (i < 0 || i > children.size())
+            throw new IllegalArgumentException("Index must be greater than or equal to zero and less than the children size");
+
         return children.get(i);
     }
 

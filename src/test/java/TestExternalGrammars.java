@@ -24,7 +24,6 @@
  * SOFTWARE.
  **/
 
-import org.antlr.v4.Tool;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestExternalGrammars {
@@ -62,18 +62,15 @@ public class TestExternalGrammars {
 
     static File grammar = null;
 
-    private Set<String> blacklist = new HashSet(
-            Arrays.asList(special)
-    );
+    private Set<String> blacklist = new HashSet(Arrays.asList(special));
 
     private Map<String, Subject> subjects = null;
 
-
     private static class Subject {
+
         public String name = "";
         public Set<File> g4 = new HashSet();
         public Set<File> examples = new HashSet();
-
 
         public boolean hasExamples() {
             return !examples.isEmpty();
@@ -81,7 +78,7 @@ public class TestExternalGrammars {
 
         @Override
         public String toString() {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("name:");
             sb.append(name);
             sb.append("\n");
@@ -107,7 +104,7 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(tc, s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
 
         Assert.assertNotNull(gp);
@@ -122,54 +119,42 @@ public class TestExternalGrammars {
             try {
                 LOGGER.info("parse {}", e.getName());
                 p.parse(e);
-            } catch (IllegalWorkflowException e1) {
+            } catch (IllegalWorkflowException | FileNotFoundException e1) {
                 LOGGER.error(e1.getMessage());
-                Assert.assertFalse(true);
-            } catch (FileNotFoundException e1) {
-                LOGGER.error(e1.getMessage());
-                Assert.assertFalse(true);
+                assertFalse(true);
             }
 
             Ast ast = dt.getAst();
             Assert.assertNotNull(ast);
-            Assert.assertTrue(ast.getNodes().size() > 1);
+            assertTrue(ast.getNodes().size() > 1);
         });
     }
 
     @Before
     public void init() {
-
         ClassLoader classLoader = getClass().getClassLoader();
 
         if (classLoader.getResource("grammars-v4") == null)
             return;
 
-        grammar = new File(classLoader.getResource("grammars-v4")
-                .getFile());
+        grammar = new File(classLoader.getResource("grammars-v4").getFile());
 
+        File[] files = grammar.listFiles(File::isDirectory);
 
-        File[] files = grammar.listFiles(pathname -> pathname.isDirectory());
-
-        Arrays.stream(files);
-
-        subjects = new HashMap();
+        subjects = new HashMap<>();
 
         for (File f : files) {
             assertTrue(f.isDirectory());
             Subject subject = new Subject();
             subject.name = f.getName();
 
-            File[] gs = f.listFiles(pathname -> pathname
-                    .getName()
-                    .endsWith(".g4"));
-
+            File[] gs = f.listFiles(pathname -> pathname.getName().endsWith(".g4"));
             if (gs != null && gs.length > 0)
                 subject.g4.addAll(Arrays.asList(gs));
 
             File examples = new File(f.getAbsolutePath() + "/examples");
 
-            File[] xamples = examples.listFiles(pathname
-                    -> !pathname.isDirectory());
+            File[] xamples = examples.listFiles(pathname -> !pathname.isDirectory());
 
             if (xamples != null && xamples.length > 0)
                 subject.examples.addAll(Arrays.asList(xamples));
@@ -179,8 +164,6 @@ public class TestExternalGrammars {
     }
 
     private void testSubject(Subject s, boolean skip) {
-
-
         if (blacklist.contains(s.name) && skip) {
             LOGGER.debug("skip {}", s.name);
             return;
@@ -188,7 +171,7 @@ public class TestExternalGrammars {
 
         LOGGER.info("test {}", s.name);
         GenericParser gp = getParserForSubject(s, null);
-        Assert.assertTrue(gp.compile());
+        assertTrue(gp.compile());
         LOGGER.debug("successfully compiled grammar");
 
         DefaultTreeListener dt = new DefaultTreeListener();
@@ -206,31 +189,28 @@ public class TestExternalGrammars {
 
     @Test
     public void testAntlr4() {
+
+        if(!subjects.containsKey("antlr4"))
+            return;
+
         Subject s = subjects.get("antlr4");
 
         // Exam
-        ToolCustomizer tc = new ToolCustomizer() {
-            @Override
-            public void customize(Tool t) {
-                t.genPackage = "org.antlr.parser.antlr4";
-            }
-        };
+        ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.antlr4";
 
         Set<File> files = s.g4.stream().filter(v -> v.getName().matches("" +
                 "(ANTLRv4" +
                 "(Lexer|Parser)|LexBasic).g4")).collect(Collectors.toSet());
 
-
-        Assert.assertTrue(files.size() > 0);
+        assertTrue(files.size() > 0);
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(tc, files.toArray(new File[files
                     .size()]));
         } catch (FileNotFoundException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
-
 
         DefaultTreeListener dt = new DefaultTreeListener();
 
@@ -243,7 +223,7 @@ public class TestExternalGrammars {
                             "/antlr/parser/antlr4/LexerAdaptor.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
+            assertFalse(true);
         }
 
         gp.compile();
@@ -251,18 +231,17 @@ public class TestExternalGrammars {
         verify(gp, s.examples);
     }
 
-
     @Test
     public void testStringTemplate() {
+
+
+        if(!subjects.containsKey("stringtemplate"))
+            return;
+
         Subject s = subjects.get("stringtemplate");
 
         // Exam
-        ToolCustomizer tc = new ToolCustomizer() {
-            @Override
-            public void customize(Tool t) {
-                t.genPackage = "org.antlr.parser.st4";
-            }
-        };
+        ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.st4";
 
         GenericParser gp = getParserForSubject(s, tc);
 
@@ -276,7 +255,7 @@ public class TestExternalGrammars {
                             "src/main/java/org/antlr/parser/st4/LexerAdaptor.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
+            assertFalse(true);
         }
 
         gp.compile();
@@ -286,15 +265,18 @@ public class TestExternalGrammars {
 
     @Test
     public void testSwift() {
+
+        if(!subjects.containsKey("swift"))
+            return;
+
         Subject s = subjects.get("swift");
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
-
 
         try {
             File util = new File
@@ -302,7 +284,7 @@ public class TestExternalGrammars {
                             "/SwiftSupport.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
+            assertFalse(true);
         }
 
         gp.compile();
@@ -312,13 +294,18 @@ public class TestExternalGrammars {
 
     @Test
     public void testObjC() {
+
+
+        if(!subjects.containsKey("objc"))
+            return;
+
         Subject s = subjects.get("objc");
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
         gp.compile();
         verify(gp, s.examples);
@@ -326,19 +313,22 @@ public class TestExternalGrammars {
 
     @Test
     public void testPHP() {
+
+
+        if(!subjects.containsKey("php"))
+            return;
+
         Subject s = subjects.get("php");
 
         s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4") ||
         f.getName().equals("PHPLexer_Python.g4"));
 
-
         GenericParser gp = null;
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
-
 
         gp.compile();
 
@@ -347,9 +337,12 @@ public class TestExternalGrammars {
 
     @Test
     public void testEcmaScript() {
+
+        if(!subjects.containsKey("ecmascript    "))
+            return;
+
         Subject s = subjects.get("ecmascript");
         s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
         testSubject(s, false);
     }
-
 }

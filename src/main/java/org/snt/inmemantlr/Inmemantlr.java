@@ -24,7 +24,6 @@
  * SOFTWARE.
  **/
 
-
 package org.snt.inmemantlr;
 
 import org.apache.commons.cli.*;
@@ -38,7 +37,9 @@ import org.snt.inmemantlr.tree.Ast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Inmemantlr {
@@ -46,18 +47,16 @@ public class Inmemantlr {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Inmemantlr.class);
 
     private static Set<File> getFilesForOption(CommandLine cmd, String opt) {
-        Set<File> ret = new HashSet();
-        if(cmd.hasOption(opt)) {
-            Set<String> us = new HashSet();
+        Set<File> ret = new HashSet<>();
+        if (cmd.hasOption(opt)) {
+            Set<String> us = new HashSet<>();
             us.addAll(Arrays.asList(cmd.getOptionValues(opt)));
             ret.addAll(us.stream().map(File::new).collect(Collectors.toSet()));
         }
         return ret;
     }
 
-
     public static void main(String[] args) {
-
         LOGGER.info("Inmemantlr tool");
 
         HelpFormatter hformatter = new HelpFormatter();
@@ -98,7 +97,6 @@ public class Inmemantlr {
                 .valueSeparator(',')
                 .build();
 
-
         Option odir = Option.builder()
                 .longOpt("outdir")
                 .desc("output directory in which the dot files will be " +
@@ -109,12 +107,10 @@ public class Inmemantlr {
                 .type(String.class)
                 .build();
 
-
         options.addOption(infiles);
         options.addOption(grmr);
         options.addOption(utilfiles);
         options.addOption(odir);
-
 
         CommandLineParser parser = new DefaultParser();
 
@@ -141,18 +137,20 @@ public class Inmemantlr {
         // output dir
         Set<File> od = getFilesForOption(cmd, "outdir");
 
-        assert od.size() <= 1;
+        if (od.size() > 1) {
+            LOGGER.error("output directories must be less than or equal to 1");
+            System.exit(-1);
+        }
 
-        if(ins.size() <= 0) {
+        if (ins.size() <= 0) {
             LOGGER.error("no input files were specified");
             System.exit(-1);
         }
 
-        if(gs.size() <= 0) {
+        if (gs.size() <= 0) {
             LOGGER.error("no grammar files were specified");
             System.exit(-1);
         }
-
 
         LOGGER.info("create generic parser");
         GenericParser gp = null;
@@ -163,7 +161,7 @@ public class Inmemantlr {
             System.exit(-1);
         }
 
-        if(!uf.isEmpty()){
+        if (!uf.isEmpty()) {
             try {
                 gp.addUtilityJavaFiles(uf.toArray(new String[uf.size()]));
             } catch (FileNotFoundException e) {
@@ -177,15 +175,14 @@ public class Inmemantlr {
         gp.setListener(dt);
 
         LOGGER.info("compile generic parser");
-        if(!gp.compile()) {
+        if (!gp.compile()) {
             LOGGER.error("cannot compile generic parser");
             System.exit(-1);
         }
 
-
         String fpfx = "";
-        for(File of : od){
-            if(!of.exists() || !of.isDirectory()) {
+        for (File of : od) {
+            if (!of.exists() || !of.isDirectory()) {
                 LOGGER.error("output directory does not exist or is not a " +
                         "directory");
                 System.exit(-1);
@@ -193,9 +190,8 @@ public class Inmemantlr {
             fpfx = of.getAbsolutePath();
         }
 
-
         Ast ast;
-        for(File f : ins){
+        for (File f : ins) {
             try {
                 gp.parse(f);
             } catch (IllegalWorkflowException | FileNotFoundException e) {
@@ -204,27 +200,22 @@ public class Inmemantlr {
             }
             ast = dt.getAst();
 
-            if(!fpfx.isEmpty()) {
-                String of = fpfx + "/" + FilenameUtils.removeExtension(f
-                        .getName()) + ".dot";
+            if (!fpfx.isEmpty()) {
+                String of = fpfx + "/" + FilenameUtils.removeExtension(f.getName()) + ".dot";
 
                 LOGGER.info("write file {}", of);
 
                 try {
-                    FileUtils.writeStringToFile(new File(of), ast.toDot(),
-                            "UTF-8");
+                    FileUtils.writeStringToFile(new File(of), ast.toDot(), "UTF-8");
                 } catch (IOException e) {
                     LOGGER.error(e.getMessage());
                     System.exit(-1);
                 }
-
             } else {
                 LOGGER.info("Tree for {} \n {}", f.getName(), ast.toDot());
             }
-
         }
 
         System.exit(0);
     }
-
 }

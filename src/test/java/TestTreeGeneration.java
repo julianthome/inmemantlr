@@ -87,7 +87,7 @@ public class TestTreeGeneration {
 
         Set<Ast> asts = ast.getSubtrees(n -> "expression".equals(n.getRule()));
 
-        assert asts.size() == 5;
+        assertTrue(asts.size() == 5);
 
         for (Ast a : asts) {
             assertTrue(ast.hasSubtree(a));

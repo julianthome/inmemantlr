@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemorySource;
-import org.snt.inmemantlr.memobjects.MemoryTuple;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 
 import javax.tools.DiagnosticListener;
@@ -58,12 +57,11 @@ public class StringCompiler {
     private static final String CONSTRUCTOR_ARG = "interface org.antlr" +
             ".v4.runtime.TokenStream";
 
-
     private SpecialClassLoader cl = null;
     private MemoryTupleSet mt = null;
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
-    private Map<String, Class<?>> classes = new HashMap();
+    private Map<String, Class<?>> classes = new HashMap<>();
     private List cp = new ArrayList();
 
     public List getClassPath() {
@@ -85,17 +83,14 @@ public class StringCompiler {
     }
 
     public void load(MemoryTupleSet mset) {
-        assert mset != null && mset.size() > 0;
+        if (mset == null || mset.size() == 0)
+            throw new IllegalArgumentException("mset must not be null or empty");
+
         mt.addAll(mset);
-        for (MemoryTuple tup : mset) {
-            for (MemoryByteCode bc : tup.getByteCodeObjects()) {
-                cl.addClass(bc);
-            }
-        }
+        mset.forEach(tup -> tup.getByteCodeObjects().forEach(bc -> cl.addClass(bc)));
     }
 
     private static final Class[] parameters = new Class[]{URL.class};
-
 
     /**
      * do the compilation for the antlr artifacts
@@ -104,14 +99,13 @@ public class StringCompiler {
      * @return true if compilation was successful, false otherwise
      */
     public boolean compile(Set<CunitProvider> units) {
-
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
         SpecialJavaFileManager fileManager = new SpecialJavaFileManager(sjfm, cl);
 
-        List<MemorySource> cunit = new ArrayList();
-        Set<MemorySource> mset = new HashSet();
+        List<MemorySource> cunit = new ArrayList<>();
+        Set<MemorySource> mset = new HashSet<>();
 
         for (CunitProvider sc : units) {
             cunit.addAll(sc.getItems());
@@ -139,13 +133,14 @@ public class StringCompiler {
         // the corresponding yte code
         for (MemorySource ms : mset) {
             Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
-            assert mb != null && mb.size() > 0;
+            if (mb.size() == 0)
+                throw new IllegalArgumentException("MemoryByteCode must not be empty");
+
             // book keeping of source-bytecode tuples
             mt.addMemoryTuple(ms, mb);
         }
         return ret;
     }
-
 
     /**
      * find class based on class name
@@ -188,8 +183,7 @@ public class StringCompiler {
      * @param useCached true to used cached lexers, otherwise false
      * @return antlr lexer
      */
-    public Lexer instanciateLexer(CharStream input, String lexerClassName, boolean
-            useCached) {
+    public Lexer instanciateLexer(CharStream input, String lexerClassName, boolean useCached) {
         Lexer elexer;
 
         if (useCached && lexer.containsKey(lexerClassName)) {
@@ -204,7 +198,8 @@ public class StringCompiler {
             return null;
 
         Constructor<?>[] cstr = elex.getConstructors();
-        assert cstr.length == 1;
+        if (cstr.length != 1)
+            throw new IllegalArgumentException("There must be only constructor");
 
         try {
             elexer = (Lexer) cstr[0].newInstance(input);
@@ -227,10 +222,10 @@ public class StringCompiler {
     public Parser instanciateParser(CommonTokenStream tstream, String parserClassName) {
         Parser eparser;
         Class<?> elex = findClass(parserClassName);
-        assert elex != null;
+        Objects.requireNonNull(elex, "Failed to find class " + parserClassName);
         Constructor<?>[] cstr = elex.getConstructors();
-
-        assert cstr.length >= 1;
+        if (cstr.length == 0)
+            throw new IllegalArgumentException("Constructors must not be empty");
 
         int cidx = 0;
 
@@ -263,6 +258,4 @@ public class StringCompiler {
     public MemoryTupleSet getAllCompiledObjects() {
         return mt;
     }
-
-
 }

@@ -26,8 +26,6 @@
 
 package org.snt.inmemantlr.comp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 
 import javax.tools.*;
@@ -41,8 +39,6 @@ import static java.util.stream.Collectors.toSet;
  * file manager for in-memory compilation
  */
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpecialJavaFileManager.class);
 
     private SpecialClassLoader xcl;
     private HashMap<String, MemoryByteCode> mb;
@@ -80,7 +76,6 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
         return mbc;
     }
 
-
     /**
      * get special class loader
      *
@@ -98,13 +93,12 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      * @return the bytecode of class cname
      */
     public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
-
         Set<MemoryByteCode> ret = mb.values().stream()
-                .filter(m -> m.getClassName().matches("(([a-zA-Z_0-9]+)/)*" + cname + "(\\$.*)?")).collect(toSet());
-
-        assert ret.size() > 0;
+                .filter(m -> m.getClassName().matches("(([a-zA-Z_0-9]+)/)*" + cname + "(\\$.*)?"))
+                .collect(toSet());
+        if (ret.isEmpty())
+            throw new IllegalArgumentException("bytecode of class " + cname + " is empty");
 
         return ret;
     }
-
 }
