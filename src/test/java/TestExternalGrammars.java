@@ -206,6 +206,10 @@ public class TestExternalGrammars {
 
     @Test
     public void testAntlr4() {
+
+        if(!subjects.containsKey("antlr4"))
+            return;
+
         Subject s = subjects.get("antlr4");
 
         // Exam
@@ -254,6 +258,11 @@ public class TestExternalGrammars {
 
     @Test
     public void testStringTemplate() {
+
+
+        if(!subjects.containsKey("stringtemplate"))
+            return;
+
         Subject s = subjects.get("stringtemplate");
 
         // Exam
@@ -286,6 +295,10 @@ public class TestExternalGrammars {
 
     @Test
     public void testSwift() {
+
+        if(!subjects.containsKey("swift"))
+            return;
+
         Subject s = subjects.get("swift");
 
         GenericParser gp = null;
@@ -312,6 +325,11 @@ public class TestExternalGrammars {
 
     @Test
     public void testObjC() {
+
+
+        if(!subjects.containsKey("objc"))
+            return;
+
         Subject s = subjects.get("objc");
 
         GenericParser gp = null;
@@ -326,6 +344,11 @@ public class TestExternalGrammars {
 
     @Test
     public void testPHP() {
+
+
+        if(!subjects.containsKey("php"))
+            return;
+
         Subject s = subjects.get("php");
 
         s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4") ||
@@ -347,6 +370,10 @@ public class TestExternalGrammars {
 
     @Test
     public void testEcmaScript() {
+
+        if(!subjects.containsKey("ecmascript    "))
+            return;
+
         Subject s = subjects.get("ecmascript");
         s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
         testSubject(s, false);
