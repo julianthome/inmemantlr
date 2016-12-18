@@ -57,7 +57,8 @@ public class TestExternalGrammars {
             "php",  // php is handled by an extra test case
             "stringtemplate",  // stringtemplate is handled by an extra case
             "swift",  // swift is handled by an extra test case
-            "swift-fin" //swift-fin can be ignored
+            "swift-fin", //swift-fin can be ignored
+            "ucb-logo" // wait for grammars-v4 update
     };
 
     static File grammar = null;
@@ -343,4 +344,5 @@ public class TestExternalGrammars {
         s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
         testSubject(s, false);
     }
+
 }
