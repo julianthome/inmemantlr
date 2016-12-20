@@ -45,6 +45,10 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toCollection;
 
+/**
+ * special tool class that implements in-memory operations for
+ * the original antlr tool
+ */
 public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InmemantlrTool.class);

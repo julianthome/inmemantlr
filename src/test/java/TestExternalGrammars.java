@@ -189,7 +189,7 @@ public class TestExternalGrammars {
     @Test
     public void testAntlr4() {
 
-        if(!subjects.containsKey("antlr4"))
+        if (!subjects.containsKey("antlr4"))
             return;
 
         Subject s = subjects.get("antlr4");
@@ -234,7 +234,7 @@ public class TestExternalGrammars {
     public void testStringTemplate() {
 
 
-        if(!subjects.containsKey("stringtemplate"))
+        if (!subjects.containsKey("stringtemplate"))
             return;
 
         Subject s = subjects.get("stringtemplate");
@@ -265,7 +265,7 @@ public class TestExternalGrammars {
     @Test
     public void testSwift() {
 
-        if(!subjects.containsKey("swift"))
+        if (!subjects.containsKey("swift"))
             return;
 
         Subject s = subjects.get("swift");
@@ -295,7 +295,7 @@ public class TestExternalGrammars {
     public void testObjC() {
 
 
-        if(!subjects.containsKey("objc"))
+        if (!subjects.containsKey("objc"))
             return;
 
         Subject s = subjects.get("objc");
@@ -314,13 +314,13 @@ public class TestExternalGrammars {
     public void testPHP() {
 
 
-        if(!subjects.containsKey("php"))
+        if (!subjects.containsKey("php"))
             return;
 
         Subject s = subjects.get("php");
 
         s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4") ||
-        f.getName().equals("PHPLexer_Python.g4"));
+                f.getName().equals("PHPLexer_Python.g4"));
 
         GenericParser gp = null;
         try {
@@ -337,7 +337,7 @@ public class TestExternalGrammars {
     @Test
     public void testEcmaScript() {
 
-        if(!subjects.containsKey("ecmascript"))
+        if (!subjects.containsKey("ecmascript"))
             return;
 
         Subject s = subjects.get("ecmascript");

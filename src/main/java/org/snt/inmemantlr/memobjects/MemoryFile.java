@@ -30,7 +30,7 @@ import javax.tools.SimpleJavaFileObject;
 import java.net.URI;
 
 /**
- * This is just a dummy class used for serialization -- it
+ * this is just a dummy class used for serialization -- it
  * is providing a non-parametric constructor
  */
 public class MemoryFile extends SimpleJavaFileObject {
@@ -39,7 +39,7 @@ public class MemoryFile extends SimpleJavaFileObject {
      * construct a SimpleJavaFileObject of the given kind and with the
      * given URI.
      *
-     * @param uri the URI for this file object
+     * @param uri  the URI for this file object
      * @param kind the kind of this file object
      */
     protected MemoryFile(URI uri, Kind kind) {

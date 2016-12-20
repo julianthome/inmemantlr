@@ -26,6 +26,12 @@
 
 package org.snt.inmemantlr.utils;
 
+/**
+ * a template tuple class
+ *
+ * @param <K> class of first item
+ * @param <T> class of second item
+ */
 public class Tuple<K, T> {
 
     private K first;

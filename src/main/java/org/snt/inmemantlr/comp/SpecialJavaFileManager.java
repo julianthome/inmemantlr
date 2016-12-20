@@ -41,27 +41,26 @@ import static java.util.stream.Collectors.toSet;
 class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private SpecialClassLoader xcl;
-    private HashMap<String, MemoryByteCode> mb;
+    private HashMap<String, MemoryByteCode> mb = new HashMap<>();
 
     /**
      * constructor
      *
      * @param sjfm a StandardJavaFileManager
-     * @param xcl a SpecialClassLoader
+     * @param xcl  a SpecialClassLoader
      */
     public SpecialJavaFileManager(StandardJavaFileManager sjfm, SpecialClassLoader xcl) {
         super(sjfm);
         this.xcl = xcl;
-        mb = new HashMap<>();
     }
 
     /**
      * get a java file (memory byte code)
      *
      * @param location path
-     * @param name filename
-     * @param kind file kind
-     * @param sibling file sibling
+     * @param name     filename
+     * @param kind     file kind
+     * @param sibling  file sibling
      * @return memory byte code object
      * @throws IOException if an error occurs getting the java file
      */

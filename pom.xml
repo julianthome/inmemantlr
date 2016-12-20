@@ -20,8 +20,8 @@
 
     <licenses>
         <license>
-        <name>MIT License</name>
-        <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
 
@@ -35,8 +35,11 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/julianthome/inmemantlr.git</connection>
-        <developerConnection>scm:git:ssh://github.com:julianthome/inmemantlr.git</developerConnection>
+        <connection>scm:git:git://github.com/julianthome/inmemantlr.git
+        </connection>
+        <developerConnection>
+            scm:git:ssh://github.com:julianthome/inmemantlr.git
+        </developerConnection>
         <url>https://github.com/julianthome/inmemantlr/tree/master</url>
     </scm>
 
@@ -47,7 +50,8 @@
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
+            </url>
         </repository>
     </distributionManagement>
 
@@ -212,7 +216,9 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>org.snt.inmemantlr.Inmemantlr</Main-Class>
+                                        <Main-Class>
+                                            org.snt.inmemantlr.Inmemantlr
+                                        </Main-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

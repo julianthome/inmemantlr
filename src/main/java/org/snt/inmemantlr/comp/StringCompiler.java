@@ -178,9 +178,9 @@ public class StringCompiler {
     /**
      * instanciate new lexer
      *
-     * @param input lexer class content as character stream
+     * @param input          lexer class content as character stream
      * @param lexerClassName class name
-     * @param useCached true to used cached lexers, otherwise false
+     * @param useCached      true to used cached lexers, otherwise false
      * @return antlr lexer
      */
     public Lexer instanciateLexer(CharStream input, String lexerClassName, boolean useCached) {
@@ -215,7 +215,7 @@ public class StringCompiler {
     /**
      * instanciate new parser
      *
-     * @param tstream parser class content as character stream
+     * @param tstream         parser class content as character stream
      * @param parserClassName class name
      * @return antlr parser
      */

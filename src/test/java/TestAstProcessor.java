@@ -26,9 +26,9 @@
 
 import org.junit.Before;
 import org.junit.Test;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
 import org.snt.inmemantlr.tree.AstProcessor;

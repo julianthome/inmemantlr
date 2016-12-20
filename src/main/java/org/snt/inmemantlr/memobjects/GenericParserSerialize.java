@@ -29,7 +29,7 @@ package org.snt.inmemantlr.memobjects;
 import java.io.Serializable;
 
 /**
- * An object that is used for serializing a generic
+ * an object that is used for serializing a generic
  * parser that is already compiled
  */
 public class GenericParserSerialize implements Serializable {
@@ -43,9 +43,9 @@ public class GenericParserSerialize implements Serializable {
     /**
      * constructor
      *
-     * @param mset set of source/byte code tuples
+     * @param mset       set of source/byte code tuples
      * @param parserName parser name
-     * @param lexerName lexer name
+     * @param lexerName  lexer name
      */
     public GenericParserSerialize(MemoryTupleSet mset, String parserName, String lexerName) {
         if (mset == null || mset.size() == 0)

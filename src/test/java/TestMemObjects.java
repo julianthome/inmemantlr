@@ -30,11 +30,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.SerializationException;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemoryTuple;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
@@ -45,9 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestMemObjects {
 

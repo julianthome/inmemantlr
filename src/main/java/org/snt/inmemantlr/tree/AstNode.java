@@ -56,10 +56,10 @@ public class AstNode {
     /**
      * constructor
      *
-     * @param tree tree to whom the node belongs to
+     * @param tree   tree to whom the node belongs to
      * @param parent parent node
-     * @param nt non terminal id
-     * @param label label
+     * @param nt     non terminal id
+     * @param label  label
      */
     protected AstNode(Ast tree, AstNode parent, String nt, String label) {
         this(tree);
@@ -72,7 +72,7 @@ public class AstNode {
      * deep copy constructor
      *
      * @param tree tree to whom the node belongs to
-     * @param nod node to duplication
+     * @param nod  node to duplication
      */
     protected AstNode(Ast tree, AstNode nod) {
         this(tree);

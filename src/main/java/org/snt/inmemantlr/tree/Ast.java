@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * An abstract syntax tree
+ * an abstract syntax tree
  */
 public class Ast {
 
@@ -51,7 +51,7 @@ public class Ast {
      * <p>
      * create a new abstract syntax tree
      *
-     * @param nt name of root non-terminal node
+     * @param nt    name of root non-terminal node
      * @param label value of root non-terminal node
      */
     public Ast(String nt, String label) {
@@ -107,8 +107,8 @@ public class Ast {
      * create new ast node
      *
      * @param parent parent node
-     * @param nt name of node to be crated
-     * @param label value of node to be created
+     * @param nt     name of node to be crated
+     * @param label  value of node to be created
      * @return newly created node
      */
     public AstNode newNode(AstNode parent, String nt, String label) {
@@ -221,9 +221,9 @@ public class Ast {
     /**
      * helper method for finding the dominating subtrees
      *
-     * @param n current root
+     * @param n        current root
      * @param selected set to keep track of visited nodes
-     * @param p predicate to search for the dominating subtree root node
+     * @param p        predicate to search for the dominating subtree root node
      */
     private void searchDominatingNodes(AstNode n, Set<AstNode> selected, Predicate<AstNode> p) {
         if (p.test(n)) {

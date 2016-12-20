@@ -37,7 +37,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 /**
- * This object is used to store already compiled antlr lexers
+ * this object is used to store already compiled antlr lexers
  * and parsers such that they can be used later on without
  * the need to compile the whole stuff again
  */
@@ -51,7 +51,7 @@ public class MemoryTupleSet implements Serializable, Iterable<MemoryTuple> {
     /**
      * add a memory (source, bytecode) tuple to the list
      *
-     * @param source the source code
+     * @param source   the source code
      * @param bytecode the corresponding bytecode
      */
     public void addMemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {

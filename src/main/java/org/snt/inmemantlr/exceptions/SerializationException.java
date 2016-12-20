@@ -45,7 +45,7 @@ public class SerializationException extends Exception {
     /**
      * constructor
      *
-     * @param msg exception message
+     * @param msg   exception message
      * @param cause the cause
      */
     public SerializationException(String msg, Throwable cause) {

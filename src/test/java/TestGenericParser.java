@@ -26,10 +26,10 @@
 
 import org.junit.Before;
 import org.junit.Test;
-import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.listener.DefaultListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;

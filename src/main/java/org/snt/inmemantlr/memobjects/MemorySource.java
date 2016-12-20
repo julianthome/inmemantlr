@@ -50,7 +50,7 @@ public class MemorySource extends MemoryFile implements Serializable {
      * constructor
      *
      * @param name class name
-     * @param src source string
+     * @param src  source string
      */
     public MemorySource(String name, String src) {
         super(URI.create("file:///" + name + ".java"), Kind.SOURCE);

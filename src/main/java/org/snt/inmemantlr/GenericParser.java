@@ -72,6 +72,13 @@ public class GenericParser {
     private String lexerName = "";
     private String parserName = "";
 
+
+    /**
+     * initialize the generic parser
+     *
+     * @param gcontent content of grammar files
+     * @param tlc tool customizer
+     */
     private void init(Set<String> gcontent, ToolCustomizer tlc) {
         if (tlc != null) {
             tlc.customize(antlr);
@@ -83,6 +90,13 @@ public class GenericParser {
         }
     }
 
+    /**
+     * private constructor used to reconstruct a serialized generic parser
+     *
+     * @param mset set of memory tuples
+     * @param parserName parser name
+     * @param lexerName lexer name
+     */
     private GenericParser(MemoryTupleSet mset, String parserName, String
             lexerName) {
         if (mset == null || mset.size() == 0)
@@ -95,6 +109,12 @@ public class GenericParser {
         this.lexerName = lexerName;
     }
 
+    /**
+     * add utility Java classes on which the antlr grammar depend on
+     *
+     * @param fils list of Java files
+     * @throws FileNotFoundException Java file does not exist
+     */
     public void addUtilityJavaFiles(File... fils) throws
             FileNotFoundException {
         for (File f : fils) {
@@ -102,12 +122,24 @@ public class GenericParser {
         }
     }
 
+    /**
+     * add utility Java classes on which the antlr grammar depend on
+     *
+     * @param fils list of paths to Java files
+     * @throws FileNotFoundException Java file does not exist
+     */
     public void addUtilityJavaFiles(String... fils) throws FileNotFoundException {
         for (String f : fils) {
             addUtilityJavaFile(new File(f));
         }
     }
 
+    /**
+     * add utility Java class on which the antlr grammar depends on
+     *
+     * @param f Java file
+     * @throws FileNotFoundException Java file does not exist
+     */
     private void addUtilityJavaFile(File f) throws
             FileNotFoundException {
 
@@ -216,6 +248,11 @@ public class GenericParser {
         sc.setClassPath(cp);
     }
 
+    /**
+     * compile generic parser
+     *
+     * @return true if compilation succeeded, false otherwise
+     */
     public boolean compile() {
         LOGGER.debug("compile");
 
@@ -395,6 +432,13 @@ public class GenericParser {
         return getAllCompiledObjects().size() > 0;
     }
 
+    /**
+     * serialize generic parser
+     *
+     * @param file path where generic parser is supposed to be stored
+     * @param overwrite overwrite file
+     * @throws SerializationException generic parser is not serializable
+     */
     public void store(String file, boolean overwrite) throws SerializationException {
         File loc = new File(file);
         File path = loc.getParentFile();
@@ -441,6 +485,13 @@ public class GenericParser {
         }
     }
 
+    /**
+     * load serialized generic parser
+     *
+     * @param file file of serialized generic parser file
+     * @return the deserialized generic parser
+     * @throws DeserializationException generic parser is not de-serializable
+     */
     public static GenericParser load(String file) throws DeserializationException {
         File loc = new File(file);
         File path = loc.getParentFile();

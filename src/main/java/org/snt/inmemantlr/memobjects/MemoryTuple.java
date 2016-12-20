@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * this class maps an antrl source file to a set of byte code
+ * this class maps an ANTLR source file to a set of byte code
  * objects (note that this is an 1:n mapping because every inner class
  * is mapped to a distinct byte code object
  */
@@ -40,17 +40,17 @@ public class MemoryTuple implements Serializable {
     private static final long serialVersionUID = 3586252835232647406L;
 
     private MemorySource source;
-    private Set<MemoryByteCode> bytecodeObjects;
+    private Set<MemoryByteCode> bytecodeObjects = new HashSet<>();
+    ;
     private String cname;
 
     public MemoryTuple() {
-        bytecodeObjects = new HashSet<>();
     }
 
     /**
      * constructor
      *
-     * @param source the source object of a give class
+     * @param source   the source object of a give class
      * @param bytecode the bytecodeObjects derived from the source object
      */
     public MemoryTuple(MemorySource source, Set<MemoryByteCode> bytecode) {

@@ -46,7 +46,7 @@ public class IllegalWorkflowException extends Exception {
     /**
      * constructor
      *
-     * @param msg exception message
+     * @param msg   exception message
      * @param cause the cause
      */
     public IllegalWorkflowException(String msg, Throwable cause) {

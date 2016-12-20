@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Ast processor to process an abstract syntax tree
+ * processor to process an abstract syntax tree
  *
  * @param <R> return type of result
  * @param <T> datatype to which an AST node can be mapped to

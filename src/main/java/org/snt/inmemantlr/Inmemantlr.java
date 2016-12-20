@@ -42,6 +42,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * inmemantlr command line tool
+ */
 public class Inmemantlr {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Inmemantlr.class);

@@ -36,12 +36,14 @@ import java.util.Collection;
 public interface CunitProvider {
     /**
      * provide items to compile
+     *
      * @return items to compile
      */
     Collection<MemorySource> getItems();
 
     /**
      * has items to compile
+     *
      * @return true, if items to compile are present, false otherwise
      */
     boolean hasItems();
