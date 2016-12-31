@@ -30,9 +30,6 @@ All of the above-mentioned inmemantlr features are illustrated by [examples](#to
 
 # Integration
 
-## Manual built
-For building a standalone `jar` file that can be integrated into your Java project, one can simply invoke `mvn package`. Afterwards, one will find the self-contained `inmemantlr-<version>-jar-with-dependencies.jar` Java archive within the `inmemantlr-api/target/` directory of the project directory.
-
 ## Maven
 inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases). The API documentation for every release is avalable [here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However, the content of this documentation, in particular the code examples and usage scenarios, is always aligned with the master branch of this repository. Hence, it might be that the latest inmemantlr features are not yet available through the maven package.
 
