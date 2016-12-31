@@ -31,7 +31,7 @@ All of the above-mentioned inmemantlr features are illustrated by [examples](#to
 # Integration
 
 ## Manual built
-For building a standalone `jar` file that can be integrated into your Java project, one can simply invoke `mvn package`. Afterwards, one will find the self-contained `inmemantlr-<version>-jar-with-dependencies.jar` Java archive within the `target/` directory of the project directory.
+For building a standalone `jar` file that can be integrated into your Java project, one can simply invoke `mvn package`. Afterwards, one will find the self-contained `inmemantlr-<version>-jar-with-dependencies.jar` Java archive within the `inmemantlr-api/target/` directory of the project directory.
 
 ## Maven
 inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases). The API documentation for every release is avalable [here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However, the content of this documentation, in particular the code examples and usage scenarios, is always aligned with the master branch of this repository. Hence, it might be that the latest inmemantlr features are not yet available through the maven package.
@@ -48,10 +48,9 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 
 Besides the inmemantlr API which is desribed in more detail below, there is also an inmemantlr command-line tool which is well suited for the simple task of generating a dot files based on ASTs that are derived from parsed text files.
 
-After creating the Maven package, the file `inmemantlr-<version>.jar` can be found within the target directory. The standalone command line tool can be invoked with `java -jar inmemantlr-<version>.jar` with the following options:
+After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can be found within the `inmemantlr-tool/target` directory. The standalone command line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with the following options:
 
 ```bash
-usage: java -jar inmemantlr.jar
     --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
  -h                           print this message
     --infiles <infiles>       comma-separated list of files to parse
@@ -63,9 +62,7 @@ usage: java -jar inmemantlr.jar
 
 If no output directory is specified, the generated dot content will be displayed on the console.
 
-The command `java -jar inmemantlr.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files `/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
-
-
+The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files `/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
 
 # API Usage Scenarios
 
@@ -271,7 +268,7 @@ code:
 GenericParser gp = GenericParser.load("/tmp/gp.out");
 ```
 ## grammars-v4
-The [grammars-v4](https://github.com/antlr/grammars-v4) repository is added as a submodule. For executing all the grammars-v4 test cases, one could run the following commands.
+The [grammars-v4](https://github.com/antlr/grammars-v4) repository is added as a submodule. For executing all the grammars-v4 test cases, one could run the following commands from within the `inmemantlr-api` maven module.
 
 ```bash
 git submodule init
