@@ -83,7 +83,7 @@ public class TestTreeGeneration {
         Ast cast = new Ast(ast);
 
         assertTrue(ast != null);
-        Assert.assertEquals(ast.getNodes().size(), cast.getNodes().size());
+        assertEquals(ast.getNodes().size(), cast.getNodes().size());
 
         Set<Ast> asts = ast.getSubtrees(n -> "expression".equals(n.getRule()));
 
