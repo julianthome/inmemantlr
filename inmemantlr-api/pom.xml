@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>com.github.julianthome</groupId>
-        <artifactId>inmemantlr-parent</artifactId>
+        <artifactId>inmemantlr</artifactId>
         <relativePath>../pom.xml</relativePath>
         <version>1.3.1</version>
     </parent>
@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.julianthome</groupId>
-    <artifactId>inmemantlr</artifactId>
+    <artifactId>inmemantlr-api</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -80,20 +80,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.7.201606060606</version>
@@ -114,18 +100,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
-            </url>
-        </repository>
-    </distributionManagement>
 
     <reporting>
         <plugins>

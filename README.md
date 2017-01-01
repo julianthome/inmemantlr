@@ -36,7 +36,7 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 ```xml
 <dependency>
     <groupId>com.github.julianthome</groupId>
-    <artifactId>inmemantlr</artifactId>
+    <artifactId>inmemantlr-api</artifactId>
     <version>1.3.1</version>
 </dependency>
 ```
