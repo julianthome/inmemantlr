@@ -34,7 +34,6 @@ import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.CompilationErrorException;
-import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
@@ -96,12 +95,11 @@ public class StringCompiler {
 
     /**
      * do the compilation for the antlr artifacts
-     *
      * @param units string code generation pipeline
-     * @return true if compilation was successful, false otherwise
+     * @throws CompilationErrorException if the compilation was not successful
      */
     public void compile(Set<CunitProvider> units) throws
-            CompilationException {
+            CompilationErrorException {
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);

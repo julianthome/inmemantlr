@@ -246,10 +246,13 @@ public class GenericParser {
         sc.setClassPath(cp);
     }
 
+
     /**
      * compile generic parser
      *
-     * @return true if compilation succeeded, false otherwise
+     * @throws CompilationErrorException an error during the Java compilation
+     * occurs
+     * @throws RedundantCompilationException objects are already compiled
      */
     public void compile() throws CompilationException {
         LOGGER.debug("compile");
