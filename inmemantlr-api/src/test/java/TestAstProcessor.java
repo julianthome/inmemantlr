@@ -27,6 +27,7 @@
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -57,8 +58,16 @@ public class TestAstProcessor {
     @Test
     public void testProcessor() {
         GenericParser gp = new GenericParser(sgrammarcontent);
-        gp.compile();
 
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
         assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();

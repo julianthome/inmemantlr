@@ -31,6 +31,7 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.DeserializationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.SerializationException;
@@ -77,7 +78,15 @@ public class TestMemObjects {
 
         assertNotNull(gp);
 
-        assertTrue(gp.compile());
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
@@ -116,7 +125,17 @@ public class TestMemObjects {
 
         assertNotNull(gp);
 
-        gp.compile();
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
+
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
         assertTrue(s != null && !s.isEmpty());

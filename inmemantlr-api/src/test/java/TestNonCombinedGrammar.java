@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestNonCombinedGrammar {
 
@@ -56,10 +58,15 @@ public class TestNonCombinedGrammar {
         DefaultTreeListener t = new DefaultTreeListener();
         gp.setListener(t);
 
-        if (!gp.compile()) {
-            LOGGER.error("Compilation error");
-            return;
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
         }
+
+        assertTrue(compile);
 
         try {
             Ast ast;

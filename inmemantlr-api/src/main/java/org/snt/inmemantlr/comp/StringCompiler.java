@@ -33,6 +33,8 @@ import org.antlr.v4.runtime.Parser;
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.exceptions.CompilationErrorException;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
@@ -41,7 +43,7 @@ import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
-import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -98,7 +100,8 @@ public class StringCompiler {
      * @param units string code generation pipeline
      * @return true if compilation was successful, false otherwise
      */
-    public boolean compile(Set<CunitProvider> units) {
+    public void compile(Set<CunitProvider> units) throws
+            CompilationException {
         JavaCompiler javac = new EclipseCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
@@ -119,7 +122,7 @@ public class StringCompiler {
         DiagnosticListener<? super JavaFileObject> dianosticListener = null;
         Iterable<String> classes = null;
 
-        Writer out = new PrintWriter(System.out);
+        Writer out = new StringWriter();
 
         List<String> optionList = new ArrayList<>();
         optionList.addAll(cp);
@@ -128,6 +131,10 @@ public class StringCompiler {
                 dianosticListener, optionList, classes, cunit);
 
         boolean ret = compile.call();
+
+        if(!ret) {
+            throw new CompilationErrorException(out.toString());
+        }
 
         // note that for the memory-source -- we just store the class name
         // the corresponding yte code
@@ -139,7 +146,6 @@ public class StringCompiler {
             // book keeping of source-bytecode tuples
             mt.addMemoryTuple(ms, mb);
         }
-        return ret;
     }
 
     /**

@@ -26,9 +26,10 @@
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.DeserializationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.*;
 import org.snt.inmemantlr.listener.DefaultListener;
 
 import java.io.File;
@@ -38,13 +39,18 @@ import static org.junit.Assert.*;
 
 public class TestGenericParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestGenericParser.class);
+
     static File grammar = null;
+    static File fgrammar = null;
     static File sfile = null;
 
     @Before
     public void init() {
         ClassLoader classLoader = getClass().getClassLoader();
         grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
+        fgrammar = new File(classLoader.getResource("inmemantlr/Fail.g4")
+                .getFile());
         sfile = new File(classLoader.getResource("inmemantlr/HelloWorld.java").getFile());
     }
 
@@ -68,7 +74,17 @@ public class TestGenericParser {
         }
 
         assertTrue(thrown);
-        gp.compile();
+
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         // Incorrect workflows
         thrown = false;
@@ -78,7 +94,20 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        gp.compile();
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+
+            if(e instanceof RedundantCompilationException)
+                compile = true;
+            else
+                compile = false;
+        }
+
+        assertTrue(compile);
+
+
         thrown = false;
         try {
             gp.parse(sfile);
@@ -93,7 +122,20 @@ public class TestGenericParser {
         // Correct workflow
         gp.setListener(new DefaultListener());
         assertNotNull(gp.getListener());
-        gp.compile();
+
+
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+
+            if(e instanceof RedundantCompilationException)
+                compile = true;
+            else
+                compile = false;
+        }
+
+        assertTrue(compile);
 
         try {
             gp.parse(sfile);
@@ -165,6 +207,41 @@ public class TestGenericParser {
             thrown = true;
         }
         assertTrue(thrown);
+    }
+
+    @Test
+    public void testCompilationError() {
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(fgrammar);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(gp);
+
+        // Incorrect workflows
+        boolean thrown = false;
+        try {
+            gp.parse(sfile);
+        } catch (IllegalWorkflowException | FileNotFoundException e) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+
+        boolean compile = true;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            if(e instanceof CompilationErrorException) {
+                compile = false;
+            }
+        }
+
+        assertFalse(compile);
+
     }
 
 }

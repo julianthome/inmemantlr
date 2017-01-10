@@ -38,9 +38,7 @@ import org.snt.inmemantlr.comp.CunitProvider;
 import org.snt.inmemantlr.comp.FileProvider;
 import org.snt.inmemantlr.comp.StringCodeGenPipeline;
 import org.snt.inmemantlr.comp.StringCompiler;
-import org.snt.inmemantlr.exceptions.DeserializationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.SerializationException;
+import org.snt.inmemantlr.exceptions.*;
 import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemorySource;
@@ -253,17 +251,19 @@ public class GenericParser {
      *
      * @return true if compilation succeeded, false otherwise
      */
-    public boolean compile() {
+    public void compile() throws CompilationException {
         LOGGER.debug("compile");
 
         // the antlr objects are already compiled
         if (antrlObjectsAvailable())
-            return false;
+            throw new RedundantCompilationException("Antlr objects are already " +
+                    "available");
+
 
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
         if (pip.isEmpty())
-            return false;
+            throw new CompilationException("No string code pipeline availabe");
 
         for (StringCodeGenPipeline p : pip) {
             for (MemorySource ms : p.getItems()) {
@@ -290,7 +290,7 @@ public class GenericParser {
 
         cu.addAll(antlr.getCompilationUnits());
 
-        return sc.compile(cu);
+        sc.compile(cu);
     }
 
     /**

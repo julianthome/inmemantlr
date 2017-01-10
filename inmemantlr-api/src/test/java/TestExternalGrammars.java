@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tool.ToolCustomizer;
@@ -170,7 +171,16 @@ public class TestExternalGrammars {
 
         LOGGER.info("test {}", s.name);
         GenericParser gp = getParserForSubject(s, null);
-        assertTrue(gp.compile());
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
         LOGGER.debug("successfully compiled grammar");
 
         DefaultTreeListener dt = new DefaultTreeListener();
@@ -225,7 +235,15 @@ public class TestExternalGrammars {
             assertFalse(true);
         }
 
-        gp.compile();
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         verify(gp, s.examples);
     }
@@ -257,7 +275,15 @@ public class TestExternalGrammars {
             assertFalse(true);
         }
 
-        gp.compile();
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         verify(gp, s.examples);
     }
@@ -286,7 +312,15 @@ public class TestExternalGrammars {
             assertFalse(true);
         }
 
-        gp.compile();
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         verify(gp, s.examples);
     }
@@ -306,7 +340,15 @@ public class TestExternalGrammars {
         } catch (FileNotFoundException e) {
             assertTrue(false);
         }
-        gp.compile();
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
         verify(gp, s.examples);
     }
 
@@ -329,7 +371,15 @@ public class TestExternalGrammars {
             assertTrue(false);
         }
 
-        gp.compile();
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         verify(gp, s.examples);
     }

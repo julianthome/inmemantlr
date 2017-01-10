@@ -27,6 +27,7 @@
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -36,6 +37,7 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.snt.inmemantlr.utils.FileUtils.getStringFromStream;
 
 public class TestDoubleParse {
@@ -59,9 +61,26 @@ public class TestDoubleParse {
     @Test
     public void testProcessor() {
         GenericParser gp1 = new GenericParser(sgrammarcontent);
-        gp1.compile();
+        boolean compile;
+        try {
+            gp1.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
+
         GenericParser gp2 = new GenericParser(sgrammarcontent);
-        gp2.compile();
+
+        try {
+            gp2.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
 
         DefaultTreeListener l1 = new DefaultTreeListener();
         DefaultTreeListener l2 = new DefaultTreeListener();

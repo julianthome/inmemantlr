@@ -24,10 +24,10 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -62,7 +62,17 @@ public class TestTreeGeneration {
             e.printStackTrace();
         }
         assertNotNull(gp);
-        gp.compile();
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
+
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
         assertTrue(s != null && !s.isEmpty());
