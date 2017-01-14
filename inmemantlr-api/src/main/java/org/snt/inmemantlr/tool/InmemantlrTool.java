@@ -255,10 +255,11 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             LOGGER.debug("process {}", g.name);
 
             String s = getDepTokVocName(g);
-            if (s != null && !s.isEmpty()) {
+            if (s != null && !s.isEmpty()
+                    && tokvok.containsKey(s)
+                    && tokvok.get(s) != null) {
                 LOGGER.debug("get {}", s);
                 String tokvoc = tokvok.get(s);
-
                 if (g instanceof InmemantlrGrammar) {
                     LOGGER.debug("import from {}", tokvoc);
                     ((InmemantlrGrammar) g).setTokenVocab(tokvoc);

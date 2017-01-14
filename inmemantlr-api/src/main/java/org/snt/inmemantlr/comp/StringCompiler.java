@@ -168,16 +168,6 @@ public class StringCompiler {
         return clazz;
     }
 
-    /**
-     * instanciate new lexer
-     *
-     * @param input lexer class content as character stream
-     * @param cname class name
-     * @return antlr lexer
-     */
-    public Lexer instanciateLexer(CharStream input, String cname) {
-        return instanciateLexer(input, cname, true);
-    }
 
     /**
      * instanciate new lexer

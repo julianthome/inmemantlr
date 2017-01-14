@@ -62,9 +62,15 @@ public class TestExternalGrammars {
             "ucb-logo" // wait for grammars-v4 update
     };
 
+    private static String[] skip = {
+            "objc", // there is a bug in the objc grammar
+    };
+
+
     static File grammar = null;
 
-    private Set<String> blacklist = new HashSet(Arrays.asList(special));
+    private Set<String> specialCases = new HashSet(Arrays.asList(special));
+    private Set<String> toskip = new HashSet(Arrays.asList(skip));
 
     private Map<String, Subject> subjects = new HashMap<>();
 
@@ -164,7 +170,7 @@ public class TestExternalGrammars {
     }
 
     private void testSubject(Subject s, boolean skip) {
-        if (blacklist.contains(s.name) && skip) {
+        if (specialCases.contains(s.name) && skip) {
             LOGGER.debug("skip {}", s.name);
             return;
         }
@@ -196,10 +202,17 @@ public class TestExternalGrammars {
                 forEach(s -> testSubject(s, true));
     }
 
+    private boolean toCheck(String tcase) {
+        if(subjects.containsKey(tcase) && !toskip.contains(tcase))
+            return true;
+
+        return false;
+    }
+
     @Test
     public void testAntlr4() {
 
-        if (!subjects.containsKey("antlr4"))
+        if (!toCheck("antlr4"))
             return;
 
         Subject s = subjects.get("antlr4");
@@ -252,7 +265,7 @@ public class TestExternalGrammars {
     public void testStringTemplate() {
 
 
-        if (!subjects.containsKey("stringtemplate"))
+        if (!toCheck("stringtemplate"))
             return;
 
         Subject s = subjects.get("stringtemplate");
@@ -291,7 +304,7 @@ public class TestExternalGrammars {
     @Test
     public void testSwift() {
 
-        if (!subjects.containsKey("swift"))
+        if (!toCheck("swift"))
             return;
 
         Subject s = subjects.get("swift");
@@ -328,11 +341,15 @@ public class TestExternalGrammars {
     @Test
     public void testObjC() {
 
+        // there seems to be a bug in the grammar
 
-        if (!subjects.containsKey("objc"))
+
+        if (!toCheck("objc"))
             return;
 
         Subject s = subjects.get("objc");
+
+        LOGGER.debug(s.g4.toString());
 
         GenericParser gp = null;
         try {
@@ -356,7 +373,7 @@ public class TestExternalGrammars {
     public void testPHP() {
 
 
-        if (!subjects.containsKey("php"))
+        if (!toCheck("php"))
             return;
 
         Subject s = subjects.get("php");
@@ -387,7 +404,7 @@ public class TestExternalGrammars {
     @Test
     public void testEcmaScript() {
 
-        if (!subjects.containsKey("ecmascript"))
+        if (!toCheck("ecmascript"))
             return;
 
         Subject s = subjects.get("ecmascript");
