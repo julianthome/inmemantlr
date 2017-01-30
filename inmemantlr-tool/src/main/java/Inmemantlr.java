@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
@@ -177,8 +178,10 @@ public class Inmemantlr {
         gp.setListener(dt);
 
         LOGGER.info("compile generic parser");
-        if (!gp.compile()) {
-            LOGGER.error("cannot compile generic parser");
+        try {
+            gp.compile();
+        } catch (CompilationException e) {
+            LOGGER.error("cannot compile generic parser: {}", e.getMessage());
             System.exit(-1);
         }
 
