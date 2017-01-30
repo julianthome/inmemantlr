@@ -1,6 +1,6 @@
 grammar Simple;
 
-Opname: [a-zA-Z]+[_a-zA-ZA0-9]*;
+Opname: [a-zA-Z]+[_a-zA-Z0-9]*;
 Operation: '+' | '-';
 Datatype: 'INTEGER';
 String : '"' (~('"') | '\\\"')* '"' | '\'' (~('\'') | '\\\'')* '\'' ;

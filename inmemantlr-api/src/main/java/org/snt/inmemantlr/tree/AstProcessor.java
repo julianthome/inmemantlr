@@ -26,6 +26,8 @@
 
 package org.snt.inmemantlr.tree;
 
+import org.snt.inmemantlr.exceptions.AstProcessorException;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -60,8 +62,10 @@ public abstract class AstProcessor<R, T> {
      * process the abstract syntax tree
      *
      * @return result
+     * @throws AstProcessorException if something went wrong while processing
+     * an ast node
      */
-    public R process() {
+    public R process() throws AstProcessorException {
         initialize();
 
         for (AstNode rn : ast.getNodes()) {
@@ -149,7 +153,9 @@ public abstract class AstProcessor<R, T> {
     /**
      * process a single ast node
      *
-     * @param n ast node
+     * @param n an ast node to process
+     * @throws AstProcessorException if something went wrong while processing
+     * an ast node
      */
-    protected abstract void process(AstNode n);
+    protected abstract void process(AstNode n) throws AstProcessorException;
 }

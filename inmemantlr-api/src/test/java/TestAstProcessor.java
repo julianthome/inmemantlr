@@ -24,9 +24,11 @@
  * SOFTWARE.
  **/
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
@@ -106,7 +108,11 @@ public class TestAstProcessor {
             }
         };
 
-        processor.process();
+        try {
+            processor.process();
+        } catch (AstProcessorException e) {
+            Assert.assertFalse(true);
+        }
         assertTrue(processor.debug() != null);
     }
 }
