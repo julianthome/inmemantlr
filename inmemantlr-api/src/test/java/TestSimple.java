@@ -83,4 +83,45 @@ public class TestSimple {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
+    @Test
+    public void testOclStringParsing() throws IOException {
+
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/DeepOcl.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        }
+
+        String toParse = "def context Dependent inv inv54: (self.birth_year " +
+                ">=2012 and self.allowances->size()=1) or (self.birth_year < " +
+                "2012 and self.birth_year >= 1996)";
+
+
+        GenericParser gp = new GenericParser(sgrammarcontent);
+        DefaultTreeListener t = new DefaultTreeListener();
+
+        gp.setListener(t);
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+            LOGGER.debug(e.getMessage());
+        }
+
+        assertTrue(compile);
+
+        try {
+            gp.parse(toParse);
+        } catch (IllegalWorkflowException e) {
+            assert false;
+        }
+
+        Ast a = t.getAst();
+        
+        LOGGER.debug(a.toDot());
+    }
+
 }
