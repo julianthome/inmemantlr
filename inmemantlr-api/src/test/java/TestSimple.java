@@ -120,7 +120,7 @@ public class TestSimple {
         }
 
         Ast a = t.getAst();
-        
+
         LOGGER.debug(a.toDot());
     }
 
