@@ -124,4 +124,46 @@ public class TestSimple {
         LOGGER.debug(a.toDot());
     }
 
+
+
+    @Test
+    public void testLogic() throws IOException {
+
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/Logic.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        }
+
+        String toParse = "( XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX2  and  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX3 ) " +
+                "or ( XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX4  and  XXXXXXXXXXXXXXXXXXXXXXXXXXXXX5  " +
+                "and  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX6 )";
+
+
+        GenericParser gp = new GenericParser(sgrammarcontent);
+        DefaultTreeListener t = new DefaultTreeListener();
+
+        gp.setListener(t);
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+            LOGGER.debug(e.getMessage());
+        }
+
+        assertTrue(compile);
+
+        try {
+            gp.parse(toParse);
+        } catch (IllegalWorkflowException e) {
+            assert false;
+        }
+
+        Ast a = t.getAst();
+
+        assertEquals(a.getNodes().size(), 22);
+    }
+
 }
