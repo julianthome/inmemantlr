@@ -113,7 +113,7 @@ By providing the output of `ast.toDot()` to graphviz, one could visualize the AS
 
 With inmemantlr, one can easily process or translate a given AST by means of an `AstProcessor`. The following example illustrates how one can process a simple AST that represents a mathematical expression. Given the grammar definition below, parsing the string `'3+100'` would yield this parse tree:
 
-<img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="Ast derived from simple expressoin '3+100'" width="200px" align="second">
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="Ast derived from simple expression '3+100'" width="200px" align="second">
 
 ```
 grammar Ops;
