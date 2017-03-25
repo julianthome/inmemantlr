@@ -1,10 +1,20 @@
 # inmemantlr
 
-inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the manual generation and compilation steps that have to be done when using vanilla ANTLR. Instead, inmemantlr does all of these steps automatically in-memory while keeping all of the original ANTLR objects accessible through its `GenericParser` class which is serializable, and hence, can be reused at a later point in time or across different applications.
+inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the
+manual generation and compilation steps that have to be done when using vanilla
+ANTLR. Instead, inmemantlr does all of these steps automatically in-memory
+while keeping all of the original ANTLR objects accessible through its
+`GenericParser` class which is serializable, and hence, can be reused at a
+later point in time or across different applications.
 
-Moreover, one can easily generate an abstract syntax tree (AST) from a parsed file that can be both visualized using [graphviz](http://www.graphviz.org/) and processed/translated by means of inmemantlr's `AstProcessor` class.
+Moreover, one can easily generate an abstract syntax tree (AST) from a parsed
+file that can be both visualized using [graphviz](http://www.graphviz.org/) and
+processed/translated by means of inmemantlr's `AstProcessor` class.
 
-All of the above-mentioned inmemantlr features are illustrated by [examples](#toc). inmemantlr is ready to use for all of the [grammars-v4](https://github.com/antlr/grammars-v4) grammars (for detailed examples please have a look at [grammars-v4](#grammars-v4)).
+All of the above-mentioned inmemantlr features are illustrated by
+[examples](#toc). inmemantlr is ready to use for all of the
+[grammars-v4](https://github.com/antlr/grammars-v4) grammars (for detailed
+examples please have a look at [grammars-v4](#grammars-v4)).
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr-api/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
@@ -30,8 +40,18 @@ All of the above-mentioned inmemantlr features are illustrated by [examples](#to
 
 # Integration
 
-## Maven
-inmemantlr is available on maven central. One can integrate it by using the following dependency in the `pom.xml` file. Note, that the maven releases do not necessarily contain the newest changes that are available in the repository. The maven releases are kept in sync with the tagged [releases](https://github.com/julianthome/inmemantlr/releases). The API documentation for every release is avalable [here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However, the content of this documentation, in particular the code examples and usage scenarios, is always aligned with the master branch of this repository. Hence, it might be that the latest inmemantlr features are not yet available through the maven package.
+## Maven 
+inmemantlr is available on maven central. One can integrate it by
+using the following dependency in the `pom.xml` file. Note, that the maven
+releases do not necessarily contain the newest changes that are available in
+the repository. The maven releases are kept in sync with the tagged
+[releases](https://github.com/julianthome/inmemantlr/releases). The API
+documentation for every release is avalable
+[here](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr). However,
+the content of this documentation, in particular the code examples and usage
+scenarios, is always aligned with the master branch of this repository. Hence,
+it might be that the latest inmemantlr features are not yet available through
+the maven package.
 
 ```xml
 <dependency>
@@ -43,9 +63,15 @@ inmemantlr is available on maven central. One can integrate it by using the foll
 
 # Command-line Tool
 
-Besides the inmemantlr API which is desribed in more detail below, there is also an inmemantlr command-line tool which is well suited for the simple task of generating a dot files based on ASTs that are derived from parsed text files.
+Besides the inmemantlr API which is desribed in more detail below, there is
+also an inmemantlr command-line tool which is well suited for the simple task
+of generating a dot files based on ASTs that are derived from parsed text
+files.
 
-After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can be found within the `inmemantlr-tool/target` directory. The standalone command line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with the following options:
+After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
+be found within the `inmemantlr-tool/target` directory. The standalone command
+line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with
+the following options:
 
 ```bash
     --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
@@ -57,13 +83,21 @@ After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can b
                               added for compilation
 ```
 
-If no output directory is specified, the generated dot content will be displayed on the console.
+If no output directory is specified, the generated dot content will be
+displayed on the console.
 
-The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4 --infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files `/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For automating the PDF generation and visualization of the dot files [this script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212) might be helpful.
+The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4
+--infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files
+`/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For
+automating the PDF generation and visualization of the dot files [this
+script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212)
+might be helpful.
 
 # API Usage Scenarios
 
-The following code snippet shows an example how to use the API of inmemantlr. The descriptions are provided as source code comments. For the sake of simplicity, exception handling is omitted for all of the following examples.
+The following code snippet shows an example how to use the API of inmemantlr.
+The descriptions are provided as source code comments. For the sake of
+simplicity, exception handling is omitted for all of the following examples.
 
 ## Simple parsing
 
@@ -83,7 +117,8 @@ ctx = gp.parse(s);
 
 ## AST generation
 
-If you would like to get the derived AST from a parsed file, the following snippet could be of use:
+If you would like to get the derived AST from a parsed file, the following
+snippet could be of use:
 
 ``` java
 File f = new File("Java.g4");
@@ -105,13 +140,17 @@ Ast ast = dlist.getAst();
 System.out.println(ast.toDot());
 ```
 
-By providing the output of `ast.toDot()` to graphviz, one could visualize the AST as illustrated in the picture below.
+By providing the output of `ast.toDot()` to graphviz, one could visualize the
+AST as illustrated in the picture below.
 
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
 
 ## Ast processing
 
-With inmemantlr, one can easily process or translate a given AST by means of an `AstProcessor`. The following example illustrates how one can process a simple AST that represents a mathematical expression. Given the grammar definition below, parsing the string `'3+100'` would yield this parse tree:
+With inmemantlr, one can easily process or translate a given AST by means of an
+`AstProcessor`. The following example illustrates how one can process a simple
+AST that represents a mathematical expression. Given the grammar definition
+below, parsing the string `'3+100'` would yield this parse tree:
 
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="Ast derived from simple expression '3+100'" width="200px" align="second">
 
@@ -132,7 +171,8 @@ operand: Number;
 WS  :  [ \t\r\n]+ -> skip;
 ```
 
-The following code example illustrates how one could compute the result of a mathematical expression based on the above-mentioned grammar.
+The following code example illustrates how one could compute the result of a
+mathematical expression based on the above-mentioned grammar.
 
 
 ```java
@@ -188,9 +228,14 @@ processor.process();
 System.out.println(processor.getResult());
 ```
 
+A more practical example on how to use the AST processor can be found within
+my [CTrans project](https://github.com/julianthome/ctrans) which takes
+a given boolean formula and translates it into CNF or DNF, respectively.
 
-## Incremental parsing
-If you have multiple strings to parse one after another, the following code snippet might be useful:
+## Incremental parsing 
+
+If you have multiple strings to parse one after another,
+the following code snippet might be useful:
 
 ```java
 File f = new File("Simple.g4");
@@ -230,7 +275,8 @@ GenericParser gp = new GenericParser(files);
 
 For accessing the ANTLR parser/lexer objects, one could use the
 `getAllCompiledObjects` method which will return the source and byte code of
-the source files that were generated by ANTLR and the corresponding byte code generated by inmenantlr.
+the source files that were generated by ANTLR and the corresponding byte code
+generated by inmenantlr.
 
 ```java
 // get access to ANTLR objects
@@ -247,8 +293,9 @@ for(MemoryTuple tup : set) {
 
 ## Parser serialization
 
-For avoiding unnecessary compilation and for enabling
-the re-use of a generic parser across different Java applications or runs, it is possible to serialize a generic parser.
+For avoiding unnecessary compilation and for enabling the re-use of a generic
+parser across different Java applications or runs, it is possible to serialize
+a generic parser.
 
 A generic parser could be serialized to a file with the following code:
 ```java
@@ -265,7 +312,10 @@ code:
 GenericParser gp = GenericParser.load("/tmp/gp.out");
 ```
 ## grammars-v4
-The [grammars-v4](https://github.com/antlr/grammars-v4) repository is added as a submodule. For executing all the grammars-v4 test cases, one could run the following commands from within the `inmemantlr-api` maven module.
+
+The [grammars-v4](https://github.com/antlr/grammars-v4) repository is added as
+a submodule. For executing all the grammars-v4 test cases, one could run the
+following commands from within the `inmemantlr-api` maven module.
 
 ```bash
 git submodule init
