@@ -31,7 +31,7 @@
         <javadocplugin.version>2.10.4</javadocplugin.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.version>4.12</junit.version>
-        <antlr.version>4.6</antlr.version>
+        <antlr.version>4.7</antlr.version>
         <ecj.version>4.6.1</ecj.version>
         <commonsio.version>2.5</commonsio.version>
         <commonscli.version>1.4</commonscli.version>

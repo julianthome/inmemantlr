@@ -3,7 +3,7 @@ grammar Simple;
 Opname: [a-zA-Z]+[_a-zA-Z0-9]*;
 Operation: '+' | '-';
 Datatype: 'INTEGER';
-String : '"' (~('"') | '\\\"')* '"' | '\'' (~('\'') | '\\\'')* '\'' ;
+String : '"' (~('"') | '\\"')* '"' | '\'' (~('\'') | '\\\'')* '\'' ;
 
 s: (print | sequence)* EOF;
 
