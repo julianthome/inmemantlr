@@ -59,7 +59,11 @@ public class TestExternalGrammars {
             "stringtemplate",  // stringtemplate is handled by an extra case
             "swift",  // swift is handled by an extra test case
             "swift-fin", //swift-fin can be ignored
-            "ucb-logo" // wait for grammars-v4 update
+            "ucb-logo", // wait for grammars-v4 update
+
+            // have to provide an extra test
+            "z",
+            "swift2",
     };
 
     private static String[] skip = {
