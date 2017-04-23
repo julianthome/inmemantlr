@@ -49,7 +49,6 @@ public class TestExternalGrammars {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestExternalGrammars.class);
 
     private static String[] special = {
-            "antlr3", // antlr3 grammar seems to be broken
             "antlr4", // antlr4 is handled by an extra test case
             "aspectj", // have to manually adapt Java grammar
             "csharp", // csharp requires extra runtime
@@ -60,7 +59,7 @@ public class TestExternalGrammars {
             "swift",  // swift is handled by an extra test case
             "swift-fin", //swift-fin can be ignored
             "ucb-logo", // wait for grammars-v4 update
-
+            "python2", // seems to be broken
             // have to provide an extra test
             "z",
             "swift2",
