@@ -14,6 +14,7 @@
         <module>inmemantlr-api</module>
         <!-- the inmemantlr standalone tool -->
         <module>inmemantlr-tool</module>
+        <module>inmemantlr-graal</module>
     </modules>
 
     <name>${project.groupId}:${project.artifactId}</name>

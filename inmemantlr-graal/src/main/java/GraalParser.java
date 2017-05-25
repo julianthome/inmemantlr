@@ -24,59 +24,67 @@
  * SOFTWARE.
  **/
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
+import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.tree.Ast;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class TestNonCombinedGrammar {
+public enum GraalParser {
+    INSTANCE;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestNonCombinedGrammar.class);
 
-    @Test
-    public void testParserLexer() throws IOException {
-        LOGGER.debug("Test multi file parsing");
+    private static File [] files = {
+            GraalUtils.getResource("ANTLRv4Lexer.g4"),
+            GraalUtils.getResource("ANTLRv4Parser.g4"),
+            GraalUtils.getResource("LexBasic.g4")
+    };
 
-        File files[] = {
-                new File(getClass().getClassLoader().getResource
-                        ("inmemantlr/MySQLLexer.g4").getFile()),
-                new File(getClass().getClassLoader().getResource
-                        ("inmemantlr/MySQLParser.g4").getFile())
-        };
 
-        GenericParser gp = new GenericParser(files);
-        DefaultTreeListener t = new DefaultTreeListener();
-        gp.setListener(t);
+    private static GenericParser gp;
+    private static DefaultTreeListener dt = new DefaultTreeListener();
+
+
+    static {
+        // Exam
+        ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.antlr4";
+
+        try {
+            gp = new GenericParser(tc,files);
+        } catch (FileNotFoundException e) {
+            assert false;
+        }
+
+        gp.setListener(dt);
+
+        try {
+            File util =  GraalUtils.getResource("src/main/java/org/antlr/parser/antlr4/LexerAdaptor.java");
+            gp.addUtilityJavaFiles(util);
+        } catch (FileNotFoundException e) {
+            assert false;
+        }
 
         boolean compile;
         try {
             gp.compile();
-            compile = true;
         } catch (CompilationException e) {
-            compile = false;
+            assert false;
         }
-
-        assertTrue(compile);
-
-        try {
-            Ast ast;
-            gp.parse("select a from b;");
-            ast = t.getAst();
-            assertEquals(ast.getNodes().size(), 13);
-            LOGGER.debug(ast.toDot());
-        } catch (IllegalWorkflowException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
     }
+
+    public Ast getAstForGrammar(File grammar) throws FileNotFoundException {
+        try {
+            gp.parse(grammar);
+        } catch (IllegalWorkflowException e) {
+            assert false;
+        }
+        return dt.getAst();
+    }
+
+
 }

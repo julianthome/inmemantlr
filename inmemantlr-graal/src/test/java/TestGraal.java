@@ -24,8 +24,31 @@
  * SOFTWARE.
  **/
 
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello");
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.tree.Ast;
+
+import java.io.FileNotFoundException;
+
+public class TestGraal {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestGraal.class);
+
+    @Test
+    public void testGraal() {
+
+        Ast agr = null;
+        try {
+            agr = GraalParser.INSTANCE.getAstForGrammar(GraalUtils
+                    .getResource("Simple.g4"));
+        } catch (FileNotFoundException e) {
+            Assert.assertFalse(true);
+        }
+
+
+        LOGGER.debug(agr.toDot());
     }
 }
