@@ -24,31 +24,62 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Test;
+package org.snt.inmemantlr.graal;
+
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.tree.Ast;
 
-import java.io.FileNotFoundException;
+public class GraalTransition extends DefaultEdge {
 
-public class TestGraal {
-
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestGraal.class);
-
-    @Test
-    public void testGraal() {
-
-        Ast agr = null;
-        try {
-            agr = GraalParser.INSTANCE.getAstForGrammar(GraalUtils
-                    .getResource("Simple.g4"));
-        } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
-        }
+    final static Logger LOGGER = LoggerFactory.getLogger(GraalTransition.class);
 
 
-        LOGGER.debug(agr.toDot());
+    private GraalState src;
+    private GraalState tar;
+
+
+    public GraalTransition(GraalState src, GraalState tar) {
+        this.src = src;
+        this.tar = tar;
+
     }
+
+    @Override
+    public GraalState getSource() {
+        return this.src;
+    }
+
+    @Override
+    public GraalState getTarget() {
+        return this.tar;
+    }
+
+    public GraalTransition clone() {
+        return new GraalTransition(src.clone(), tar.clone());
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(!(o instanceof GraalTransition)) {
+            return false;
+        }
+        GraalTransition t = (GraalTransition)o;
+        return src.equals(t.src) && tar.equals(t.tar);
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = 0;
+        hc = 37 * hc + src.hashCode();
+        return 37 * hc + tar.hashCode();
+    }
+
+    public String toDot() {
+        return "";
+    }
+
+
 }

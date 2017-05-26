@@ -1,5 +1,5 @@
-/**
- * Inmemantlr - In memory compiler for Antlr 4
+package org.snt.inmemantlr.tool; /**
+ * org.snt.inmemantlr.tool.Inmemantlr - In memory compiler for Antlr 4
  * 
  * The MIT License (MIT)
  * 
@@ -60,7 +60,7 @@ public class Inmemantlr {
     }
 
     public static void main(String[] args) {
-        LOGGER.info("Inmemantlr tool");
+        LOGGER.info("org.snt.inmemantlr.tool.Inmemantlr tool");
 
         HelpFormatter hformatter = new HelpFormatter();
 

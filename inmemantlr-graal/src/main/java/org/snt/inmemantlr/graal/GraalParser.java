@@ -24,6 +24,8 @@
  * SOFTWARE.
  **/
 
+package org.snt.inmemantlr.graal;
+
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
@@ -69,7 +71,6 @@ public enum GraalParser {
             assert false;
         }
 
-        boolean compile;
         try {
             gp.compile();
         } catch (CompilationException e) {
