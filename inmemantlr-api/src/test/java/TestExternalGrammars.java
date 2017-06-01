@@ -153,6 +153,7 @@ public class TestExternalGrammars {
         File[] files = grammar.listFiles(File::isDirectory);
 
         for (File f : files) {
+
             assertTrue(f.isDirectory());
             Subject subject = new Subject();
             subject.name = f.getName();
@@ -186,6 +187,7 @@ public class TestExternalGrammars {
             gp.compile();
             compile = true;
         } catch (CompilationException e) {
+            LOGGER.debug("Error for {}:{}", s.name, e.getMessage());
             compile = false;
         }
 

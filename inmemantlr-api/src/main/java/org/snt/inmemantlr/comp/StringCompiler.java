@@ -124,6 +124,9 @@ public class StringCompiler {
 
         List<String> optionList = new ArrayList<>();
         optionList.addAll(cp);
+        optionList.add("-source");
+        optionList.add("1.7");
+
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
                 dianosticListener, optionList, classes, cunit);
