@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestExternalGrammars {
@@ -51,14 +52,13 @@ public class TestExternalGrammars {
     private static String[] special = {
             "antlr4", // antlr4 is handled by an extra test case
             "aspectj", // have to manually adapt Java grammar
-            "csharp", // csharp requires extra runtime
+            "csharp", // csharp is handled by an extra test case
             "ecmascript", // ecmascript is handled by an extra test case
             "objc", // objc is handled by an extra test case
             "php",  // php is handled by an extra test case
             "stringtemplate",  // stringtemplate is handled by an extra case
             "swift",  // swift is handled by an extra test case
             "swift-fin", //swift-fin can be ignored
-            "ucb-logo", // wait for grammars-v4 update
             "python2", // seems to be broken
             // have to provide an extra test
             "z",
@@ -417,4 +417,46 @@ public class TestExternalGrammars {
         testSubject(s, false);
     }
 
+
+    @Test
+    public void testCSharp() {
+
+
+        if (!toCheck("csharp"))
+            return;
+
+        Subject s = subjects.get("csharp");
+
+        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+                "CSharp" + "(Lexer|Parser).g4")).collect
+                (Collectors.toSet());
+
+        assertTrue(mfiles.size() > 0);
+
+        GenericParser mparser = null;
+        try {
+            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        assertNotNull(mparser);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            mparser.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        mparser.setListener(mdt);
+
+        assertTrue(compile);
+
+        verify(mparser, s.examples);
+    }
 }
