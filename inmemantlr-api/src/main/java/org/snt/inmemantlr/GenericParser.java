@@ -353,7 +353,7 @@ public class GenericParser {
 
         listener.reset();
 
-        ANTLRInputStream input = new ANTLRInputStream(toParse);
+        CodePointCharStream input = CharStreams.fromString(toParse);
 
         LOGGER.debug("load lexer {}", lexerName);
         Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
