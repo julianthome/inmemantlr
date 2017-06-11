@@ -61,7 +61,7 @@ public class TestExternalGrammars {
             "swift-fin", //swift-fin can be ignored
             "python2", // seems to be broken
             // have to provide an extra test
-            "z",
+            "z", // z is handled by an extra test case
             "swift2",
     };
 
@@ -275,6 +275,8 @@ public class TestExternalGrammars {
 
         Subject s = subjects.get("stringtemplate");
 
+        LOGGER.info("G4 {}", s.g4);
+
         // Exam
         ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.st4";
 
@@ -416,6 +418,59 @@ public class TestExternalGrammars {
         s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
         testSubject(s, false);
     }
+
+    @Test
+    public void testZ() {
+
+        if (!toCheck("z"))
+            return;
+        Subject s = subjects.get("z");
+
+
+        //assertTrue(mfiles.size() > 0);
+
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        try {
+            File util1 = new File
+                    ("src/test/resources/grammars-v4/z/src/main/java" +
+                            "/ZOperatorListener.java");
+            File util2 = new File
+                    ("src/test/resources/grammars-v4/z/src/main/java" +
+                            "/ZSupport.java");
+
+            gp.addUtilityJavaFiles(util1, util2);
+
+        } catch (FileNotFoundException e) {
+            assertFalse(true);
+        }
+
+        assertNotNull(gp);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        gp.setListener(mdt);
+
+        assertTrue(compile);
+
+        verify(gp, s.examples);
+    }
+
+
 
 
     @Test
