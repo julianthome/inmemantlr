@@ -24,11 +24,15 @@
  * SOFTWARE.
  **/
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
@@ -41,6 +45,8 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class TestTreeGeneration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestTreeGeneration.class);
 
     static File grammar = null;
     static File sfile = null;
@@ -55,6 +61,8 @@ public class TestTreeGeneration {
 
     @Test
     public void testGeneration() {
+
+
         GenericParser gp = null;
         try {
             gp = new GenericParser(grammar);
@@ -81,13 +89,19 @@ public class TestTreeGeneration {
 
         gp.setListener(dlist);
 
+
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            assertTrue(false);
+            Assert.assertTrue(false);
+        } catch (ParsingException e) {
+            Assert.assertTrue(false);
         }
 
+
         Ast ast = dlist.getAst();
+
+        LOGGER.debug(ast.toDot());
 
         // create copy
         Ast cast = new Ast(ast);

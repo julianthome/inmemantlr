@@ -31,6 +31,7 @@ import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
@@ -78,7 +79,7 @@ public class TestAstProcessor {
 
         try {
             gp.parse(s);
-        } catch (IllegalWorkflowException e) {
+        } catch (IllegalWorkflowException | ParsingException e) {
             assertTrue(false);
         }
 

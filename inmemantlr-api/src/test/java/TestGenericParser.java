@@ -69,7 +69,8 @@ public class TestGenericParser {
         boolean thrown = false;
         try {
             gp.parse(sfile);
-        } catch (IllegalWorkflowException | FileNotFoundException e) {
+        } catch (IllegalWorkflowException | FileNotFoundException |
+                ParsingException e) {
             thrown = true;
         }
 
@@ -90,7 +91,7 @@ public class TestGenericParser {
         thrown = false;
         try {
             gp.parse(sfile);
-        } catch (IllegalWorkflowException | FileNotFoundException e) {
+        } catch (IllegalWorkflowException | FileNotFoundException | ParsingException e) {
             thrown = true;
         }
 
@@ -111,7 +112,7 @@ public class TestGenericParser {
         thrown = false;
         try {
             gp.parse(sfile);
-        } catch (IllegalWorkflowException | FileNotFoundException e) {
+        } catch (IllegalWorkflowException | FileNotFoundException | ParsingException e) {
             thrown = true;
         }
 
@@ -139,7 +140,8 @@ public class TestGenericParser {
 
         try {
             gp.parse(sfile);
-        } catch (IllegalWorkflowException | FileNotFoundException e) {
+        } catch (IllegalWorkflowException | FileNotFoundException |
+                ParsingException e) {
             thrown = true;
         }
 
@@ -224,7 +226,7 @@ public class TestGenericParser {
         boolean thrown = false;
         try {
             gp.parse(sfile);
-        } catch (IllegalWorkflowException | FileNotFoundException e) {
+        } catch (IllegalWorkflowException | FileNotFoundException | ParsingException e) {
             thrown = true;
         }
 

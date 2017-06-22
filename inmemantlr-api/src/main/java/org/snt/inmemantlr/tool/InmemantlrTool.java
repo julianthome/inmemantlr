@@ -28,8 +28,7 @@ package org.snt.inmemantlr.tool;
 
 import org.antlr.v4.misc.Graph;
 import org.antlr.v4.parse.ANTLRParser;
-import org.antlr.v4.tool.Grammar;
-import org.antlr.v4.tool.GrammarTransformPipeline;
+import org.antlr.v4.tool.*;
 import org.antlr.v4.tool.ast.GrammarAST;
 import org.antlr.v4.tool.ast.GrammarASTErrorNode;
 import org.antlr.v4.tool.ast.GrammarRootAST;
@@ -319,4 +318,31 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
                 .filter(p -> !isImported(p.getG().name))
                 .collect(toCollection(LinkedHashSet::new));
     }
+
+
+    @Override
+    public void info(String msg) {
+        LOGGER.debug("info");
+        super.info(msg);
+    }
+
+    public void error(ANTLRMessage msg) {
+        LOGGER.debug("error");
+        super.error(msg);
+    }
+
+    public void warning(ANTLRMessage msg) {
+        LOGGER.debug("warning");
+        super.warning(msg);
+
+    }
+
+    public void version() {
+        this.info("ANTLR Parser Generator  Version " + VERSION);
+    }
+
+    public void exit(int e) {
+        System.exit(e);
+    }
+
 }

@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.utils.FileUtils;
@@ -79,7 +80,7 @@ public class TestSimple {
             ast = t.getAst();
             LOGGER.debug(ast.toDot());
             assertEquals(ast.getNodes().size(), 4);
-        } catch (IllegalWorkflowException e) {
+        } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -92,9 +93,9 @@ public class TestSimple {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 
-        String toParse = "def context Dependent inv inv54: (self.birth_year " +
-                ">=2012 and self.allowances->size()=1) or (self.birth_year < " +
-                "2012 and self.birth_year >= 1996)";
+        String toParse = "context Dependent inv inv54: (self.birthyear " +
+                ">=2012 and self.allowances->size()=1) or (self.birthyear < " +
+                "2012 and self.birthyear >= 1996)";
 
 
         GenericParser gp = new GenericParser(sgrammarcontent);
@@ -115,13 +116,12 @@ public class TestSimple {
 
         try {
             gp.parse(toParse);
-        } catch (IllegalWorkflowException e) {
-            assert false;
+        } catch (IllegalWorkflowException | ParsingException e) {
+            assertTrue(false);
         }
 
         Ast a = t.getAst();
 
-        LOGGER.debug(a.toDot());
     }
 
 
@@ -157,7 +157,7 @@ public class TestSimple {
 
         try {
             gp.parse(toParse);
-        } catch (IllegalWorkflowException e) {
+        } catch (IllegalWorkflowException | ParsingException e) {
             assert false;
         }
 

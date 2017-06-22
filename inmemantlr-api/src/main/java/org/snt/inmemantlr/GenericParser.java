@@ -43,6 +43,7 @@ import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.tool.InmemantlrErrorListener;
 import org.snt.inmemantlr.tool.InmemantlrTool;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
@@ -52,6 +53,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -305,7 +307,7 @@ public class GenericParser {
      * @throws FileNotFoundException    if input file cannot be found
      */
     public ParserRuleContext parse(File toParse) throws
-            IllegalWorkflowException, FileNotFoundException {
+            IllegalWorkflowException, FileNotFoundException,ParsingException {
         return parse(toParse, null);
     }
 
@@ -316,7 +318,8 @@ public class GenericParser {
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      */
-    public ParserRuleContext parse(String toParse) throws IllegalWorkflowException {
+    public ParserRuleContext parse(String toParse) throws
+            IllegalWorkflowException, ParsingException {
         return parse(toParse, null);
     }
 
@@ -330,7 +333,7 @@ public class GenericParser {
      * @throws FileNotFoundException    file not found
      */
     public ParserRuleContext parse(File toParse, String production) throws
-            IllegalWorkflowException, FileNotFoundException {
+            IllegalWorkflowException, FileNotFoundException, ParsingException {
         if (!toParse.exists()) {
             throw new FileNotFoundException("could not find file " + toParse
                     .getAbsolutePath());
@@ -346,7 +349,8 @@ public class GenericParser {
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      */
-    public ParserRuleContext parse(String toParse, String production) throws IllegalWorkflowException {
+    public ParserRuleContext parse(String toParse, String production) throws
+            IllegalWorkflowException, ParsingException {
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
@@ -371,8 +375,10 @@ public class GenericParser {
         // make parser information available to listener
         listener.setParser(parser);
 
-        // parser.addErrorListener(new DiagnosticErrorListener());
+        InmemantlrErrorListener el = new InmemantlrErrorListener();
+
         parser.removeErrorListeners();
+        parser.addErrorListener(el);
         parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
         parser.setBuildParseTree(true);
         parser.setTokenStream(tokens);
@@ -388,15 +394,29 @@ public class GenericParser {
             entryPoint = production;
         }
 
-        ParserRuleContext data;
+        ParserRuleContext data = null;
         try {
             Class<?> pc = parser.getClass();
-            Method m = pc.getMethod(entryPoint, (Class<?>[]) null);
+            Method m = pc.getDeclaredMethod(entryPoint, (Class<?>[]) null);
             data = (ParserRuleContext) m.invoke(parser, (Object[]) null);
         } catch (NoSuchMethodException | SecurityException |
                 IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException e) {
             return null;
+        }
+
+
+        Set<String> msgs = el.getLog().entrySet().stream().filter(e -> e.getKey
+                () ==
+                InmemantlrErrorListener.Type.SYNTAX_ERROR).map(e -> e
+                .getValue()).collect(Collectors.toSet());
+
+
+        if(msgs.size() > 0) {
+            String result = msgs
+                    .stream()
+                    .collect(Collectors.joining());
+            throw new ParsingException(result);
         }
 
         ParseTreeWalker walker = new ParseTreeWalker();

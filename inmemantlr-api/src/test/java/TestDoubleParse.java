@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 
@@ -94,7 +95,7 @@ public class TestDoubleParse {
         try {
             gp1.parse(s1);
             gp2.parse(s2);
-        } catch (IllegalWorkflowException e) {
+        } catch (IllegalWorkflowException | ParsingException e) {
             e.printStackTrace();
         }
 
