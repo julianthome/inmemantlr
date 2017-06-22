@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
 
@@ -199,7 +200,8 @@ public class Inmemantlr {
         for (File f : ins) {
             try {
                 gp.parse(f);
-            } catch (IllegalWorkflowException | FileNotFoundException e) {
+            } catch (IllegalWorkflowException | FileNotFoundException |
+                    ParsingException e) {
                 LOGGER.error(e.getMessage());
                 System.exit(-1);
             }
