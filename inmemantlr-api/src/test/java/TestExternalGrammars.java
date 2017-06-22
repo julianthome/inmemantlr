@@ -144,7 +144,6 @@ public class TestExternalGrammars {
             } catch (IllegalWorkflowException | FileNotFoundException |
                     RecognitionException | ParsingException e1) {
                 LOGGER.error(e1.getMessage());
-                System.exit(-1);
                 assertFalse(true);
             }
 
@@ -295,7 +294,7 @@ public class TestExternalGrammars {
 
         Subject s = subjects.get("stringtemplate");
 
-        LOGGER.info("G4 {}", s.g4);
+        //LOGGER.info("G4 {}", s.g4);
 
         // Exam
         ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.st4";
