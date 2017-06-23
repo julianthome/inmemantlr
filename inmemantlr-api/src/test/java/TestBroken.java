@@ -24,69 +24,48 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr.graal;
-
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tool.ToolCustomizer;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
+import static org.junit.Assert.assertFalse;
 
-public enum GraalParser {
-    INSTANCE;
+public class TestBroken {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestBroken.class);
 
-    private static File [] files = {
-            GraalUtils.getResource("ANTLRv4Lexer.g4"),
-            GraalUtils.getResource("ANTLRv4Parser.g4"),
-            GraalUtils.getResource("LexBasic.g4")
-    };
+    String sgrammarcontent = "";
 
+    @Test
+    public void testBroken() throws IOException {
 
-    private static GenericParser gp;
-    private static DefaultTreeListener dt = new DefaultTreeListener();
-
-
-    static {
-        // Exam
-        ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.antlr4";
-
-        try {
-            gp = new GenericParser(tc,files);
-        } catch (FileNotFoundException e) {
-            assert false;
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/Broken.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 
-        gp.setListener(dt);
+        GenericParser gp = new GenericParser(sgrammarcontent);
+        DefaultTreeListener t = new DefaultTreeListener();
 
-        try {
-            File util =  GraalUtils.getResource("src/main/java/org/antlr/parser/antlr4/LexerAdaptor.java");
-            gp.addUtilityJavaFiles(util);
-        } catch (FileNotFoundException e) {
-            assert false;
-        }
+        gp.setListener(t);
+
+        boolean compile;
 
         try {
             gp.compile();
+            compile = true;
         } catch (CompilationException e) {
-            assert false;
+            compile = false;
         }
-    }
 
-    public Ast getAstForGrammar(File grammar) throws FileNotFoundException {
-        try {
-            gp.parse(grammar);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            assert false;
-        }
-        return dt.getAst();
+        assertFalse(compile);
     }
-
 
 }

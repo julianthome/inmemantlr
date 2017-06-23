@@ -1,4 +1,4 @@
-package org.snt.inmemantlr.tool; /**
+ /**
  * org.snt.inmemantlr.tool.Inmemantlr - In memory compiler for Antlr 4
  * 
  * The MIT License (MIT)
@@ -24,24 +24,26 @@ package org.snt.inmemantlr.tool; /**
  * SOFTWARE.
  **/
 
-import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+ package org.snt.inmemantlr.tool;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+ import org.apache.commons.cli.*;
+ import org.apache.commons.io.FileUtils;
+ import org.apache.commons.io.FilenameUtils;
+ import org.slf4j.LoggerFactory;
+ import org.snt.inmemantlr.GenericParser;
+ import org.snt.inmemantlr.exceptions.CompilationException;
+ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+ import org.snt.inmemantlr.exceptions.ParsingException;
+ import org.snt.inmemantlr.listener.DefaultTreeListener;
+ import org.snt.inmemantlr.tree.Ast;
+
+ import java.io.File;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.util.Arrays;
+ import java.util.HashSet;
+ import java.util.Set;
+ import java.util.stream.Collectors;
 
 /**
  * inmemantlr command line tool

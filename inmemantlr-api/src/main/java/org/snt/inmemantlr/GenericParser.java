@@ -305,6 +305,7 @@ public class GenericParser {
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws FileNotFoundException    if input file cannot be found
+     * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(File toParse) throws
             IllegalWorkflowException, FileNotFoundException,ParsingException {
@@ -317,6 +318,7 @@ public class GenericParser {
      * @param toParse string to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
+     * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(String toParse) throws
             IllegalWorkflowException, ParsingException {
@@ -331,6 +333,7 @@ public class GenericParser {
      * @return context
      * @throws IllegalWorkflowException sources are not compiled
      * @throws FileNotFoundException    file not found
+     * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(File toParse, String production) throws
             IllegalWorkflowException, FileNotFoundException, ParsingException {
@@ -348,6 +351,7 @@ public class GenericParser {
      * @param production production name to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
+     * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(String toParse, String production) throws
             IllegalWorkflowException, ParsingException {
@@ -410,6 +414,7 @@ public class GenericParser {
                 () ==
                 InmemantlrErrorListener.Type.SYNTAX_ERROR).map(e -> e
                 .getValue()).collect(Collectors.toSet());
+
 
 
         if(msgs.size() > 0) {

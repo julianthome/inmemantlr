@@ -448,6 +448,17 @@ public class TestExternalGrammars {
     }
 
     @Test
+    public void testErlang() {
+
+        if (!toCheck("erlang"))
+            return;
+
+        Subject s = subjects.get("erlang");
+        //s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
+        testSubject(s, false);
+    }
+
+    @Test
     public void testZ() {
 
         if (!toCheck("z"))
