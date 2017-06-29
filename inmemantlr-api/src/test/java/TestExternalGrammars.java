@@ -337,7 +337,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
     @Test
@@ -388,7 +388,7 @@ public class TestExternalGrammars {
                 ("example1.st")
         ).collect(Collectors.toSet());
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
     @Test
@@ -426,7 +426,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
     @Test
@@ -464,42 +464,11 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
 
 
-    @Test
-    public void testObjC() {
-
-        // there seems to be a bug in the grammar
-
-
-        if (!toCheck("objc"))
-            return;
-
-        Subject s = subjects.get("objc");
-
-        LOGGER.debug(s.g4.toString());
-
-        GenericParser gp = null;
-        try {
-            gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
-        } catch (FileNotFoundException e) {
-            assertTrue(false);
-        }
-
-        boolean compile;
-        try {
-            gp.compile();
-            compile = true;
-        } catch (CompilationException e) {
-            compile = false;
-        }
-
-        assertTrue(compile);
-        verify(gp, s.examples);
-    }
 
     @Test
     public void testPHP() {
@@ -535,7 +504,7 @@ public class TestExternalGrammars {
                 ("alternativeSyntax.php")
         ).collect(Collectors.toSet());
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
 
@@ -588,7 +557,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
     }
 
 
@@ -631,7 +600,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(mparser, s.examples);
+        verify(mparser, s.examples, s.entrypoint);
     }
 
 
