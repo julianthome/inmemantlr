@@ -374,6 +374,7 @@ public class GenericParser {
         LOGGER.debug("load parser {}", parserName);
         Parser parser = sc.instanciateParser(tokens, parserName);
 
+
         Objects.requireNonNull(parser, "Parser must not be null");
 
         // make parser information available to listener
@@ -389,6 +390,8 @@ public class GenericParser {
 
         String[] rules = parser.getRuleNames();
         String entryPoint;
+
+
         if (production == null) {
             entryPoint = rules[0];
         } else {
@@ -402,13 +405,14 @@ public class GenericParser {
         try {
             Class<?> pc = parser.getClass();
             Method m = pc.getDeclaredMethod(entryPoint, (Class<?>[]) null);
+            Objects.requireNonNull(m, "method should not be null");
             data = (ParserRuleContext) m.invoke(parser, (Object[]) null);
         } catch (NoSuchMethodException | SecurityException |
                 IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException e) {
+            //e.printStackTrace();
             return null;
         }
-
 
         Set<String> msgs = el.getLog().entrySet().stream().filter(e -> e.getKey
                 () ==
@@ -511,6 +515,38 @@ public class GenericParser {
             closeQuietly(o_out);
             closeQuietly(f_out);
         }
+    }
+
+    /**
+     * Get active lexer name
+     * @return name of the active lexer
+     */
+    public String getLexerName() {
+        return lexerName;
+    }
+
+    /**
+     * set active lexer name
+     * @param lexerName
+     */
+    public void setLexerName(String lexerName) {
+        this.lexerName = lexerName;
+    }
+
+    /**
+     * get active parser name
+     * @return
+     */
+    public String getParserName() {
+        return parserName;
+    }
+
+    /**
+     * set active parser name
+     * @param parserName
+     */
+    public void setParserName(String parserName) {
+        this.parserName = parserName;
     }
 
     /**

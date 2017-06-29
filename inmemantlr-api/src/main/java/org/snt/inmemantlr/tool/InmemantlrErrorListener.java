@@ -64,7 +64,9 @@ public class InmemantlrErrorListener extends BaseErrorListener {
                             String msg,
                             RecognitionException e)
     {
-        log.put(Type.SYNTAX_ERROR, msg);
+        //LOGGER.debug("", msg,  e.getMessage());
+        log.put(Type.SYNTAX_ERROR, "(line " + line + ",char " +
+                charPositionInLine + "): " + msg);
     }
 
     @Override

@@ -24,6 +24,7 @@
  * SOFTWARE.
  **/
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
@@ -38,9 +39,15 @@ import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.tree.Ast;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,33 +65,24 @@ public class TestExternalGrammars {
             "objc", // objc is handled by an extra test case
             "php",  // php is handled by an extra test case
             "stringtemplate",  // stringtemplate is handled by an extra case
-            "swift",  // swift is handled by an extra test case
-            "swift-fin", //swift-fin can be ignored
             "python2", // seems to be broken
-            // have to provide an extra test
-            "z", // z is handled by an extra test case
-            "swift2",
-            "vb", // errors in example files
-            "python3", // errors in example files
-            "java8", // errors in example files
-            "c", // errors in example files
-            "vhdl", // errors in example files
-            "modula2pim4", // errors in example files
-            "oncrpc", // errors in example files
-            "verilog", // errors in example files
-            "scala", // errors in example files
-            "antlr3", // errors in example files
+            "swift2", // handled by extra testcase
+            "swift3", // handled by extra testcase
+            "swift-fin",
+            "z", // handled by extra testcase
+
+            "antlr3", // skip
+            "oncrpc", // skip
+            "objc", // skip
+            "oncrpc", // skip
+            "python3alt" //skip
     };
 
-    private static String[] skip = {
-            "objc", // there is a bug in the objc grammar
-    };
 
 
     static File grammar = null;
 
     private Set<String> specialCases = new HashSet(Arrays.asList(special));
-    private Set<String> toskip = new HashSet(Arrays.asList(skip));
 
     private Map<String, Subject> subjects = new HashMap<>();
 
@@ -93,6 +91,8 @@ public class TestExternalGrammars {
         public String name = "";
         public Set<File> g4 = new HashSet();
         public Set<File> examples = new HashSet();
+
+        private String entrypoint = "";
 
         public boolean hasExamples() {
             return !examples.isEmpty();
@@ -122,9 +122,15 @@ public class TestExternalGrammars {
     }
 
     private GenericParser getParserForSubject(Subject s, ToolCustomizer tc) {
+
+
+        File [] gs = s.g4.toArray(new File [s.g4.size()]);
+
+        LOGGER.debug("gs {}" ,gs.length);
+
         GenericParser gp = null;
         try {
-            gp = new GenericParser(tc, s.g4.toArray(new File[s.g4.size()]));
+            gp = new GenericParser(tc, gs);
         } catch (FileNotFoundException e) {
             assertTrue(false);
         }
@@ -134,13 +140,23 @@ public class TestExternalGrammars {
         return gp;
     }
 
-    private void verify(GenericParser p, Set<File> toParse) {
+    private void verify(GenericParser g, Set<File> toParser) {
+        verify(g, toParser, null);
+    }
+
+
+    private void verify(GenericParser p, Set<File> toParse, String ep) {
         DefaultTreeListener dt = new DefaultTreeListener();
         p.setListener(dt);
-        toParse.forEach(e -> {
+
+
+        for(File e : toParse){
             try {
-                LOGGER.info("parse {}", e.getName());
-                p.parse(e);
+                LOGGER.info("parse {} with {} and ept {}", e.getName(), p
+                        .getParserName(), ep);
+                ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
+                        .parse(e,ep) : p.parse(e);
+                Assert.assertNotNull(ctx);
             } catch (IllegalWorkflowException | FileNotFoundException |
                     RecognitionException | ParsingException e1) {
                 LOGGER.error(e1.getMessage());
@@ -149,8 +165,9 @@ public class TestExternalGrammars {
 
             Ast ast = dt.getAst();
             Assert.assertNotNull(ast);
+            LOGGER.debug(ast.toDot());
             assertTrue(ast.getNodes().size() > 1);
-        });
+        }
     }
 
     @Before
@@ -164,15 +181,51 @@ public class TestExternalGrammars {
 
         File[] files = grammar.listFiles(File::isDirectory);
 
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+
         for (File f : files) {
+
 
             assertTrue(f.isDirectory());
             Subject subject = new Subject();
             subject.name = f.getName();
 
+
+            File [] xmla = f.listFiles(pathname -> pathname
+                            .getName()
+                            .equals("pom.xml"));
+
+            List<File> xmls = Arrays.asList(xmla);
+
+            if(xmls.size() == 1) {
+                Document doc = null;
+                try {
+                    doc = dbf.newDocumentBuilder().parse(xmls.get(0));
+                } catch (ParserConfigurationException e) {
+                    Assert.assertTrue(false);
+                } catch (SAXException e) {
+                    Assert.assertTrue(false);
+                } catch (IOException e) {
+                    Assert.assertTrue(false);
+                }
+
+                NodeList nl = doc.getElementsByTagName("entryPoint");
+
+                if(nl.getLength() == 1) {
+                    subject.entrypoint = nl.item(0).getTextContent();
+                }
+
+            }
+
+
             File[] gs = f.listFiles(pathname -> pathname.getName().endsWith(".g4"));
-            if (gs != null && gs.length > 0)
+
+
+            if (gs != null && gs.length > 0) {
                 subject.g4.addAll(Arrays.asList(gs));
+            }
 
             File examples = new File(f.getAbsolutePath() + "/examples");
 
@@ -185,15 +238,17 @@ public class TestExternalGrammars {
 
             );
 
-            if (xamples != null && xamples.length > 0)
+            if (xamples != null && xamples.length > 0) {
                 subject.examples.addAll(Arrays.asList(xamples));
+            }
 
             subjects.put(subject.name, subject);
         }
     }
 
-    private void testSubject(Subject s, boolean skip) {
-        if (specialCases.contains(s.name) && skip) {
+    private void testSubject(Subject s) {
+        LOGGER.debug("test {}", s.name);
+        if (specialCases.contains(s.name)) {
             LOGGER.debug("skip {}", s.name);
             return;
         }
@@ -216,18 +271,18 @@ public class TestExternalGrammars {
         DefaultTreeListener dt = new DefaultTreeListener();
         gp.setListener(dt);
 
-        verify(gp, s.examples);
+        verify(gp, s.examples, s.entrypoint);
 
     }
 
     @Test
     public void testGeneration() {
         subjects.values().stream().filter(Subject::hasExamples).
-                forEach(s -> testSubject(s, true));
+                forEach(s -> testSubject(s));
     }
 
     private boolean toCheck(String tcase) {
-        if(subjects.containsKey(tcase) && !toskip.contains(tcase))
+        if(subjects.containsKey(tcase))
             return true;
 
         return false;
@@ -305,6 +360,7 @@ public class TestExternalGrammars {
 
         gp.setListener(dt);
 
+
         try {
             File util = new File
                     ("src/test/resources/grammars-v4/stringtemplate/" +
@@ -322,9 +378,13 @@ public class TestExternalGrammars {
             compile = false;
         }
 
+
+        LOGGER.debug("name {}", gp.getParserName());
+        gp.setParserName("org.antlr.parser.st4.STParser");
+        gp.setLexerName("org.antlr.parser.st4.STLexer");
         assertTrue(compile);
 
-        s.examples = s.examples.stream().filter( f -> !f.getName().contains
+        s.examples = s.examples.stream().filter( f -> f.getName().contains
                 ("example1.st")
         ).collect(Collectors.toSet());
 
@@ -332,12 +392,12 @@ public class TestExternalGrammars {
     }
 
     @Test
-    public void testSwift() {
+    public void testSwift2() {
 
-        if (!toCheck("swift"))
+        if (!toCheck("swift2"))
             return;
 
-        Subject s = subjects.get("swift");
+        Subject s = subjects.get("swift2");
 
         GenericParser gp = null;
         try {
@@ -346,9 +406,10 @@ public class TestExternalGrammars {
             assertTrue(false);
         }
 
+
         try {
             File util = new File
-                    ("src/test/resources/grammars-v4/swift/src/main/java" +
+                    ("src/test/resources/grammars-v4/swift2/src/main/java" +
                             "/SwiftSupport.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
@@ -369,6 +430,46 @@ public class TestExternalGrammars {
     }
 
     @Test
+    public void testSwift3() {
+
+        if (!toCheck("swift3"))
+            return;
+
+        Subject s = subjects.get("swift3");
+
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        try {
+            File util = new File
+                    ("src/test/resources/grammars-v4/swift3/src/main/java" +
+                            "/SwiftSupport.java");
+            gp.addUtilityJavaFiles(util);
+        } catch (FileNotFoundException e) {
+            assertFalse(true);
+        }
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
+
+        verify(gp, s.examples);
+    }
+
+
+
+    @Test
     public void testObjC() {
 
         // there seems to be a bug in the grammar
@@ -387,6 +488,7 @@ public class TestExternalGrammars {
         } catch (FileNotFoundException e) {
             assertTrue(false);
         }
+
         boolean compile;
         try {
             gp.compile();
@@ -436,27 +538,7 @@ public class TestExternalGrammars {
         verify(gp, s.examples);
     }
 
-    @Test
-    public void testEcmaScript() {
 
-        if (!toCheck("ecmascript"))
-            return;
-
-        Subject s = subjects.get("ecmascript");
-        s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
-        testSubject(s, false);
-    }
-
-    @Test
-    public void testErlang() {
-
-        if (!toCheck("erlang"))
-            return;
-
-        Subject s = subjects.get("erlang");
-        //s.g4.removeIf(f -> !f.getName().equals("ECMAScript.g4"));
-        testSubject(s, false);
-    }
 
     @Test
     public void testZ() {
@@ -510,8 +592,6 @@ public class TestExternalGrammars {
     }
 
 
-
-
     @Test
     public void testCSharp() {
 
@@ -553,4 +633,7 @@ public class TestExternalGrammars {
 
         verify(mparser, s.examples);
     }
+
+
+
 }
