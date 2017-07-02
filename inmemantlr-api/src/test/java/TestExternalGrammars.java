@@ -598,7 +598,7 @@ public class TestExternalGrammars {
 
         verify(gp, s.examples, s.entrypoint);
     }
-    
+
 
     @Test
     public void testCSharp() {
