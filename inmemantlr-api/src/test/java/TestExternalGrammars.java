@@ -72,9 +72,6 @@ public class TestExternalGrammars {
             "z", // handled by extra testcase
 
             "antlr3", // skip
-            "oncrpc", // skip
-            "objc", // skip
-            "oncrpc", // skip
             "python3alt" //skip
     };
 
@@ -246,9 +243,9 @@ public class TestExternalGrammars {
         }
     }
 
-    private void testSubject(Subject s) {
+    private void testSubject(Subject s, boolean skip) {
         LOGGER.debug("test {}", s.name);
-        if (specialCases.contains(s.name)) {
+        if (specialCases.contains(s.name) && skip) {
             LOGGER.debug("skip {}", s.name);
             return;
         }
@@ -278,7 +275,7 @@ public class TestExternalGrammars {
     @Test
     public void testGeneration() {
         subjects.values().stream().filter(Subject::hasExamples).
-                forEach(s -> testSubject(s));
+                forEach(s -> testSubject(s,true));
     }
 
     private boolean toCheck(String tcase) {
@@ -560,6 +557,48 @@ public class TestExternalGrammars {
         verify(gp, s.examples, s.entrypoint);
     }
 
+
+    @Test
+    public void testObjc() {
+
+        if (!toCheck("objc"))
+            return;
+
+        Subject s = subjects.get("objc");
+
+        s.g4.add(new File("src/test/resources/grammars-v4/objc/one-step" +
+                "-processing/ObjectiveCLexer.g4"));
+        s.g4.add(new File("src/test/resources/grammars-v4/objc/one-step" +
+                "-processing/ObjectiveCPreprocessorParser.g4"));
+
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            LOGGER.error(e.getMessage());
+            compile = false;
+        }
+
+        gp.setListener(mdt);
+
+        assertTrue(compile);
+
+        s.examples.removeIf(p -> p.getName().contains("AllInOne.m"));
+
+        verify(gp, s.examples, s.entrypoint);
+    }
+    
 
     @Test
     public void testCSharp() {

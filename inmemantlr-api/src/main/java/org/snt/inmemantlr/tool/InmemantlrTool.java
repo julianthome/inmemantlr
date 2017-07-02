@@ -182,6 +182,8 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
         final Grammar g = createGrammar(ast);
         g.fileName = g.name;
 
+        g.loadImportedGrammars();
+
         StringCodeGenPipeline spip = new StringCodeGenPipeline(g);
 
         LOGGER.debug("put grammar {}", g.name);
