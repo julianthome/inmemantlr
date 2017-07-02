@@ -107,7 +107,8 @@ public class TestGrammarImport {
 
         try {
             gp.parse(new File
-                    ("src/test/resources/inmemantlr/CalculatorService.x"), "oncrpcv2Specification");
+                    ("src/test/resources/inmemantlr/CalculatorService.x"),
+                    "oncrpcv2Specification", GenericParser.CaseSensitiveType.NONE);
         } catch (IllegalWorkflowException e) {
             thrown = true;
         } catch (ParsingException e) {

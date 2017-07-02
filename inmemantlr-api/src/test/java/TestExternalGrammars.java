@@ -149,10 +149,10 @@ public class TestExternalGrammars {
 
         for(File e : toParse){
             try {
-                LOGGER.info("parse {} with {} and ept {}", e.getName(), p
+                LOGGER.info("parseFile {} with {} and ept {}", e.getName(), p
                         .getParserName(), ep);
                 ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
-                        .parse(e,ep) : p.parse(e);
+                        .parse(e,ep, GenericParser.CaseSensitiveType.NONE) : p.parse(e);
                 Assert.assertNotNull(ctx);
             } catch (IllegalWorkflowException | FileNotFoundException |
                     RecognitionException | ParsingException e1) {

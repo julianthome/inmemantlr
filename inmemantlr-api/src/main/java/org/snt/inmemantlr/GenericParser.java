@@ -64,6 +64,12 @@ public class GenericParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericParser.class);
 
+    public enum CaseSensitiveType {
+        NONE,
+        UPPER,
+        LOWER
+    }
+
     private InmemantlrTool antlr = new InmemantlrTool();
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc = new StringCompiler();
@@ -299,9 +305,9 @@ public class GenericParser {
     }
 
     /**
-     * parse file content an create a context
+     * parseFile file content an create a context
      *
-     * @param toParse string to parse
+     * @param toParse string to parseFile
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws FileNotFoundException    if input file cannot be found
@@ -309,55 +315,86 @@ public class GenericParser {
      */
     public ParserRuleContext parse(File toParse) throws
             IllegalWorkflowException, FileNotFoundException,ParsingException {
-        return parse(toParse, null);
+        return parse(toParse, null, CaseSensitiveType.NONE);
+    }
+
+
+
+
+    public ParserRuleContext parse(File toParse, CaseSensitiveType cs) throws
+            IllegalWorkflowException, FileNotFoundException,ParsingException {
+        return parse(toParse, null, cs);
     }
 
     /**
-     * parse string an create a context
+     * parseFile string an create a context
      *
-     * @param toParse string to parse
+     * @param toParse string to parseFile
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(String toParse) throws
             IllegalWorkflowException, ParsingException {
-        return parse(toParse, null);
+        return parse(toParse, null, CaseSensitiveType.NONE);
+    }
+
+
+    public ParserRuleContext parse(String toParse, CaseSensitiveType cs) throws
+            IllegalWorkflowException, ParsingException {
+        return parse(toParse, null, cs);
     }
 
     /**
-     * parse in fresh
+     * parseFile in fresh
      *
-     * @param toParse    file to parse
-     * @param production production name to parse
+     * @param toParse    file to parseFile
+     * @param production production name to parseFile
      * @return context
      * @throws IllegalWorkflowException sources are not compiled
      * @throws FileNotFoundException    file not found
      * @throws ParsingException         if an error occurs while parsing
      */
-    public ParserRuleContext parse(File toParse, String production) throws
+    public ParserRuleContext parse(File toParse, String production,
+                                   CaseSensitiveType cs) throws
             IllegalWorkflowException, FileNotFoundException, ParsingException {
         if (!toParse.exists()) {
             throw new FileNotFoundException("could not find file " + toParse
                     .getAbsolutePath());
         }
-        return parse(FileUtils.loadFileContent(toParse.getAbsolutePath()), production);
+
+        return parse(FileUtils.loadFileContent(toParse.getAbsolutePath()),
+                production,cs);
     }
 
     /**
-     * parse in fresh
+     * parseFile in fresh
      *
-     * @param toParse    string to parse
-     * @param production production name to parse
+     * @param toParse    string to parseFile
+     * @param production production name to parseFile
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws ParsingException         if an error occurs while parsing
      */
-    public ParserRuleContext parse(String toParse, String production) throws
+    public ParserRuleContext parse(String toParse, String production,
+                                   CaseSensitiveType cs)
+            throws
             IllegalWorkflowException, ParsingException {
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
+
+        switch (cs) {
+            case NONE:
+                break;
+            case UPPER:
+                toParse = toParse.toUpperCase();
+                break;
+            case LOWER:
+                toParse = toParse.toLowerCase();
+                break;
+        }
+
 
         listener.reset();
 
@@ -434,16 +471,16 @@ public class GenericParser {
     }
 
     /**
-     * get parse tree listener
+     * get parseFile tree listener
      *
-     * @return parse tree listener
+     * @return parseFile tree listener
      */
     public ParseTreeListener getListener() {
         return listener;
     }
 
     /**
-     * set parse tree listener
+     * set parseFile tree listener
      *
      * @param listener listener to use
      */
