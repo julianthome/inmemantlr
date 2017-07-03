@@ -249,7 +249,7 @@ public class GenericParser {
      * independent instance of a generic parser
      * @param tlc a ToolCustomizer
      * @param content grammar content
-     * @return
+     * @return grammar object
      */
     public static GenericParser independentInstance(ToolCustomizer tlc,
                                                     String content) {
@@ -334,9 +334,9 @@ public class GenericParser {
      * @param toParse file to parse
      * @param cs set context sensitivity
      * @return context
-     * @throws IllegalWorkflowException
-     * @throws FileNotFoundException
-     * @throws ParsingException
+     * @throws IllegalWorkflowException if compilation did not take place
+     * @throws FileNotFoundException    if input file cannot be found
+     * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(File toParse, CaseSensitiveType cs) throws
             IllegalWorkflowException, FileNotFoundException, ParsingException {
@@ -590,7 +590,7 @@ public class GenericParser {
 
     /**
      * set active lexer name
-     * @param lexerName
+     * @param lexerName name of the lexer to be used
      */
     public void setLexerName(String lexerName) {
         this.lexerName = lexerName;
@@ -598,7 +598,7 @@ public class GenericParser {
 
     /**
      * get active parser name
-     * @return
+     * @return parser name
      */
     public String getParserName() {
         return parserName;
@@ -606,7 +606,7 @@ public class GenericParser {
 
     /**
      * set active parser name
-     * @param parserName
+     * @param parserName name of the parser to be used
      */
     public void setParserName(String parserName) {
         this.parserName = parserName;
