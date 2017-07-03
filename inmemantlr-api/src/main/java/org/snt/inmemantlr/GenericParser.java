@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -237,19 +237,29 @@ public class GenericParser {
     /**
      * a signle instance of a generic parser
      *
-     * @param content grammar content
      * @param tlc     a ToolCustomizer
+     * @param content grammar content
      * @return grammar object
      */
     public static GenericParser instance(ToolCustomizer tlc, String content) {
         return new GenericParser(tlc, content);
     }
 
+    /**
+     * independent instance of a generic parser
+     * @param tlc a ToolCustomizer
+     * @param content grammar content
+     * @return
+     */
     public static GenericParser independentInstance(ToolCustomizer tlc,
                                                     String content) {
         return new GenericParser(tlc, false, content);
     }
 
+    /**
+     * set classpath
+     * @param cp list of items to add to classpath
+     */
     public void setClassPath(List cp) {
         sc.setClassPath(cp);
     }
@@ -305,51 +315,40 @@ public class GenericParser {
     }
 
     /**
-     * parseFile file content an create a context
+     * parse file content an create a context
      *
-     * @param toParse string to parseFile
+     * @param toParse file to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws FileNotFoundException    if input file cannot be found
      * @throws ParsingException         if an error occurs while parsing
      */
     public ParserRuleContext parse(File toParse) throws
-            IllegalWorkflowException, FileNotFoundException,ParsingException {
+            IllegalWorkflowException, FileNotFoundException, ParsingException {
         return parse(toParse, null, CaseSensitiveType.NONE);
     }
 
-
-
-
-    public ParserRuleContext parse(File toParse, CaseSensitiveType cs) throws
-            IllegalWorkflowException, FileNotFoundException,ParsingException {
-        return parse(toParse, null, cs);
-    }
-
     /**
-     * parseFile string an create a context
+     * parse file content an create a context
      *
-     * @param toParse string to parseFile
+     * @param toParse file to parse
+     * @param cs set context sensitivity
      * @return context
-     * @throws IllegalWorkflowException if compilation did not take place
-     * @throws ParsingException         if an error occurs while parsing
+     * @throws IllegalWorkflowException
+     * @throws FileNotFoundException
+     * @throws ParsingException
      */
-    public ParserRuleContext parse(String toParse) throws
-            IllegalWorkflowException, ParsingException {
-        return parse(toParse, null, CaseSensitiveType.NONE);
-    }
-
-
-    public ParserRuleContext parse(String toParse, CaseSensitiveType cs) throws
-            IllegalWorkflowException, ParsingException {
+    public ParserRuleContext parse(File toParse, CaseSensitiveType cs) throws
+            IllegalWorkflowException, FileNotFoundException, ParsingException {
         return parse(toParse, null, cs);
     }
 
     /**
-     * parseFile in fresh
+     * parse file content an create a context
      *
      * @param toParse    file to parseFile
      * @param production production name to parseFile
+     * @param cs         case sensitivity
      * @return context
      * @throws IllegalWorkflowException sources are not compiled
      * @throws FileNotFoundException    file not found
@@ -364,14 +363,43 @@ public class GenericParser {
         }
 
         return parse(FileUtils.loadFileContent(toParse.getAbsolutePath()),
-                production,cs);
+                production, cs);
     }
 
     /**
-     * parseFile in fresh
+     * parse string and create a context
+     *
+     * @param toParse string to parseFile
+     * @return context
+     * @throws IllegalWorkflowException if compilation did not take place
+     * @throws ParsingException         if an error occurs while parsing
+     */
+    public ParserRuleContext parse(String toParse) throws
+            IllegalWorkflowException, ParsingException {
+        return parse(toParse, null, CaseSensitiveType.NONE);
+    }
+
+    /**
+     * parse string and create a context
+     *
+     * @param toParse string to parseFile
+     * @param cs         case sensitivity
+     * @return context
+     * @throws IllegalWorkflowException if compilation did not take place
+     * @throws ParsingException         if an error occurs while parsing
+     */
+    public ParserRuleContext parse(String toParse, CaseSensitiveType cs) throws
+            IllegalWorkflowException, ParsingException {
+        return parse(toParse, null, cs);
+    }
+
+
+    /**
+     * parse string and create a context
      *
      * @param toParse    string to parseFile
      * @param production production name to parseFile
+     * @param cs         case sensitivity
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws ParsingException         if an error occurs while parsing
@@ -394,7 +422,6 @@ public class GenericParser {
                 toParse = toParse.toLowerCase();
                 break;
         }
-
 
         listener.reset();
 
@@ -457,8 +484,7 @@ public class GenericParser {
                 .getValue()).collect(Collectors.toSet());
 
 
-
-        if(msgs.size() > 0) {
+        if (msgs.size() > 0) {
             String result = msgs
                     .stream()
                     .collect(Collectors.joining());

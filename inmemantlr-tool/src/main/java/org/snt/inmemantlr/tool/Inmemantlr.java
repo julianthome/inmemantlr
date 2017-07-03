@@ -85,7 +85,7 @@ public class Inmemantlr {
         Option infiles = Option.builder()
                 .longOpt("infiles")
                 .hasArgs()
-                .desc("comma-separated list of files to parse")
+                .desc("comma-separated list of files to parseFile")
                 .required(true)
                 .argName("infiles")
                 .type(String.class)
@@ -176,7 +176,7 @@ public class Inmemantlr {
             }
         }
 
-        LOGGER.info("create and add parse tree listener");
+        LOGGER.info("create and add parseFile tree listener");
         DefaultTreeListener dt = new DefaultTreeListener();
         gp.setListener(dt);
 
@@ -201,7 +201,7 @@ public class Inmemantlr {
         Ast ast;
         for (File f : ins) {
             try {
-                gp.parse(f);
+                gp.parseFile(f);
             } catch (IllegalWorkflowException | FileNotFoundException |
                     ParsingException e) {
                 LOGGER.error(e.getMessage());
