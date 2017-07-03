@@ -201,7 +201,7 @@ public class Inmemantlr {
         Ast ast;
         for (File f : ins) {
             try {
-                gp.parseFile(f);
+                gp.parse(f);
             } catch (IllegalWorkflowException | FileNotFoundException |
                     ParsingException e) {
                 LOGGER.error(e.getMessage());
