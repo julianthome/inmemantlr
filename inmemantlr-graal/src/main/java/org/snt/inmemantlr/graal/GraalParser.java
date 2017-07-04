@@ -81,7 +81,7 @@ public enum GraalParser {
 
     public Ast getAstForGrammar(File grammar) throws FileNotFoundException {
         try {
-            gp.parseFile(grammar);
+            gp.parse(grammar);
         } catch (IllegalWorkflowException | ParsingException e) {
             assert false;
         }
