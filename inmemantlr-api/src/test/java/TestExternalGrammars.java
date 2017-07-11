@@ -74,6 +74,7 @@ public class TestExternalGrammars {
 
             "tsql", // handled by extra testcase
             "plsql", // handled by extra testcase
+            "mysql", // handled by extra testcase
 
             "antlr3", // skip
             "python3alt" //skip
@@ -709,6 +710,50 @@ public class TestExternalGrammars {
 
         Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
                 "PlSql" + "(Lexer|Parser).g4")).collect
+                (Collectors.toSet());
+
+        assertTrue(mfiles.size() > 0);
+
+        GenericParser mparser = null;
+        try {
+            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        assertNotNull(mparser);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            mparser.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
+                .CaseSensitiveType.UPPER));
+
+        mparser.setListener(mdt);
+
+        assertTrue(compile);
+
+        verify(mparser, s.examples, s.entrypoint);
+    }
+
+    @Test
+    public void testMySQL() {
+
+        if (!toCheck("mysql"))
+            return;
+
+        Subject s = subjects.get("mysql");
+
+        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+                "MySql" + "(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
         assertTrue(mfiles.size() > 0);
