@@ -43,6 +43,8 @@ import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
+import org.snt.inmemantlr.stream.DefaultStreamProvider;
+import org.snt.inmemantlr.stream.StreamProvider;
 import org.snt.inmemantlr.tool.InmemantlrErrorListener;
 import org.snt.inmemantlr.tool.InmemantlrTool;
 import org.snt.inmemantlr.tool.ToolCustomizer;
@@ -74,6 +76,7 @@ public class GenericParser {
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc = new StringCompiler();
     private FileProvider fp = new FileProvider();
+    private StreamProvider provider = new DefaultStreamProvider();
     private boolean useCached = true;
     private String lexerName = "";
     private String parserName = "";
@@ -266,6 +269,21 @@ public class GenericParser {
 
 
     /**
+     * get char stream provider for lexer
+     * @return stream provider
+     */
+    public StreamProvider getStreamProvider() {
+        return provider;
+    }
+
+    /**
+     * set char stream provider for lexer
+     */
+    public void setStreamProvider(StreamProvider provider) {
+        this.provider = provider;
+    }
+
+    /**
      * compile generic parser
      *
      * @throws CompilationErrorException an error during the Java compilation
@@ -394,6 +412,7 @@ public class GenericParser {
     }
 
 
+
     /**
      * parse string and create a context
      *
@@ -425,9 +444,14 @@ public class GenericParser {
 
         listener.reset();
 
-        CodePointCharStream input = CharStreams.fromString(toParse);
+        //CodePointCharStream input = CharStreams.fromString(toParse);
+
+        CharStream input = provider.getCharStream(toParse);
+
+        Objects.requireNonNull(input, "char stream must not be null");
 
         LOGGER.debug("load lexer {}", lexerName);
+
         Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
         Objects.requireNonNull(lex, "lex must not be null");
 
@@ -437,8 +461,7 @@ public class GenericParser {
 
         LOGGER.debug("load parser {}", parserName);
         Parser parser = sc.instanciateParser(tokens, parserName);
-
-
+        
         Objects.requireNonNull(parser, "Parser must not be null");
 
         // make parser information available to listener

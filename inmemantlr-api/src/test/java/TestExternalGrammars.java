@@ -37,6 +37,7 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
+import org.snt.inmemantlr.stream.CasedStreamProvider;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.tree.Ast;
 import org.w3c.dom.Document;
@@ -71,8 +72,8 @@ public class TestExternalGrammars {
             "swift-fin",
             "z", // handled by extra testcase
 
-            "tsql", // broken -- skip
-            "plsql", // broken -- skip
+            "tsql", // handled by extra testcase
+            "plsql", // handled by extra testcase
 
             "antlr3", // skip
             "python3alt" //skip
@@ -614,7 +615,6 @@ public class TestExternalGrammars {
     @Test
     public void testCSharp() {
 
-
         if (!toCheck("csharp"))
             return;
 
@@ -655,7 +655,92 @@ public class TestExternalGrammars {
 
 
 
+    @Test
+    public void testTSql() {
+
+        if (!toCheck("tsql"))
+            return;
+
+        Subject s = subjects.get("tsql");
+
+        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+                "TSql" + "(Lexer|Parser).g4")).collect
+                (Collectors.toSet());
+
+        assertTrue(mfiles.size() > 0);
+
+        GenericParser mparser = null;
+        try {
+            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
 
 
+        assertNotNull(mparser);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            mparser.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
+                        .CaseSensitiveType.UPPER));
+
+        mparser.setListener(mdt);
+
+        assertTrue(compile);
+
+        verify(mparser, s.examples, s.entrypoint);
+    }
+
+    @Test
+    public void testPlsql() {
+
+        if (!toCheck("plsql"))
+            return;
+
+        Subject s = subjects.get("plsql");
+
+        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+                "PlSql" + "(Lexer|Parser).g4")).collect
+                (Collectors.toSet());
+
+        assertTrue(mfiles.size() > 0);
+
+        GenericParser mparser = null;
+        try {
+            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+        } catch (FileNotFoundException e) {
+            assertTrue(false);
+        }
+
+
+        assertNotNull(mparser);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            mparser.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
+                .CaseSensitiveType.UPPER));
+
+        mparser.setListener(mdt);
+
+        assertTrue(compile);
+
+        verify(mparser, s.examples, s.entrypoint);
+    }
 
 }
