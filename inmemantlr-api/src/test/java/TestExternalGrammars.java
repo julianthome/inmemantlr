@@ -71,6 +71,9 @@ public class TestExternalGrammars {
             "swift-fin",
             "z", // handled by extra testcase
 
+            "tsql", // broken -- skip
+            "plsql", // broken -- skip
+
             "antlr3", // skip
             "python3alt" //skip
     };
@@ -138,11 +141,16 @@ public class TestExternalGrammars {
     }
 
     private void verify(GenericParser g, Set<File> toParser) {
-        verify(g, toParser, null);
+        verify(g, toParser, null, GenericParser.CaseSensitiveType.NONE);
     }
 
-
     private void verify(GenericParser p, Set<File> toParse, String ep) {
+        DefaultTreeListener dt = new DefaultTreeListener();
+        verify(p, toParse, ep, GenericParser.CaseSensitiveType.NONE);
+    }
+
+    private void verify(GenericParser p, Set<File> toParse, String ep,
+                        GenericParser.CaseSensitiveType t) {
         DefaultTreeListener dt = new DefaultTreeListener();
         p.setListener(dt);
 
@@ -152,7 +160,8 @@ public class TestExternalGrammars {
                 LOGGER.info("parseFile {} with {} and ept {}", e.getName(), p
                         .getParserName(), ep);
                 ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
-                        .parse(e,ep, GenericParser.CaseSensitiveType.NONE) : p.parse(e);
+                        .parse(e,ep, GenericParser.CaseSensitiveType.NONE) :
+                        p.parse(e, t);
                 Assert.assertNotNull(ctx);
             } catch (IllegalWorkflowException | FileNotFoundException |
                     RecognitionException | ParsingException e1) {
@@ -331,6 +340,8 @@ public class TestExternalGrammars {
         } catch (CompilationException e) {
             compile = false;
         }
+
+        s.examples.removeIf(f -> f.getName().contains("three.g4"));
 
         assertTrue(compile);
 
@@ -641,6 +652,9 @@ public class TestExternalGrammars {
 
         verify(mparser, s.examples, s.entrypoint);
     }
+
+
+
 
 
 
