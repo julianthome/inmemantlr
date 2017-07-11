@@ -278,6 +278,7 @@ public class GenericParser {
 
     /**
      * set char stream provider for lexer
+     * @param provider stream provider
      */
     public void setStreamProvider(StreamProvider provider) {
         this.provider = provider;
@@ -461,7 +462,7 @@ public class GenericParser {
 
         LOGGER.debug("load parser {}", parserName);
         Parser parser = sc.instanciateParser(tokens, parserName);
-        
+
         Objects.requireNonNull(parser, "Parser must not be null");
 
         // make parser information available to listener
