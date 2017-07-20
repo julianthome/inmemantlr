@@ -1,7 +1,7 @@
 # inmemantlr
 
 inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the
-manual generation and compilation steps that have to be done when using vanilla
+manual generation and compilation steps which have to be done when using vanilla
 ANTLR. Instead, inmemantlr does all of these steps automatically in-memory
 while keeping all of the original ANTLR objects accessible through its
 `GenericParser` class which is serializable, and hence, can be reused at a
