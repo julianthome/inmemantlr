@@ -27,8 +27,11 @@
 package org.snt.inmemantlr.listener;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.tree.Ast;
 import org.snt.inmemantlr.tree.AstNode;
 
@@ -41,6 +44,8 @@ import java.util.function.Predicate;
  * default tree listener implementation
  */
 public class DefaultTreeListener extends DefaultListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTreeListener.class);
 
     private static final long serialVersionUID = 5637734678821255670L;
 
@@ -81,7 +86,11 @@ public class DefaultTreeListener extends DefaultListener {
     public void enterEveryRule(ParserRuleContext ctx) {
         String rule = getRuleByKey(ctx.getRuleIndex());
         if (filter.test(rule)) {
-            AstNode n = ast.newNode(nodeptr, rule, ctx.getText());
+            Token s = ctx.getStart();
+            Token e = ctx.getStop();
+            AstNode n = ast.newNode(nodeptr, rule, ctx.getText(),
+                    s != null ? s.getStartIndex() : 0,
+                    e != null ? e.getStopIndex() : 0);
             nodeptr.addChild(n);
             nodeptr = n;
         }

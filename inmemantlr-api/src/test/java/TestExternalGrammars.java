@@ -507,6 +507,10 @@ public class TestExternalGrammars {
             compile = false;
         }
 
+
+        gp.setStreamProvider(new CasedStreamProvider(GenericParser
+                .CaseSensitiveType.LOWER));
+
         assertTrue(compile);
 
 

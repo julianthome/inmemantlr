@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestAstProcessorEvaluation {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestSimple.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestAstProcessorEvaluation.class);
 
     String sgrammarcontent = "";
 

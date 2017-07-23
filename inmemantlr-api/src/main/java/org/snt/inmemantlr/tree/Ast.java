@@ -56,7 +56,7 @@ public class Ast {
      */
     public Ast(String nt, String label) {
         this();
-        root = newNode(null, nt, label);
+        root = newNode(null, nt, label,0,0);
     }
 
     /**
@@ -111,8 +111,9 @@ public class Ast {
      * @param label  value of node to be created
      * @return newly created node
      */
-    public AstNode newNode(AstNode parent, String nt, String label) {
-        AstNode rn = new AstNode(this, parent, nt, label);
+    public AstNode newNode(AstNode parent, String nt, String label, int sidx,
+     int eidx) {
+        AstNode rn = new AstNode(this, parent, nt, label, sidx, eidx);
         nodes.add(rn);
         return rn;
     }
@@ -141,34 +142,16 @@ public class Ast {
      * @return dot format string
      */
     public String toDot() {
-        StringBuilder sb = new StringBuilder()
-                .append("graph {\n")
-                .append("\tnode [fontname=Helvetica,fontsize=11];\n")
-                .append("\tedge [fontname=Helvetica,fontsize=10];\n");
+        return AstSerializer.INSTANCE.toDot(this);
+    }
 
-        nodes.forEach(n -> sb
-                .append("\tn")
-                .append(n.getId())
-                .append(" [label=\"(")
-                .append(n.getId())
-                .append(")\\n")
-                .append(n.getEscapedLabel())
-                .append("\\n")
-                .append(n.getRule())
-                .append("\"];\n"));
-
-        nodes.forEach(n -> n.getChildren().stream()
-                .filter(AstNode::hasParent)
-                .forEach(c -> sb
-                        .append("\tn")
-                        .append(c.getParent().getId())
-                        .append(" -- n")
-                        .append(c.getId())
-                        .append(";\n")));
-
-        sb.append("}\n");
-
-        return sb.toString();
+    /**
+     * generate JSON representation from ast
+     *
+     * @return JSON format string
+     */
+    public String toJson() {
+        return AstSerializer.INSTANCE.toJson(this);
     }
 
     /**

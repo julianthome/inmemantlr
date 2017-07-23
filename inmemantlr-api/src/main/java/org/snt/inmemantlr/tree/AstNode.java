@@ -39,6 +39,9 @@ public class AstNode {
     private Ast tree;
     private int id;
 
+    private int sidx = 0;
+    private int eidx = 0;
+
     private List<AstNode> children;
     private static int cnt = 0;
 
@@ -61,11 +64,14 @@ public class AstNode {
      * @param nt     non terminal id
      * @param label  label
      */
-    protected AstNode(Ast tree, AstNode parent, String nt, String label) {
+    protected AstNode(Ast tree, AstNode parent, String nt, String label, int
+            sidx, int eidx) {
         this(tree);
         ntype = nt;
         this.label = label;
         this.parent = parent;
+        this.sidx = sidx;
+        this.eidx = eidx;
     }
 
     /**
@@ -79,6 +85,8 @@ public class AstNode {
         id = nod.id;
         ntype = nod.ntype;
         label = nod.label;
+        this.eidx = nod.eidx;
+        this.sidx = nod.sidx;
         for (AstNode c : nod.children) {
             AstNode cnod = new AstNode(tree, c);
             cnod.parent = this;
@@ -225,6 +233,22 @@ public class AstNode {
      */
     public String getEscapedLabel() {
         return EscapeUtils.escapeSpecialCharacters(label);
+    }
+
+    /**
+     * get start index
+     * @return start index
+     */
+    public int getSidx() {
+        return sidx;
+    }
+
+    /**
+     * get ent index
+     * @return end index
+     */
+    public int getEidx() {
+        return eidx;
     }
 
     /**
