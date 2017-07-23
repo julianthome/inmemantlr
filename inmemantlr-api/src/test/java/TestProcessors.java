@@ -41,9 +41,9 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertTrue;
 
-public class TestJsonProcessor {
+public class TestProcessors {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestJsonProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestProcessors.class);
 
     String sgrammarcontent = "";
     String s = "";
@@ -58,8 +58,10 @@ public class TestJsonProcessor {
         }
     }
 
-    @Test
-    public void testProcessor() {
+    private static Ast ast = null;
+
+    @Before
+    public void prepare() {
         GenericParser gp = new GenericParser(sgrammarcontent);
 
         boolean compile;
@@ -83,10 +85,20 @@ public class TestJsonProcessor {
             assertTrue(false);
         }
 
-        Ast ast = dlist.getAst();
+        ast = dlist.getAst();
+    }
 
-        assertTrue(ast.toJson().length() > 1);
+    @Test
+    public void testXmlProcessor() {
+        String xml = ast.toXml();
+        LOGGER.debug(xml);
+        assertTrue(xml.length() > 1);
+    }
 
-        LOGGER.debug(ast.toJson());
+    @Test
+    public void testJsonProcessor() {
+        String json = ast.toJson();
+        LOGGER.debug(json);
+        assertTrue(json.length() > 1);
     }
 }

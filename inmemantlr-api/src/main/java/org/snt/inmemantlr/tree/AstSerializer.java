@@ -57,5 +57,19 @@ public enum AstSerializer {
     }
 
 
+    public String toXml(Ast ast) {
+        XmlProcessor xmlProc = new XmlProcessor(ast);
+        StringBuilder sb = null;
+        try {
+            sb = xmlProc.process();
+        } catch (AstProcessorException e) {
+            LOGGER.error(e.getMessage());
+            System.exit(-1);
+        }
+        return sb.toString();
+    }
+
+
+
 
 }

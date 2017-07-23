@@ -4,22 +4,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 
-public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
+public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlProcessor.class);
 
     /**
      * constructor
      *
      * @param ast abstract syntax tree to process
      */
-    public JsonProcessor(Ast ast) {
+    public XmlProcessor(Ast ast) {
         super(ast);
     }
 
     @Override
     public StringBuilder getResult() {
-        return smap.get(ast.getRoot());
+        StringBuilder root = smap.get(ast.getRoot());
+        root.insert(0,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        return root;
     }
 
     @Override
@@ -37,30 +39,27 @@ public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
             return;
         }
 
-        sb.append("{");
-        sb.append("\"nt\":\"");
+        sb.append("<nt>");
+        sb.append("<name>");
         sb.append(n.getRule());
-        sb.append("\",\"ran\":\"");
+        sb.append("</name>");
+        sb.append("<ran>");
         sb.append(n.getSidx());
         sb.append(",");
         sb.append(n.getEidx());
-        sb.append("\"");
+        sb.append("</ran>");
 
 
 
         if (n.hasChildren()) {
-            sb.append(",");
-            sb.append("\"cld\":[");
+            sb.append("<cld>");
             for (int i = 0; i < n.getChildren().size(); i++) {
-                if (i > 0)
-                    sb.append(",");
-
                 sb.append(smap.get(n.getChild(i)));
             }
-            sb.append("]");
+            sb.append("</cld>");
         }
 
-        sb.append("}");
+        sb.append("</nt>");
 
         smap.put(n, sb);
     }

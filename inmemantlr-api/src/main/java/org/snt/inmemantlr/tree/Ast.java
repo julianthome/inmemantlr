@@ -155,6 +155,16 @@ public class Ast {
     }
 
     /**
+     * generate XML representation from ast
+     *
+     * @return XML format string
+     */
+    public String toXml() {
+        return AstSerializer.INSTANCE.toXml(this);
+    }
+
+
+    /**
      * replace oldTree by newTree
      *
      * @param oldTree tree to be replaced
