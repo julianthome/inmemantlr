@@ -76,6 +76,8 @@ public class TestExternalGrammars {
             "plsql", // handled by extra testcase
             "mysql", // handled by extra testcase
 
+            "html", // handled by extra testcase
+
             "antlr3", // skip
             "python3alt" //skip
     };
@@ -790,6 +792,27 @@ public class TestExternalGrammars {
         assertTrue(compile);
 
         verify(mparser, s.examples, s.entrypoint);
+    }
+
+    @Test
+    public void testHTML() {
+
+        if (!toCheck("html"))
+            return;
+
+        Subject s = subjects.get("html");
+
+        GenericParser gp = getParserForSubject(s, null);
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        assertTrue(compile);
     }
 
 }
