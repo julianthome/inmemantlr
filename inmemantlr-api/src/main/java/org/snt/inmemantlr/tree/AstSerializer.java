@@ -12,23 +12,27 @@ public enum AstSerializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AstSerializer.class);
 
-    public String toDot(Ast ast) {
+    public String toDot(Ast ast, boolean rulesOnly) {
         List<AstNode> nodes = ast.getNodes();
         StringBuilder sb = new StringBuilder()
                 .append("graph {\n")
                 .append("\tnode [fontname=Helvetica,fontsize=11];\n")
                 .append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
-        nodes.forEach(n -> sb
-                .append("\tn")
-                .append(n.getId())
-                .append(" [label=\"(")
-                .append(n.getId())
-                .append(")\\n")
-                .append(n.getEscapedLabel())
-                .append("\\n")
-                .append(n.getRule())
-                .append("\"];\n"));
+        for(AstNode n : nodes ) {
+            sb.append("\tn");
+            sb.append(n.getId());
+            sb.append(" [label=\"");
+            if(!rulesOnly) {
+                sb.append("(");
+                sb.append(n.getId());
+                sb.append(")\\n");
+                sb.append(n.getEscapedLabel());
+                sb.append("\\n");
+            }
+            sb.append(n.getRule());
+            sb.append("\"];\n");
+        }
 
         nodes.forEach(n -> n.getChildren().stream()
                 .filter(AstNode::hasParent)
@@ -42,6 +46,10 @@ public enum AstSerializer {
         sb.append("}\n");
 
         return sb.toString();
+    }
+
+    public String toDot(Ast ast) {
+        return toDot(ast, false);
     }
 
     public String toJson(Ast ast) {

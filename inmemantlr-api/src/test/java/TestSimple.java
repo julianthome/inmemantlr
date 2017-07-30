@@ -33,6 +33,7 @@ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.AstSerializer;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -162,6 +163,8 @@ public class TestSimple {
         Ast a = t.getAst();
 
         assertEquals(a.getNodes().size(), 4);
+
+        LOGGER.debug(AstSerializer.INSTANCE.toDot(a, true));
     }
 
 }
