@@ -24,6 +24,7 @@
  * SOFTWARE.
  **/
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +123,10 @@ public class TestSimple {
         }
 
         Ast a = t.getAst();
+
+        Assert.assertTrue(a.getNodes().size() > 1);
+
+        LOGGER.debug(a.toDot());
 
     }
 
