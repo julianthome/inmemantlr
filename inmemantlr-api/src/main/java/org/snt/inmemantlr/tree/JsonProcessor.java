@@ -8,13 +8,26 @@ public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessor.class);
 
+    private boolean idxOnly = false;
+
+    /**
+     * constructor
+     *
+     * @param ast abstract syntax tree to process
+     * @param idxOnly print index only
+     */
+    public JsonProcessor(Ast ast, boolean idxOnly) {
+        super(ast);
+        this.idxOnly = idxOnly;
+    }
+
     /**
      * constructor
      *
      * @param ast abstract syntax tree to process
      */
     public JsonProcessor(Ast ast) {
-        super(ast);
+        this(ast,true);
     }
 
     @Override
@@ -46,7 +59,11 @@ public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
         sb.append(n.getEidx());
         sb.append("\"");
 
-
+        if(!idxOnly) {
+            sb.append("\",\"lbl\":\"");
+            sb.append(n.getEscapedLabel());
+            sb.append("\"");
+        }
 
         if (n.hasChildren()) {
             sb.append(",");

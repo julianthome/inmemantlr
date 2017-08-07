@@ -1,5 +1,6 @@
 package org.snt.inmemantlr.tree;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
@@ -8,14 +9,28 @@ public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlProcessor.class);
 
+    private boolean idxOnly = false;
+
+    /**
+     * constructor
+     *
+     * @param ast abstract syntax tree to process
+     * @param idxOnly print index only
+     */
+    public XmlProcessor(Ast ast, boolean idxOnly) {
+        super(ast);
+        this.idxOnly = idxOnly;
+    }
+
     /**
      * constructor
      *
      * @param ast abstract syntax tree to process
      */
     public XmlProcessor(Ast ast) {
-        super(ast);
+        this(ast,true);
     }
+
 
     @Override
     public StringBuilder getResult() {
@@ -49,7 +64,11 @@ public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
         sb.append(n.getEidx());
         sb.append("</ran>");
 
-
+        if(!idxOnly) {
+            sb.append("<lbl>");
+            sb.append(StringEscapeUtils.unescapeXml(n.getLabel()));
+            sb.append("</lbl>");
+        }
 
         if (n.hasChildren()) {
             sb.append("<cld>");
