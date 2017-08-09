@@ -443,6 +443,8 @@ public class GenericParser {
                 break;
         }
 
+        InmemantlrErrorListener el = new InmemantlrErrorListener();
+
         listener.reset();
 
         //CodePointCharStream input = CharStreams.fromString(toParse);
@@ -454,6 +456,7 @@ public class GenericParser {
         LOGGER.debug("load lexer {}", lexerName);
 
         Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
+        lex.addErrorListener(el);
         Objects.requireNonNull(lex, "lex must not be null");
 
         CommonTokenStream tokens = new CommonTokenStream(lex);
@@ -468,7 +471,6 @@ public class GenericParser {
         // make parser information available to listener
         listener.setParser(parser);
 
-        InmemantlrErrorListener el = new InmemantlrErrorListener();
 
         parser.removeErrorListeners();
         parser.addErrorListener(el);

@@ -40,6 +40,7 @@ import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.stream.CasedStreamProvider;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -71,13 +72,10 @@ public class TestExternalGrammars {
             "swift3", // handled by extra testcase
             "swift-fin",
             "z", // handled by extra testcase
-
             "tsql", // handled by extra testcase
             "plsql", // handled by extra testcase
             "mysql", // handled by extra testcase
-
             "html", // handled by extra testcase
-
             "r", // handled by extra testcase
 
             "antlr3", // skip
@@ -96,7 +94,12 @@ public class TestExternalGrammars {
 
         public String name = "";
         public Set<File> g4 = new HashSet();
+        // positive examples
         public Set<File> examples = new HashSet();
+
+        // negative examples
+        public Set<File> nexamples = new HashSet();
+        public Map<String, String> errors = new HashMap();
 
         private String entrypoint = "";
 
@@ -146,20 +149,23 @@ public class TestExternalGrammars {
         return gp;
     }
 
-    private void verify(GenericParser g, Set<File> toParser) {
-        verify(g, toParser, null, GenericParser.CaseSensitiveType.NONE);
+    private void verify(GenericParser g, Set<File> ok, Set<File> error) {
+        verify(g, ok, null, GenericParser.CaseSensitiveType.NONE, true);
+        verify(g, error, null, GenericParser.CaseSensitiveType.NONE, false);
     }
 
-    private void verify(GenericParser p, Set<File> toParse, String ep) {
+    private void verify(GenericParser p, Set<File> ok, Set<File> error, String ep) {
         DefaultTreeListener dt = new DefaultTreeListener();
-        verify(p, toParse, ep, GenericParser.CaseSensitiveType.NONE);
+        verify(p, ok, ep, GenericParser.CaseSensitiveType.NONE,true);
+        verify(p, error, ep, GenericParser.CaseSensitiveType.NONE, false);
     }
 
     private void verify(GenericParser p, Set<File> toParse, String ep,
-                        GenericParser.CaseSensitiveType t) {
+                        GenericParser.CaseSensitiveType t, boolean shouldParse) {
         DefaultTreeListener dt = new DefaultTreeListener();
         p.setListener(dt);
 
+        boolean parses;
 
         for(File e : toParse){
             try {
@@ -168,17 +174,26 @@ public class TestExternalGrammars {
                 ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
                         .parse(e,ep, GenericParser.CaseSensitiveType.NONE) :
                         p.parse(e, t);
-                Assert.assertNotNull(ctx);
+                //Assert.assertNotNull(ctx);
+                if(ctx == null)
+                    parses = false;
+                else
+                    parses = true;
             } catch (IllegalWorkflowException | FileNotFoundException |
                     RecognitionException | ParsingException e1) {
-                LOGGER.error(e1.getMessage());
-                assertFalse(true);
+                LOGGER.error("error: {}", e1.getMessage());
+                parses = false;
             }
 
-            Ast ast = dt.getAst();
-            Assert.assertNotNull(ast);
-            LOGGER.debug(ast.toDot());
-            assertTrue(ast.getNodes().size() > 1);
+            assertEquals(shouldParse, parses);
+
+
+            if(shouldParse) {
+                Ast ast = dt.getAst();
+                Assert.assertNotNull(ast);
+                LOGGER.debug(ast.toDot());
+                assertTrue(ast.getNodes().size() > 1);
+            }
         }
     }
 
@@ -250,9 +265,27 @@ public class TestExternalGrammars {
 
             );
 
+            File[] errors = examples.listFiles(pathname -> !pathname
+                    .isDirectory() &&
+                    FilenameUtils.getExtension(pathname.getName()).equals("errors")
+            );
+
+            if(errors != null) {
+                for (File ef : errors) {
+                    String content = FileUtils.loadFileContent(ef);
+                    subject.errors.put(FilenameUtils.getBaseName(ef.getName()), content);
+                }
+            }
+
             if (xamples != null && xamples.length > 0) {
                 subject.examples.addAll(Arrays.asList(xamples));
+                Set<File> negative = subject.examples.stream().filter(x ->
+                        subject.errors.keySet().contains(x.getName()))
+                        .collect(Collectors.toSet());
+                subject.examples.removeAll(negative);
+                subject.nexamples.addAll(negative);
             }
+
 
             subjects.put(subject.name, subject);
         }
@@ -283,7 +316,7 @@ public class TestExternalGrammars {
         DefaultTreeListener dt = new DefaultTreeListener();
         gp.setListener(dt);
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
 
     }
 
@@ -351,7 +384,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -402,7 +435,7 @@ public class TestExternalGrammars {
                 ("example1.st")
         ).collect(Collectors.toSet());
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -440,7 +473,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -478,7 +511,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
 
@@ -522,7 +555,7 @@ public class TestExternalGrammars {
                 ("alternativeSyntax.php")
         ).collect(Collectors.toSet());
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
 
@@ -575,7 +608,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
 
@@ -617,7 +650,7 @@ public class TestExternalGrammars {
 
         s.examples.removeIf(p -> p.getName().contains("AllInOne.m"));
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
 
@@ -659,7 +692,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(mparser, s.examples, s.entrypoint);
+        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
 
@@ -705,7 +738,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(mparser, s.examples, s.entrypoint);
+        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -749,7 +782,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(mparser, s.examples, s.entrypoint);
+        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -793,7 +826,7 @@ public class TestExternalGrammars {
 
         assertTrue(compile);
 
-        verify(mparser, s.examples, s.entrypoint);
+        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -839,7 +872,7 @@ public class TestExternalGrammars {
 
         gp.setParserName("RParser");
 
-        verify(gp, s.examples, s.entrypoint);
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
 }
