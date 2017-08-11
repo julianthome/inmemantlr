@@ -1,0 +1,12 @@
+version: "{build}"
+
+clone_depth: 10
+
+branches:
+  only:
+    - master
+
+build: off
+
+test_script:
+  - mvn clean package
