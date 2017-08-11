@@ -28,12 +28,12 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 [![Code Climate](https://codeclimate.com/github/julianthome/inmemantlr/badges/gpa.svg)][codeclimate]
 
 [licence]: https://opensource.org/licenses/mit
-[language]: https://www.java.com/
-[maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg
+[language]: https://www.java.com
+[maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr
 [javadoc]: http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api
-[travis]: https://travis-ci.org/julianthome/inmemantlr.svg?branch=master
-[appveyor]: https://ci.appveyor.com/project/julianthome/inmemantlr/branch/master
-[codeclimate]: https://codeclimate.com/github/julianthome/inmemantlr/badges/gpa.svg
+[travis]: https://travis-ci.org/julianthome/inmemantlr
+[appveyor]: https://ci.appveyor.com/project/julianthome/inmemantlr
+[codeclimate]: https://codeclimate.com/github/julianthome/inmemantlr
 [coverage]: https://codecov.io/gh/julianthome/inmemantlr
 
 
