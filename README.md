@@ -17,7 +17,25 @@ All of the above-mentioned inmemantlr features are illustrated by
 examples please have a look at [grammars-v4](#grammars-v4)).
 
 # Status
-[![Build Status](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)](https://travis-ci.org/julianthome/inmemantlr.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/inmemantlr)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr-api/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/) [![Code Climate](https://codeclimate.com/github/julianthome/inmemantlr/badges/gpa.svg)](https://codeclimate.com/github/julianthome/inmemantlr)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)][licence]
+[![Language](http://img.shields.io/badge/language-java-brightgreen.svg)][language]
+[![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)][maven]
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr-api/badge.svg)][javadoc]
+[![Linux Build Status](https://img.shields.io/travis/julianthome/inmemantlr/master.svg?label=Linux%20build)][travis]
+[![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/inmemantlr/master.svg?label=Windows%20build)][appveyor]
+[![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
+[![Code Climate](https://codeclimate.com/github/julianthome/inmemantlr/badges/gpa.svg)][codeclimate]
+
+[licence]: https://opensource.org/licenses/mit
+[language]: https://www.java.com/
+[maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg
+[javadoc]: http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api
+[travis]: https://travis-ci.org/julianthome/inmemantlr.svg?branch=master
+[appveyor]: https://ci.appveyor.com/project/julianthome/inmemantlr/branch/master
+[codeclimate]: https://codeclimate.com/github/julianthome/inmemantlr/badges/gpa.svg
+[coverage]: https://codecov.io/gh/julianthome/inmemantlr
+
 
 # TOC
 
