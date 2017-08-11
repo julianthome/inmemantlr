@@ -657,6 +657,11 @@ public class TestExternalGrammars {
     @Test
     public void testCSharp() {
 
+        // skipt this test if the runtime environment is windows for the time
+        // being -- cshar grammar is runtime dependent
+        if(System.getProperty("os.name").equals("Windows"))
+            return;
+
         if (!toCheck("csharp"))
             return;
 
