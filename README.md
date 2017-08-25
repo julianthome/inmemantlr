@@ -6,7 +6,7 @@ vanilla ANTLR. Instead, inmemantlr does all of these steps automatically
 in-memory while keeping all of the original ANTLR objects accessible through
 its `GenericParser` class which is serializable, and hence, can be reused at a
 later point in time or across different applications. inmemantlr can be used
-via an easy-to-use JAVA API or as command-line tool.
+via an easy-to-use Java API or as command-line tool.
 
 Moreover, one can easily generate an abstract syntax tree (AST) from a parsed
 file that can be both visualized using [graphviz](http://www.graphviz.org/) and
