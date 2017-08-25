@@ -1,11 +1,12 @@
 # inmemantlr
 
 inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the
-manual generation and compilation steps which have to be done when using vanilla
-ANTLR. Instead, inmemantlr does all of these steps automatically in-memory
-while keeping all of the original ANTLR objects accessible through its
-`GenericParser` class which is serializable, and hence, can be reused at a
-later point in time or across different applications.
+manual generation and compilation steps which have to be done when using
+vanilla ANTLR. Instead, inmemantlr does all of these steps automatically
+in-memory while keeping all of the original ANTLR objects accessible through
+its `GenericParser` class which is serializable, and hence, can be reused at a
+later point in time or across different applications. inmemantlr can be used
+via an easy-to-use JAVA API or as command-line tool.
 
 Moreover, one can easily generate an abstract syntax tree (AST) from a parsed
 file that can be both visualized using [graphviz](http://www.graphviz.org/) and
@@ -41,8 +42,6 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 
 [Integration](#integration)
 
-[Command-line Tool](#command-line-tool)
-
 [API Usage Scenarios](#api-usage-scenarios)
   * [Simple parsing](#simple-parsing)
   * [AST generation](#ast-generation)
@@ -52,6 +51,8 @@ examples please have a look at [grammars-v4](#grammars-v4)).
   * [Accessing ANTLR objects](#accessing-antlr-objects)
   * [Parser serialization](#parser-serialization)
   * [grammars-v4](#grammars-v4)
+
+[Command-line Tool](#command-line-tool)
 
 [Licence](#licence)
 
@@ -78,38 +79,6 @@ the maven package.
     <version>1.3.8</version>
 </dependency>
 ```
-
-# Command-line Tool
-
-Besides the inmemantlr API which is desribed in more detail below, there is
-also an inmemantlr command-line tool which is well suited for the simple task
-of generating a dot files based on ASTs that are derived from parsed text
-files.
-
-After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
-be found within the `inmemantlr-tool/target` directory. The standalone command
-line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with
-the following options:
-
-```bash
-    --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
- -h                           print this message
-    --infiles <infiles>       comma-separated list of files to parse
-    --outdir <outdir>         output directory in which the dot files will
-                              be created
-    --utilfiles <utilfiles>   comma-separated list of utility files to be
-                              added for compilation
-```
-
-If no output directory is specified, the generated dot content will be
-displayed on the console.
-
-The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4
---infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files
-`/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For
-automating the PDF generation and visualization of the dot files [this
-script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212)
-might be helpful.
 
 # API Usage Scenarios
 
@@ -329,6 +298,7 @@ code:
 // load generic parser from file /tmp/gp.out
 GenericParser gp = GenericParser.load("/tmp/gp.out");
 ```
+
 ## grammars-v4
 
 The [grammars-v4](https://github.com/antlr/grammars-v4) repository is added as
@@ -340,6 +310,38 @@ git submodule init
 git submodule update
 mvn -Dtest=TestExternalGrammars test
 ```
+
+# Command-line Tool
+
+Besides the inmemantlr API which is desribed in more detail below, there is
+also an inmemantlr command-line tool which is well suited for the simple task
+of generating a dot files based on ASTs that are derived from parsed text
+files.
+
+After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
+be found within the `inmemantlr-tool/target` directory. The standalone command
+line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with
+the following options:
+
+```bash
+    --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
+ -h                           print this message
+    --infiles <infiles>       comma-separated list of files to parse
+    --outdir <outdir>         output directory in which the dot files will
+                              be created
+    --utilfiles <utilfiles>   comma-separated list of utility files to be
+                              added for compilation
+```
+
+If no output directory is specified, the generated dot content will be
+displayed on the console.
+
+The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4
+--infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files
+`/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For
+automating the PDF generation and visualization of the dot files [this
+script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212)
+might be helpful.
 
 
 # Licence
