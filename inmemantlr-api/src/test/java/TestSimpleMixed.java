@@ -69,7 +69,8 @@ public class TestSimpleMixed {
 
         assertTrue(compile);
 
-        // this example shows you how one could use inmemantlr for incremental parsing
+        // this example shows you how one could use inmemantlr for sequential
+        // parsing
         try {
             ParseTree parseTree;
             gp.parse("jan 1999 12");

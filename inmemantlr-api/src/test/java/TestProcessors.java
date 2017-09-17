@@ -24,6 +24,9 @@
  * SOFTWARE.
  **/
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -35,10 +38,16 @@ import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestProcessors {
@@ -92,6 +101,22 @@ public class TestProcessors {
     public void testXmlProcessor() {
         String xml = parseTree.toXml();
         LOGGER.debug(xml);
+
+        DocumentBuilder newDocumentBuilder = null;
+        try {
+            newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+        try {
+            newDocumentBuilder.parse(new ByteArrayInputStream(xml
+                    .getBytes()));
+        } catch (SAXException e) {
+            assertFalse(true);
+        } catch (IOException e) {
+            assertFalse(true);
+        }
+
         assertTrue(xml.length() > 1);
     }
 
@@ -99,6 +124,12 @@ public class TestProcessors {
     public void testJsonProcessor() {
         String json = parseTree.toJson();
         LOGGER.debug(json);
+
+        try {
+            new JsonParser().parse(json);
+        } catch ( JsonIOException | JsonSyntaxException e) {
+            assertFalse(true);
+        }
         assertTrue(json.length() > 1);
     }
 }
