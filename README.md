@@ -46,7 +46,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
   * [Simple parsing](#simple-parsing)
   * [Parse tree generation](#parse-tree-generation)
   * [Parse tree processing](#parse-tree-processing)
-  * [Incremental parsing](#incremental-parsing)
+  * [Sequential parsing](#sequential-parsing)
   * [Non-combined grammars](#non-combined-grammars)
   * [Accessing ANTLR objects](#accessing-antlr-objects)
   * [Parser serialization](#parser-serialization)
@@ -130,7 +130,7 @@ System.out.println(pt.toDot());
 By providing the output of `pt.toDot()` to graphviz, one could visualize the
 Parse tree as illustrated in the picture below.
 
-<img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example Parse tree" width="400px" align="second">
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/pt.png" alt="Example Parse tree" width="400px" align="second">
 
 ## Parse tree processing
 
@@ -165,7 +165,7 @@ mathematical expression based on the above-mentioned grammar.
 ```java
 // ...
 gp.compile();
-// this example shows you how one could use inmemantlr for incremental parsing
+// this example shows you how one could use inmemantlr for sequential parsing
 ParseTree pt;
 gp.parse("3+100");
 pt = t.getParseTree();
@@ -219,7 +219,7 @@ A more practical example on how to use the Parse tree processor can be found wit
 my [CTrans project](https://github.com/julianthome/ctrans) which takes
 a given boolean formula and translates it into CNF or DNF, respectively.
 
-## Incremental parsing 
+## Sequential parsing 
 
 If you have multiple strings to parse one after another,
 the following code snippet might be useful:
