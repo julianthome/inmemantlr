@@ -33,9 +33,9 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.AstProcessor;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
+import org.snt.inmemantlr.tree.ParseTreeProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertTrue;
 
-public class TestAstProcessor {
+public class TestParseTreeProcessor {
 
     String sgrammarcontent = "";
     String s = "";
@@ -83,10 +83,10 @@ public class TestAstProcessor {
             assertTrue(false);
         }
 
-        Ast ast = dlist.getAst();
+        ParseTree parseTree = dlist.getParseTree();
 
         // Process the tree bottom up
-        AstProcessor<String, String> processor = new AstProcessor<String, String>(ast) {
+        ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<String, String>(parseTree) {
             int cnt = 0;
 
             @Override
@@ -96,13 +96,13 @@ public class TestAstProcessor {
 
             @Override
             protected void initialize() {
-                for (AstNode n : ast.getNodes()) {
+                for (ParseTreeNode n : this.parseTree.getNodes()) {
                     smap.put(n, "");
                 }
             }
 
             @Override
-            protected void process(AstNode n) {
+            protected void process(ParseTreeNode n) {
                 cnt++;
                 simpleProp(n);
                 assertTrue(getElement(n) != null);

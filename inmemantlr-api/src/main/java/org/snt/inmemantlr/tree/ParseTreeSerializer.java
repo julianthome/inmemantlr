@@ -6,20 +6,20 @@ import org.snt.inmemantlr.exceptions.AstProcessorException;
 
 import java.util.List;
 
-public enum AstSerializer {
+public enum ParseTreeSerializer {
 
     INSTANCE;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AstSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParseTreeSerializer.class);
 
-    public String toDot(Ast ast, boolean rulesOnly) {
-        List<AstNode> nodes = ast.getNodes();
+    public String toDot(ParseTree parseTree, boolean rulesOnly) {
+        List<ParseTreeNode> nodes = parseTree.getNodes();
         StringBuilder sb = new StringBuilder()
                 .append("graph {\n")
                 .append("\tnode [fontname=Helvetica,fontsize=11];\n")
                 .append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
-        for(AstNode n : nodes ) {
+        for(ParseTreeNode n : nodes ) {
             sb.append("\tn");
             sb.append(n.getId());
             sb.append(" [label=\"");
@@ -35,7 +35,7 @@ public enum AstSerializer {
         }
 
         nodes.forEach(n -> n.getChildren().stream()
-                .filter(AstNode::hasParent)
+                .filter(ParseTreeNode::hasParent)
                 .forEach(c -> sb
                         .append("\tn")
                         .append(c.getParent().getId())
@@ -48,12 +48,12 @@ public enum AstSerializer {
         return sb.toString();
     }
 
-    public String toDot(Ast ast) {
-        return toDot(ast, false);
+    public String toDot(ParseTree parseTree) {
+        return toDot(parseTree, false);
     }
 
-    public String toJson(Ast ast) {
-        JsonProcessor jsonProc = new JsonProcessor(ast);
+    public String toJson(ParseTree parseTree) {
+        JsonProcessor jsonProc = new JsonProcessor(parseTree);
         StringBuilder sb = null;
         try {
             sb = jsonProc.process();
@@ -65,8 +65,8 @@ public enum AstSerializer {
     }
 
 
-    public String toXml(Ast ast) {
-        XmlProcessor xmlProc = new XmlProcessor(ast);
+    public String toXml(ParseTree parseTree) {
+        XmlProcessor xmlProc = new XmlProcessor(parseTree);
         StringBuilder sb = null;
         try {
             sb = xmlProc.process();

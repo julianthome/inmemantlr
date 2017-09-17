@@ -32,7 +32,7 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,11 +70,11 @@ public class TestNonCombinedGrammar {
         assertTrue(compile);
 
         try {
-            Ast ast;
+            ParseTree parseTree;
             gp.parse("select a from b;");
-            ast = t.getAst();
-            assertEquals(ast.getNodes().size(), 13);
-            LOGGER.debug(ast.toDot());
+            parseTree = t.getParseTree();
+            assertEquals(parseTree.getNodes().size(), 13);
+            LOGGER.debug(parseTree.toDot());
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);
         }

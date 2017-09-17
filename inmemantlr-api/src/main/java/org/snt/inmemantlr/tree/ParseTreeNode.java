@@ -31,18 +31,18 @@ import org.snt.inmemantlr.utils.EscapeUtils;
 import java.util.List;
 import java.util.Vector;
 
-public class AstNode {
+public class ParseTreeNode {
 
     private String label;
     private String ntype;
-    private AstNode parent;
-    private Ast tree;
+    private ParseTreeNode parent;
+    private ParseTree tree;
     private int id;
 
     private int sidx = 0;
     private int eidx = 0;
 
-    private List<AstNode> children;
+    private List<ParseTreeNode> children;
     private static int cnt = 0;
 
     /**
@@ -50,7 +50,7 @@ public class AstNode {
      *
      * @param tree tree to whom the node belongs to
      */
-    private AstNode(Ast tree) {
+    private ParseTreeNode(ParseTree tree) {
         this.tree = tree;
         id = cnt++;
         children = new Vector<>();
@@ -64,7 +64,7 @@ public class AstNode {
      * @param nt     non terminal id
      * @param label  label
      */
-    protected AstNode(Ast tree, AstNode parent, String nt, String label, int
+    protected ParseTreeNode(ParseTree tree, ParseTreeNode parent, String nt, String label, int
             sidx, int eidx) {
         this(tree);
         ntype = nt;
@@ -80,15 +80,15 @@ public class AstNode {
      * @param tree tree to whom the node belongs to
      * @param nod  node to duplication
      */
-    protected AstNode(Ast tree, AstNode nod) {
+    protected ParseTreeNode(ParseTree tree, ParseTreeNode nod) {
         this(tree);
         id = nod.id;
         ntype = nod.ntype;
         label = nod.label;
         this.eidx = nod.eidx;
         this.sidx = nod.sidx;
-        for (AstNode c : nod.children) {
-            AstNode cnod = new AstNode(tree, c);
+        for (ParseTreeNode c : nod.children) {
+            ParseTreeNode cnod = new ParseTreeNode(tree, c);
             cnod.parent = this;
             this.tree.nodes.add(cnod);
             children.add(cnod);
@@ -101,7 +101,7 @@ public class AstNode {
      * @param i the index of the child
      * @return child with index i
      */
-    public AstNode getChild(int i) {
+    public ParseTreeNode getChild(int i) {
         if (i < 0 || i > children.size())
             throw new IllegalArgumentException("Index must be greater than or equal to zero and less than the children size");
 
@@ -113,7 +113,7 @@ public class AstNode {
      *
      * @return last child
      */
-    public AstNode getLastChild() {
+    public ParseTreeNode getLastChild() {
         if (!children.isEmpty()) {
             return children.get(children.size() - 1);
         }
@@ -125,7 +125,7 @@ public class AstNode {
      *
      * @return first child
      */
-    public AstNode getFirstChild() {
+    public ParseTreeNode getFirstChild() {
         if (!children.isEmpty()) {
             return children.get(0);
         }
@@ -137,7 +137,7 @@ public class AstNode {
      *
      * @param par parent node
      */
-    public void setParent(AstNode par) {
+    public void setParent(ParseTreeNode par) {
         parent = par;
     }
 
@@ -155,7 +155,7 @@ public class AstNode {
      *
      * @return parent node
      */
-    public AstNode getParent() {
+    public ParseTreeNode getParent() {
         return parent;
     }
 
@@ -173,7 +173,7 @@ public class AstNode {
      *
      * @return list of children
      */
-    public List<AstNode> getChildren() {
+    public List<ParseTreeNode> getChildren() {
         return children;
     }
 
@@ -182,7 +182,7 @@ public class AstNode {
      *
      * @param n child node to be added
      */
-    public void addChild(AstNode n) {
+    public void addChild(ParseTreeNode n) {
         children.add(n);
     }
 
@@ -191,7 +191,7 @@ public class AstNode {
      *
      * @param n child node to be deleted
      */
-    public void delChild(AstNode n) {
+    public void delChild(ParseTreeNode n) {
         children.remove(n);
     }
 
@@ -201,7 +201,7 @@ public class AstNode {
      * @param oldNode child to be replaced
      * @param newNode replacement
      */
-    public void replaceChild(AstNode oldNode, AstNode newNode) {
+    public void replaceChild(ParseTreeNode oldNode, ParseTreeNode newNode) {
         if (children.contains(oldNode)) {
             children.set(children.indexOf(oldNode), newNode);
             newNode.parent = this;
@@ -267,10 +267,10 @@ public class AstNode {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AstNode))
+        if (!(o instanceof ParseTreeNode))
             return false;
 
-        AstNode n = (AstNode) o;
+        ParseTreeNode n = (ParseTreeNode) o;
         return n.getId() == getId() && n.ntype.equals(ntype) &&
                 n.label.equals(label) && children.equals(n.children);
     }

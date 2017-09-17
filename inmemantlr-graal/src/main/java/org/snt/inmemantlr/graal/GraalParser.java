@@ -32,7 +32,7 @@ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tool.ToolCustomizer;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,13 +79,13 @@ public enum GraalParser {
         }
     }
 
-    public Ast getAstForGrammar(File grammar) throws FileNotFoundException {
+    public ParseTree getAstForGrammar(File grammar) throws FileNotFoundException {
         try {
             gp.parse(grammar);
         } catch (IllegalWorkflowException | ParsingException e) {
             assert false;
         }
-        return dt.getAst();
+        return dt.getParseTree();
     }
 
 

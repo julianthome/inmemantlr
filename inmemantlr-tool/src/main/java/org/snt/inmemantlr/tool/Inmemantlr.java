@@ -35,7 +35,7 @@
  import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
  import org.snt.inmemantlr.exceptions.ParsingException;
  import org.snt.inmemantlr.listener.DefaultTreeListener;
- import org.snt.inmemantlr.tree.Ast;
+ import org.snt.inmemantlr.tree.ParseTree;
 
  import java.io.File;
  import java.io.FileNotFoundException;
@@ -198,7 +198,7 @@ public class Inmemantlr {
             fpfx = of.getAbsolutePath();
         }
 
-        Ast ast;
+        ParseTree parseTree;
         for (File f : ins) {
             try {
                 gp.parse(f);
@@ -207,7 +207,7 @@ public class Inmemantlr {
                 LOGGER.error(e.getMessage());
                 System.exit(-1);
             }
-            ast = dt.getAst();
+            parseTree = dt.getParseTree();
 
             if (!fpfx.isEmpty()) {
                 String of = fpfx + "/" + FilenameUtils.removeExtension(f.getName()) + ".dot";
@@ -215,13 +215,13 @@ public class Inmemantlr {
                 LOGGER.info("write file {}", of);
 
                 try {
-                    FileUtils.writeStringToFile(new File(of), ast.toDot(), "UTF-8");
+                    FileUtils.writeStringToFile(new File(of), parseTree.toDot(), "UTF-8");
                 } catch (IOException e) {
                     LOGGER.error(e.getMessage());
                     System.exit(-1);
                 }
             } else {
-                LOGGER.info("Tree for {} \n {}", f.getName(), ast.toDot());
+                LOGGER.info("Tree for {} \n {}", f.getName(), parseTree.toDot());
             }
         }
 

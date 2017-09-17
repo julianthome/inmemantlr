@@ -31,7 +31,7 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,8 +99,8 @@ public class TestDoubleParse {
             e.printStackTrace();
         }
 
-        Ast out1 = l1.getAst();
-        Ast out2 = l2.getAst();
+        ParseTree out1 = l1.getParseTree();
+        ParseTree out2 = l2.getParseTree();
         assertFalse(out1.equals(out2));
     }
 }

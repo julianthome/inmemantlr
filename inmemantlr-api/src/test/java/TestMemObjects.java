@@ -186,8 +186,8 @@ public class TestMemObjects {
             assertFalse(true);
         }
 
-        assertTrue(dlist.getAst() != null);
+        assertTrue(dlist.getParseTree() != null);
 
-        LOGGER.debug(dlist.getAst().toDot());
+        LOGGER.debug(dlist.getParseTree().toDot());
     }
 }

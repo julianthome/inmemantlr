@@ -32,8 +32,8 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,8 +51,8 @@ public class DefaultTreeListener extends DefaultListener {
 
     private Stack<String> sctx = new Stack<>();
     private StringBuffer glob = new StringBuffer();
-    private Ast ast = null;
-    private AstNode nodeptr = null;
+    private ParseTree parseTree = null;
+    private ParseTreeNode nodeptr = null;
     private Predicate<String> filter = null;
 
     /**
@@ -69,8 +69,8 @@ public class DefaultTreeListener extends DefaultListener {
      */
     public DefaultTreeListener(Predicate<String> filter) {
         sctx.add("S");
-        ast = new Ast("root", "root");
-        nodeptr = ast.getRoot();
+        parseTree = new ParseTree("root", "root");
+        nodeptr = parseTree.getRoot();
         this.filter = filter;
     }
 
@@ -88,7 +88,7 @@ public class DefaultTreeListener extends DefaultListener {
         if (filter.test(rule)) {
             Token s = ctx.getStart();
             Token e = ctx.getStop();
-            AstNode n = ast.newNode(nodeptr, rule, ctx.getText(),
+            ParseTreeNode n = parseTree.newNode(nodeptr, rule, ctx.getText(),
                     s != null ? s.getStartIndex() : 0,
                     e != null ? e.getStopIndex() : 0);
             nodeptr.addChild(n);
@@ -109,8 +109,8 @@ public class DefaultTreeListener extends DefaultListener {
         super.reset();
         sctx.clear();
         sctx.add("S");
-        ast = new Ast("root", "root");
-        nodeptr = ast.getRoot();
+        parseTree = new ParseTree("root", "root");
+        nodeptr = parseTree.getRoot();
         glob.delete(0, glob.length());
     }
 
@@ -119,8 +119,8 @@ public class DefaultTreeListener extends DefaultListener {
      *
      * @return ast
      */
-    public Ast getAst() {
-        return ast;
+    public ParseTree getParseTree() {
+        return parseTree;
     }
 
     /**
@@ -128,8 +128,8 @@ public class DefaultTreeListener extends DefaultListener {
      *
      * @return set of ast nodes
      */
-    public Set<AstNode> getNodes() {
-        return new HashSet<>(ast.getNodes());
+    public Set<ParseTreeNode> getNodes() {
+        return new HashSet<>(parseTree.getNodes());
     }
 
     @Override

@@ -34,9 +34,9 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstNode;
-import org.snt.inmemantlr.tree.AstProcessor;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
+import org.snt.inmemantlr.tree.ParseTreeProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -45,9 +45,9 @@ import java.io.InputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestAstProcessorEvaluation {
+public class TestParseTreeProcessorEvaluation {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestAstProcessorEvaluation.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestParseTreeProcessorEvaluation.class);
 
     String sgrammarcontent = "";
 
@@ -78,24 +78,24 @@ public class TestAstProcessorEvaluation {
 
         // this example shows you how one could use inmemantlr for incremental parsing
         try {
-            Ast ast;
+            ParseTree parseTree;
             gp.parse("3+100");
-            ast = t.getAst();
+            parseTree = t.getParseTree();
 
             // Process the tree bottom up
-            AstProcessor<String, String> processor = new AstProcessor<String, String>(ast) {
+            ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<String, String>(parseTree) {
                 @Override
                 public String getResult() {
-                    return smap.get(ast.getRoot());
+                    return smap.get(this.parseTree.getRoot());
                 }
 
                 @Override
                 protected void initialize() {
-                    ast.getNodes().forEach(n -> smap.put(n, n.getLabel()));
+                    this.parseTree.getNodes().forEach(n -> smap.put(n, n.getLabel()));
                 }
 
                 @Override
-                protected void process(AstNode n) {
+                protected void process(ParseTreeNode n) {
                     LOGGER.debug("id " + n.getId());
                     if (n.getRule().equals("expression")) {
                         int n0 = Integer.parseInt(smap.get(n.getChild(0)));
@@ -120,7 +120,7 @@ public class TestAstProcessorEvaluation {
             } catch (AstProcessorException e) {
                 Assert.assertFalse(true);
             }
-            assertEquals(ast.getNodes().size(), 7);
+            assertEquals(parseTree.getNodes().size(), 7);
             assertEquals(processor.getResult(), "103");
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);

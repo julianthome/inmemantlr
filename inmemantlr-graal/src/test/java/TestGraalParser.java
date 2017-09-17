@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.graal.GraalParser;
 import org.snt.inmemantlr.graal.GraalUtils;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 
 import java.io.FileNotFoundException;
 
@@ -42,7 +42,7 @@ public class TestGraalParser {
     @Test
     public void testGraal() {
 
-        Ast agr = null;
+        ParseTree agr = null;
         try {
             agr = GraalParser.INSTANCE.getAstForGrammar(GraalUtils
                     .getResource("Simple.g4"));

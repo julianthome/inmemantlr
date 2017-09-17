@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 
-public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
+public class JsonProcessor extends ParseTreeProcessor<StringBuilder, StringBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessor.class);
 
@@ -13,26 +13,26 @@ public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
     /**
      * constructor
      *
-     * @param ast abstract syntax tree to process
+     * @param parseTree abstract syntax tree to process
      * @param idxOnly print index only
      */
-    public JsonProcessor(Ast ast, boolean idxOnly) {
-        super(ast);
+    public JsonProcessor(ParseTree parseTree, boolean idxOnly) {
+        super(parseTree);
         this.idxOnly = idxOnly;
     }
 
     /**
      * constructor
      *
-     * @param ast abstract syntax tree to process
+     * @param parseTree abstract syntax tree to process
      */
-    public JsonProcessor(Ast ast) {
-        this(ast,true);
+    public JsonProcessor(ParseTree parseTree) {
+        this(parseTree,true);
     }
 
     @Override
     public StringBuilder getResult() {
-        return smap.get(ast.getRoot());
+        return smap.get(parseTree.getRoot());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class JsonProcessor extends AstProcessor<StringBuilder, StringBuilder> {
     }
 
     @Override
-    protected void process(AstNode n) throws AstProcessorException {
+    protected void process(ParseTreeNode n) throws AstProcessorException {
 
         StringBuilder sb = new StringBuilder();
 

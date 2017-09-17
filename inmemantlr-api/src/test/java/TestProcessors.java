@@ -33,7 +33,7 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class TestProcessors {
         }
     }
 
-    private static Ast ast = null;
+    private static ParseTree parseTree = null;
 
     @Before
     public void prepare() {
@@ -85,19 +85,19 @@ public class TestProcessors {
             assertTrue(false);
         }
 
-        ast = dlist.getAst();
+        parseTree = dlist.getParseTree();
     }
 
     @Test
     public void testXmlProcessor() {
-        String xml = ast.toXml();
+        String xml = parseTree.toXml();
         LOGGER.debug(xml);
         assertTrue(xml.length() > 1);
     }
 
     @Test
     public void testJsonProcessor() {
-        String json = ast.toJson();
+        String json = parseTree.toJson();
         LOGGER.debug(json);
         assertTrue(json.length() > 1);
     }

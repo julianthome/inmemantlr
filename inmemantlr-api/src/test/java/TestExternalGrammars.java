@@ -39,7 +39,7 @@ import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.stream.CasedStreamProvider;
 import org.snt.inmemantlr.tool.ToolCustomizer;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -189,10 +189,10 @@ public class TestExternalGrammars {
 
 
             if(shouldParse) {
-                Ast ast = dt.getAst();
-                Assert.assertNotNull(ast);
-                LOGGER.debug(ast.toDot());
-                assertTrue(ast.getNodes().size() > 1);
+                ParseTree parseTree = dt.getParseTree();
+                Assert.assertNotNull(parseTree);
+                LOGGER.debug(parseTree.toDot());
+                assertTrue(parseTree.getNodes().size() > 1);
             }
         }
     }

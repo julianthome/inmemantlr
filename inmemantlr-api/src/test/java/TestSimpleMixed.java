@@ -33,7 +33,7 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
+import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -71,10 +71,10 @@ public class TestSimpleMixed {
 
         // this example shows you how one could use inmemantlr for incremental parsing
         try {
-            Ast ast;
+            ParseTree parseTree;
             gp.parse("jan 1999 12");
-            ast = t.getAst();
-            Assert.assertEquals(ast.getNodes().size(), 6);
+            parseTree = t.getParseTree();
+            Assert.assertEquals(parseTree.getNodes().size(), 6);
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (ParsingException e) {

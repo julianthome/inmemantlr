@@ -38,21 +38,21 @@ import java.util.Map;
  * @param <R> return type of result
  * @param <T> datatype to which an AST node can be mapped to
  */
-public abstract class AstProcessor<R, T> {
+public abstract class ParseTreeProcessor<R, T> {
 
-    protected Ast ast = null;
-    protected Map<AstNode, T> smap;
-    protected LinkedList<AstNode> active;
+    protected ParseTree parseTree = null;
+    protected Map<ParseTreeNode, T> smap;
+    protected LinkedList<ParseTreeNode> active;
 
-    private Map<AstNode, Integer> nmap;
+    private Map<ParseTreeNode, Integer> nmap;
 
     /**
      * constructor
      *
-     * @param ast abstract syntax tree to process
+     * @param parseTree abstract syntax tree to process
      */
-    public AstProcessor(Ast ast) {
-        this.ast = ast;
+    public ParseTreeProcessor(ParseTree parseTree) {
+        this.parseTree = parseTree;
         nmap = new HashMap<>();
         smap = new HashMap<>();
         active = new LinkedList<>();
@@ -68,18 +68,18 @@ public abstract class AstProcessor<R, T> {
     public R process() throws AstProcessorException {
         initialize();
 
-        for (AstNode rn : ast.getNodes()) {
+        for (ParseTreeNode rn : parseTree.getNodes()) {
             nmap.put(rn, rn.getChildren().size());
         }
 
-        active.addAll(ast.getLeafs());
+        active.addAll(parseTree.getLeafs());
 
         while (!active.isEmpty()) {
-            AstNode rn = active.poll();
+            ParseTreeNode rn = active.poll();
 
             process(rn);
 
-            AstNode parent = rn.getParent();
+            ParseTreeNode parent = rn.getParent();
 
             if (parent != null) {
                 nmap.replace(parent, nmap.get(parent) - 1);
@@ -101,13 +101,13 @@ public abstract class AstProcessor<R, T> {
         StringBuilder sb = new StringBuilder();
 
         sb.append(".....Smap......\n");
-        for (Map.Entry<AstNode, T> e : smap.entrySet()) {
+        for (Map.Entry<ParseTreeNode, T> e : smap.entrySet()) {
             sb.append(e.getKey().getId()).append(" :: ").append(e.getValue()).append("\n");
         }
 
         sb.append(".....Nmap......\n");
 
-        for (Map.Entry<AstNode, Integer> e : nmap.entrySet()) {
+        for (Map.Entry<ParseTreeNode, Integer> e : nmap.entrySet()) {
             sb.append(e.getKey().getId()).append(" :: ").append(e.getValue()).append("\n");
         }
 
@@ -119,7 +119,7 @@ public abstract class AstProcessor<R, T> {
      *
      * @param n ast node
      */
-    public void simpleProp(AstNode n) {
+    public void simpleProp(ParseTreeNode n) {
         if (n.getChildren().size() == 1) {
             smap.put(n, smap.get(n.getFirstChild()));
         }
@@ -131,7 +131,7 @@ public abstract class AstProcessor<R, T> {
      * @param n ast node
      * @return data mapped to n
      */
-    public T getElement(AstNode n) {
+    public T getElement(ParseTreeNode n) {
         if (!smap.containsKey(n))
             throw new IllegalArgumentException("smap must contain AstNode");
 
@@ -157,5 +157,5 @@ public abstract class AstProcessor<R, T> {
      * @throws AstProcessorException if something went wrong while processing
      * an ast node
      */
-    protected abstract void process(AstNode n) throws AstProcessorException;
+    protected abstract void process(ParseTreeNode n) throws AstProcessorException;
 }

@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.AstProcessorException;
 
-public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
+public class XmlProcessor extends ParseTreeProcessor<StringBuilder, StringBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlProcessor.class);
 
@@ -14,27 +14,27 @@ public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
     /**
      * constructor
      *
-     * @param ast abstract syntax tree to process
+     * @param parseTree abstract syntax tree to process
      * @param idxOnly print index only
      */
-    public XmlProcessor(Ast ast, boolean idxOnly) {
-        super(ast);
+    public XmlProcessor(ParseTree parseTree, boolean idxOnly) {
+        super(parseTree);
         this.idxOnly = idxOnly;
     }
 
     /**
      * constructor
      *
-     * @param ast abstract syntax tree to process
+     * @param parseTree abstract syntax tree to process
      */
-    public XmlProcessor(Ast ast) {
-        this(ast,true);
+    public XmlProcessor(ParseTree parseTree) {
+        this(parseTree,true);
     }
 
 
     @Override
     public StringBuilder getResult() {
-        StringBuilder root = smap.get(ast.getRoot());
+        StringBuilder root = smap.get(parseTree.getRoot());
         root.insert(0,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         return root;
     }
@@ -45,7 +45,7 @@ public class XmlProcessor extends AstProcessor<StringBuilder, StringBuilder> {
     }
 
     @Override
-    protected void process(AstNode n) throws AstProcessorException {
+    protected void process(ParseTreeNode n) throws AstProcessorException {
 
         StringBuilder sb = new StringBuilder();
 

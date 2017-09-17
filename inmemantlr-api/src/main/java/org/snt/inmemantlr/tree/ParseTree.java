@@ -37,12 +37,12 @@ import static java.util.stream.Collectors.toSet;
 /**
  * an abstract syntax tree
  */
-public class Ast {
+public class ParseTree {
 
-    private AstNode root = null;
-    List<AstNode> nodes = null;
+    private ParseTreeNode root = null;
+    List<ParseTreeNode> nodes = null;
 
-    private Ast() {
+    private ParseTree() {
         nodes = new Vector<>();
     }
 
@@ -54,7 +54,7 @@ public class Ast {
      * @param nt    name of root non-terminal node
      * @param label value of root non-terminal node
      */
-    public Ast(String nt, String label) {
+    public ParseTree(String nt, String label) {
         this();
         root = newNode(null, nt, label,0,0);
     }
@@ -66,7 +66,7 @@ public class Ast {
      *
      * @param tree tree to be duplicated
      */
-    public Ast(Ast tree) {
+    public ParseTree(ParseTree tree) {
         this();
         root = newNode(tree.getRoot());
     }
@@ -77,7 +77,7 @@ public class Ast {
      *
      * @param nod root node
      */
-    private Ast(AstNode nod) {
+    private ParseTree(ParseTreeNode nod) {
         this();
         root = newNode(nod);
     }
@@ -87,7 +87,7 @@ public class Ast {
      *
      * @return root node
      */
-    public AstNode getRoot() {
+    public ParseTreeNode getRoot() {
         return root;
     }
 
@@ -97,8 +97,8 @@ public class Ast {
      * @param parent root of new ast node to be created
      * @return newly created ast node
      */
-    private AstNode newNode(AstNode parent) {
-        AstNode rn = new AstNode(this, parent);
+    private ParseTreeNode newNode(ParseTreeNode parent) {
+        ParseTreeNode rn = new ParseTreeNode(this, parent);
         nodes.add(rn);
         return rn;
     }
@@ -111,9 +111,9 @@ public class Ast {
      * @param label  value of node to be created
      * @return newly created node
      */
-    public AstNode newNode(AstNode parent, String nt, String label, int sidx,
-     int eidx) {
-        AstNode rn = new AstNode(this, parent, nt, label, sidx, eidx);
+    public ParseTreeNode newNode(ParseTreeNode parent, String nt, String label, int sidx,
+                                 int eidx) {
+        ParseTreeNode rn = new ParseTreeNode(this, parent, nt, label, sidx, eidx);
         nodes.add(rn);
         return rn;
     }
@@ -123,7 +123,7 @@ public class Ast {
      *
      * @return set of leaf nodes
      */
-    public Set<AstNode> getLeafs() {
+    public Set<ParseTreeNode> getLeafs() {
         return nodes.stream().filter(n -> !n.hasChildren()).collect(toSet());
     }
 
@@ -132,7 +132,7 @@ public class Ast {
      *
      * @return list of ast nodes
      */
-    public List<AstNode> getNodes() {
+    public List<ParseTreeNode> getNodes() {
         return nodes;
     }
 
@@ -142,7 +142,7 @@ public class Ast {
      * @return dot format string
      */
     public String toDot() {
-        return AstSerializer.INSTANCE.toDot(this);
+        return ParseTreeSerializer.INSTANCE.toDot(this);
     }
 
     /**
@@ -151,7 +151,7 @@ public class Ast {
      * @return JSON format string
      */
     public String toJson() {
-        return AstSerializer.INSTANCE.toJson(this);
+        return ParseTreeSerializer.INSTANCE.toJson(this);
     }
 
     /**
@@ -160,7 +160,7 @@ public class Ast {
      * @return XML format string
      */
     public String toXml() {
-        return AstSerializer.INSTANCE.toXml(this);
+        return ParseTreeSerializer.INSTANCE.toXml(this);
     }
 
 
@@ -171,7 +171,7 @@ public class Ast {
      * @param newTree tree replacement
      * @return true when subtree replacement was successful, false otherwise
      */
-    public boolean replaceSubtree(Ast oldTree, Ast newTree) {
+    public boolean replaceSubtree(ParseTree oldTree, ParseTree newTree) {
         if (hasSubtree(oldTree)) {
             nodes.stream()
                     .filter(n -> oldTree.getRoot().equals(n))
@@ -188,7 +188,7 @@ public class Ast {
      * @param subtree to be removed
      * @return true when removal was succesful, false otherwise
      */
-    public boolean removeSubtree(Ast subtree) {
+    public boolean removeSubtree(ParseTree subtree) {
         if (hasSubtree(subtree)) {
             nodes.stream()
                     .filter(n -> subtree.getRoot().equals(n))
@@ -205,8 +205,8 @@ public class Ast {
      * @param p predicate to search for the dominating subtree root node
      * @return set of dominating subtrees
      */
-    public Set<Ast> getDominatingSubtrees(Predicate<AstNode> p) {
-        Set<AstNode> selected = new HashSet<>();
+    public Set<ParseTree> getDominatingSubtrees(Predicate<ParseTreeNode> p) {
+        Set<ParseTreeNode> selected = new HashSet<>();
         searchDominatingNodes(root, selected, p);
         return getSubtrees(selected::contains);
     }
@@ -218,7 +218,7 @@ public class Ast {
      * @param selected set to keep track of visited nodes
      * @param p        predicate to search for the dominating subtree root node
      */
-    private void searchDominatingNodes(AstNode n, Set<AstNode> selected, Predicate<AstNode> p) {
+    private void searchDominatingNodes(ParseTreeNode n, Set<ParseTreeNode> selected, Predicate<ParseTreeNode> p) {
         if (p.test(n)) {
             selected.add(n);
         } else {
@@ -232,8 +232,8 @@ public class Ast {
      * @param p predicate for identifying the root node
      * @return set of ast nodes
      */
-    public Set<Ast> getSubtrees(Predicate<AstNode> p) {
-        return nodes.stream().filter(p).map(Ast::new).collect(toSet());
+    public Set<ParseTree> getSubtrees(Predicate<ParseTreeNode> p) {
+        return nodes.stream().filter(p).map(ParseTree::new).collect(toSet());
     }
 
     /**
@@ -242,8 +242,8 @@ public class Ast {
      * @param subtree tree whose presence is checked
      * @return true if subtree is present in actual one, false otherwise
      */
-    public boolean hasSubtree(Ast subtree) {
-        Set<Ast> subtrees = getSubtrees(n -> subtree.getRoot().equals(n));
+    public boolean hasSubtree(ParseTree subtree) {
+        Set<ParseTree> subtrees = getSubtrees(n -> subtree.getRoot().equals(n));
         return subtrees.stream().filter(subtree::equals).count() > 0;
     }
 
@@ -253,8 +253,8 @@ public class Ast {
      * @param subtree tree whose presence is checked
      * @return subree
      */
-    public Ast getSubtree(Ast subtree) {
-        Set<Ast> subtrees = getSubtrees(n -> n.equals(subtree.getRoot()));
+    public ParseTree getSubtree(ParseTree subtree) {
+        Set<ParseTree> subtrees = getSubtrees(n -> n.equals(subtree.getRoot()));
         return subtrees.stream().filter(subtree::equals).findFirst().orElse(null);
     }
 
@@ -265,11 +265,11 @@ public class Ast {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Ast))
+        if (!(o instanceof ParseTree))
             return false;
 
-        Ast ast = (Ast) o;
+        ParseTree parseTree = (ParseTree) o;
         // will recursively check AST nodes
-        return root.equals(ast.getRoot());
+        return root.equals(parseTree.getRoot());
     }
 }

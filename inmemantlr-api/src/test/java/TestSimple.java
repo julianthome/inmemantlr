@@ -33,8 +33,8 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.Ast;
-import org.snt.inmemantlr.tree.AstSerializer;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeSerializer;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
@@ -73,15 +73,15 @@ public class TestSimple {
 
         // this example shows you how one could use inmemantlr for incremental parsing
         try {
-            Ast ast;
+            ParseTree parseTree;
             gp.parse("PRINT a+b");
-            ast = t.getAst();
-            LOGGER.debug(ast.toDot());
-            assertEquals(ast.getNodes().size(), 6);
+            parseTree = t.getParseTree();
+            LOGGER.debug(parseTree.toDot());
+            assertEquals(parseTree.getNodes().size(), 6);
             gp.parse("PRINT \"test\"");
-            ast = t.getAst();
-            LOGGER.debug(ast.toDot());
-            assertEquals(ast.getNodes().size(), 4);
+            parseTree = t.getParseTree();
+            LOGGER.debug(parseTree.toDot());
+            assertEquals(parseTree.getNodes().size(), 4);
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -122,7 +122,7 @@ public class TestSimple {
             assertTrue(false);
         }
 
-        Ast a = t.getAst();
+        ParseTree a = t.getParseTree();
 
         Assert.assertTrue(a.getNodes().size() > 1);
 
@@ -165,11 +165,11 @@ public class TestSimple {
             assert false;
         }
 
-        Ast a = t.getAst();
+        ParseTree a = t.getParseTree();
 
         assertEquals(a.getNodes().size(), 4);
 
-        LOGGER.debug(AstSerializer.INSTANCE.toDot(a, true));
+        LOGGER.debug(ParseTreeSerializer.INSTANCE.toDot(a, true));
     }
 
 }

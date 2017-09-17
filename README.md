@@ -8,9 +8,9 @@ its `GenericParser` class which is serializable, and hence, can be reused at a
 later point in time or across different applications. inmemantlr can be used
 via an easy-to-use Java API or as command-line tool.
 
-Moreover, one can easily generate an abstract syntax tree (AST) from a parsed
-file that can be both visualized using [graphviz](http://www.graphviz.org/) and
-processed/translated by means of inmemantlr's `AstProcessor` class.
+Moreover, you can easily generate a parse tree from a parsed file and convert
+it into various formats such as `.dot`, `.xml` or `.json`. A parse tree
+can be processed/translated by means of inmemantlr's `ParseTreeProcessor` class.
 
 All of the above-mentioned inmemantlr features are illustrated by
 [examples](#toc). inmemantlr is ready to use for all of the
@@ -44,8 +44,8 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 
 [API Usage Scenarios](#api-usage-scenarios)
   * [Simple parsing](#simple-parsing)
-  * [AST generation](#ast-generation)
-  * [AST processing](#ast-processing)
+  * [Parse tree generation](#parse-tree-generation)
+  * [Parse tree processing](#parse-tree-processing)
   * [Incremental parsing](#incremental-parsing)
   * [Non-combined grammars](#non-combined-grammars)
   * [Accessing ANTLR objects](#accessing-antlr-objects)
@@ -102,9 +102,9 @@ gp.compile();
 ctx = gp.parse(s);
 ```
 
-## AST generation
+## Parse tree generation
 
-If you would like to get the derived AST from a parsed file, the following
+If you would like to get the derived Parse tree from a parsed file, the following
 snippet could be of use:
 
 ``` java
@@ -112,7 +112,7 @@ File f = new File("Java.g4");
 GenericParser gp = new GenericParser(f);
 String s = FileUtils.loadFileContent("HelloWorld.java");
 
-// this listener will create an AST from the java file
+// this listener will create an Parse tree from the java file
 DefaultTreeListener dlist = new DefaultTreeListener();
 
 gp.setListener(dlist);
@@ -120,26 +120,26 @@ gp.compile();
 
 ParserRuleContext ctx = gp.parse(s);
 
-// get access to AST
-Ast ast = dlist.getAst();
+// get access to Parse tree
+ParseTree pt = dlist.getParseTree();
 
-// print AST in dot format
-System.out.println(ast.toDot());
+// print Parse tree in dot format
+System.out.println(pt.toDot());
 ```
 
-By providing the output of `ast.toDot()` to graphviz, one could visualize the
-AST as illustrated in the picture below.
+By providing the output of `pt.toDot()` to graphviz, one could visualize the
+Parse tree as illustrated in the picture below.
 
-<img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example AST" width="400px" align="second">
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/ast.png" alt="Example Parse tree" width="400px" align="second">
 
-## Ast processing
+## Parse tree processing
 
-With inmemantlr, you can easily process or translate a given AST by means of an
-`AstProcessor`. The following example illustrates how to process a simple
-AST that represents a mathematical expression. Given the grammar definition
+With inmemantlr, you can easily process or translate a given Parse tree by means of an
+`ParseTreeProcessor`. The following example illustrates how to process a simple
+Parse tree that represents a mathematical expression. Given the grammar definition
 below, parsing the string `'3+100'` would yield this parse tree:
 
-<img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="Ast derived from simple expression '3+100'" width="200px" align="second">
+<img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="ParseTree derived from simple expression '3+100'" width="200px" align="second">
 
 ```
 grammar Ops;
@@ -166,28 +166,28 @@ mathematical expression based on the above-mentioned grammar.
 // ...
 gp.compile();
 // this example shows you how one could use inmemantlr for incremental parsing
-Ast ast;
+ParseTree pt;
 gp.parse("3+100");
-ast = t.getAst();
-// Process the AST bottom-up starting from the leafs up to the root node
-AstProcessor<String, String> processor = new AstProcessor<String, String>(ast) {
+pt = t.getParseTree();
+// Process the Parse tree bottom-up starting from the leafs up to the root node
+ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<String, String>(pt) {
   @Override
   public String getResult() {
     // when all nodes have been processed, the result is available in the smap
     // value of the root node which is returned here
-    return smap.get(ast.getRoot());
+    return smap.get(pt.getRoot());
   }
   @Override
   protected void initialize() {
     // initialize smap - a data structure that keeps track of the intermediate
     // values for every node
-    ast.getNodes().forEach(n -> smap.put(n, n.getLabel()));
+    pt.getNodes().forEach(n -> smap.put(n, n.getLabel()));
   }
   // This operation is executed for each and every node in left to right and
   // bottom up order. Non-leaf nodes are processed only if all of their siblings
   // have been already processed
   @Override
-  protected void process(AstNode n) {
+  protected void process(ParseTreeNode n) {
     if(n.getRule().equals("expression")){
       int n0 = Integer.parseInt(smap.get(n.getChild(0)));
       int n1 = Integer.parseInt(smap.get(n.getChild(2)));
@@ -215,7 +215,7 @@ processor.process();
 System.out.println(processor.getResult());
 ```
 
-A more practical example on how to use the AST processor can be found within
+A more practical example on how to use the Parse tree processor can be found within
 my [CTrans project](https://github.com/julianthome/ctrans) which takes
 a given boolean formula and translates it into CNF or DNF, respectively.
 
@@ -234,13 +234,13 @@ GenericParser gp = new GenericParser(f);
 gp.setListener(new DefaultTreeListener());
 gp.compile();
 
-Ast ast;
+ParseTree pt;
 gp.parse("PRINT a+b");
-ast = t.getAst();
+pt = t.getParseTree();
 // do something with parsing result
 
 gp.parse("PRINT \"test\"");
-ast = t.getAst();
+pt = t.getParseTree();
 // do something with parsing result
 ```
 
@@ -315,7 +315,7 @@ mvn -Dtest=TestExternalGrammars test
 
 Besides the inmemantlr API which is desribed in more detail below, there is
 also an inmemantlr command-line tool which is well suited for the simple task
-of generating a dot files based on ASTs that are derived from parsed text
+of generating a dot files based on parse trees that are derived from parsed text
 files.
 
 After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
