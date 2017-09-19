@@ -170,8 +170,11 @@ dlist = new DefaultTreeListener(s -> filter.contains(s));
 ## Parse tree processing
 
 With inmemantlr, you can easily process or translate a given Parse tree by means of an
-`ParseTreeProcessor`. Note, that ANTLR can automatically 
-
+`ParseTreeProcessor`. Note, that ANTLR can automatically generate
+visitors/listeners from a given grammar which you can obtain through the
+`GenericParser` member function `getAllCompiledObjects`. However,
+in case you would like to develop a simple application inmemantlr
+`ParseTreeProcessor` might be sufficient for your use case.
 
 The following example illustrates how to process a simple
 parse tree that represents a mathematical expression. Given the grammar definition
