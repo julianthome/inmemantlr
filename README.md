@@ -45,6 +45,8 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 [API Usage Scenarios](#api-usage-scenarios)
   * [Simple parsing](#simple-parsing)
   * [Parse tree generation](#parse-tree-generation)
+  * [Parse tree serialization](#parse-tree-serialization)
+  * [Parse tree pruning](#parse-tree-pruning)
   * [Parse tree processing](#parse-tree-processing)
   * [Sequential parsing](#sequential-parsing)
   * [Non-combined grammars](#non-combined-grammars)
