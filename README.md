@@ -3,7 +3,7 @@
 inmemantlr is an [ANTLR v4](http://www.antlr.org/) wrapper that automates the
 manual generation and compilation steps which have to be done when using
 vanilla ANTLR. Instead, inmemantlr does all of these steps automatically
-in-memory while keeping all of the original ANTLR objects accessible through
+and in-memory while keeping all of the original ANTLR objects accessible through
 its `GenericParser` class which is serializable, and hence, can be reused at a
 later point in time or across different applications. inmemantlr can be used
 via an easy-to-use Java API or as command-line tool.
@@ -99,20 +99,26 @@ gp.setListener(new DefaultListener());
 // 4. compile Lexer and parser in-memory
 gp.compile();
 // 5. parse the string that represents the content of HelloWorld.java
-ctx = gp.parse(s);
+ParserRuleContext ctx = gp.parse(s);
 ```
 
 ## Parse tree generation
 
-If you would like to get the derived Parse tree from a parsed file, the following
-snippet could be of use:
+While providing access to the original `ParseTree` data-structure of ANTLR
+which can be obtained through the `ParserRuleContext` object, inmemantlr also
+provides it's own `ParseTree` data-structure and some ready-to-use utility
+classes which help with everyday tasks such as pruning, data-conversion,
+tree-traversal and translation.
+
+If you would like to obtain the `ParseTree` from a parsed file,
+the following snippet could be of use:
 
 ``` java
 File f = new File("Java.g4");
 GenericParser gp = new GenericParser(f);
 String s = FileUtils.loadFileContent("HelloWorld.java");
 
-// this listener will create an Parse tree from the java file
+// this listener will create a parse tree from the java file
 DefaultTreeListener dlist = new DefaultTreeListener();
 
 gp.setListener(dlist);
@@ -120,23 +126,53 @@ gp.compile();
 
 ParserRuleContext ctx = gp.parse(s);
 
-// get access to Parse tree
+// get access to the parse tree of inmemantlr
 ParseTree pt = dlist.getParseTree();
-
-// print Parse tree in dot format
-System.out.println(pt.toDot());
 ```
 
-By providing the output of `pt.toDot()` to graphviz, one could visualize the
-Parse tree as illustrated in the picture below.
+## Parse tree serialization
+
+As depicted below, our `ParseTree` implementation can be serialized to various
+output formats such as `.xml`, `.json` or `.dot`.
+
+```java
+String xml = parseTree.toXml();
+String json = parseTree.toJson();
+String dot = parseTree.toDot();
+```
+
+Serialization may be useful in case you would like to use parsing results
+across different applications or in case you would like get a quick and simple
+visualization of your parse tree by means of graphviz as in the example
+below. 
 
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/pt.png" alt="Example Parse tree" width="400px" align="second">
+
+## Parse tree pruning
+
+In case you are just interested in particular nodes of the parse tree, it is
+possible to pass a lambda expression as parameter to the `DefaultTreeListener`
+as illustrated in the example below. Only those nodes remain in the parse
+tree for which the lambda expression returns true.
+
+``` java
+private Set<String> filter  = new HashSet<>(Arrays.asList(new String []{
+        "alternation", "expr", "literal",
+}));
+// ...
+dlist = new DefaultTreeListener(s -> filter.contains(s));
+// ...
+```
+
 
 ## Parse tree processing
 
 With inmemantlr, you can easily process or translate a given Parse tree by means of an
-`ParseTreeProcessor`. The following example illustrates how to process a simple
-Parse tree that represents a mathematical expression. Given the grammar definition
+`ParseTreeProcessor`. Note, that ANTLR can automatically 
+
+
+The following example illustrates how to process a simple
+parse tree that represents a mathematical expression. Given the grammar definition
 below, parsing the string `'3+100'` would yield this parse tree:
 
 <img src="https://github.com/julianthome/inmemantlr/blob/master/images/simpleop.png" alt="ParseTree derived from simple expression '3+100'" width="200px" align="second">

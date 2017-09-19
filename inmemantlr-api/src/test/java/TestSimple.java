@@ -24,6 +24,7 @@
  * SOFTWARE.
  **/
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -117,7 +118,9 @@ public class TestSimple {
         assertTrue(compile);
 
         try {
-            gp.parse(toParse);
+            ParserRuleContext ctx = gp.parse(toParse);
+
+            LOGGER.info("ctx {}", ctx.getChild(0).getText());
         } catch (IllegalWorkflowException | ParsingException e) {
             assertTrue(false);
         }
