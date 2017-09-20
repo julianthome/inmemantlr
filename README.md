@@ -356,8 +356,8 @@ mvn -Dtest=TestExternalGrammars test
 
 Besides the inmemantlr API which is desribed in more detail below, there is
 also an inmemantlr command-line tool which is well suited for the simple task
-of generating a dot files based on parse trees that are derived from parsed text
-files.
+of generating `.dot`, `.xml` or `.json` files based on parse trees that are
+derived from parsed text files.
 
 After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
 be found within the `inmemantlr-tool/target` directory. The standalone command
