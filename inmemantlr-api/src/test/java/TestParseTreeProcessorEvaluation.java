@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
@@ -117,7 +117,7 @@ public class TestParseTreeProcessorEvaluation {
 
             try {
                 processor.process();
-            } catch (AstProcessorException e) {
+            } catch (ParseTreeProcessorException e) {
                 Assert.assertFalse(true);
             }
             assertEquals(parseTree.getNodes().size(), 7);

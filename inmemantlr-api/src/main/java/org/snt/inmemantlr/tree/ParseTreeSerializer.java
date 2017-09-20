@@ -2,7 +2,7 @@ package org.snt.inmemantlr.tree;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public enum ParseTreeSerializer {
         StringBuilder sb = null;
         try {
             sb = jsonProc.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             LOGGER.error(e.getMessage());
             System.exit(-1);
         }
@@ -70,7 +70,7 @@ public enum ParseTreeSerializer {
         StringBuilder sb = null;
         try {
             sb = xmlProc.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             LOGGER.error(e.getMessage());
             System.exit(-1);
         }

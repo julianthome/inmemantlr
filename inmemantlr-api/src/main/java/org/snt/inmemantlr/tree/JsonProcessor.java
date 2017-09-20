@@ -2,7 +2,7 @@ package org.snt.inmemantlr.tree;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
 public class JsonProcessor extends ParseTreeProcessor<StringBuilder, StringBuilder> {
 
@@ -41,7 +41,7 @@ public class JsonProcessor extends ParseTreeProcessor<StringBuilder, StringBuild
     }
 
     @Override
-    protected void process(ParseTreeNode n) throws AstProcessorException {
+    protected void process(ParseTreeNode n) throws ParseTreeProcessorException {
 
         StringBuilder sb = new StringBuilder();
 

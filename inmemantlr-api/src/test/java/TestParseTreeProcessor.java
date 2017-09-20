@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.AstProcessorException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
@@ -111,7 +111,7 @@ public class TestParseTreeProcessor {
 
         try {
             processor.process();
-        } catch (AstProcessorException e) {
+        } catch (ParseTreeProcessorException e) {
             Assert.assertFalse(true);
         }
         assertTrue(processor.debug() != null);

@@ -26,7 +26,7 @@
 
 package org.snt.inmemantlr.tree;
 
-import org.snt.inmemantlr.exceptions.AstProcessorException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,10 +62,10 @@ public abstract class ParseTreeProcessor<R, T> {
      * process the abstract syntax tree
      *
      * @return result
-     * @throws AstProcessorException if something went wrong while processing
+     * @throws ParseTreeProcessorException if something went wrong while processing
      * an ast node
      */
-    public R process() throws AstProcessorException {
+    public R process() throws ParseTreeProcessorException {
         initialize();
 
         for (ParseTreeNode rn : parseTree.getNodes()) {
@@ -154,8 +154,8 @@ public abstract class ParseTreeProcessor<R, T> {
      * process a single ast node
      *
      * @param n an ast node to process
-     * @throws AstProcessorException if something went wrong while processing
+     * @throws ParseTreeProcessorException if something went wrong while processing
      * an ast node
      */
-    protected abstract void process(ParseTreeNode n) throws AstProcessorException;
+    protected abstract void process(ParseTreeNode n) throws ParseTreeProcessorException;
 }

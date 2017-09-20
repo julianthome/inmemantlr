@@ -3,7 +3,7 @@ package org.snt.inmemantlr.exceptions;
 /**
  * this exception is something is going wrong while processing an AST
  */
-public class AstProcessorException extends Exception {
+public class ParseTreeProcessorException extends Exception {
     private static final long serialVersionUID = -3663250114314629370L;
 
     /**
@@ -11,7 +11,7 @@ public class AstProcessorException extends Exception {
      *
      * @param msg exception message
      */
-    public AstProcessorException(String msg) {
+    public ParseTreeProcessorException(String msg) {
         super(msg);
     }
 
@@ -21,7 +21,7 @@ public class AstProcessorException extends Exception {
      * @param msg   exception message
      * @param cause the cause
      */
-    public AstProcessorException(String msg, Throwable cause) {
+    public ParseTreeProcessorException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
