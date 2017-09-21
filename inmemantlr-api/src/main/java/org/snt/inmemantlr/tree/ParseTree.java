@@ -109,6 +109,8 @@ public class ParseTree {
      * @param parent parent node
      * @param nt     name of node to be crated
      * @param label  value of node to be created
+     * @param sidx   start index
+     * @param eidx   end index
      * @return newly created node
      */
     public ParseTreeNode newNode(ParseTreeNode parent, String nt, String label, int sidx,

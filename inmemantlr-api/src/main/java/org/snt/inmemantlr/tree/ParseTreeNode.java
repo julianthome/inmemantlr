@@ -62,6 +62,8 @@ public class ParseTreeNode {
      * @param tree   tree to whom the node belongs to
      * @param parent parent node
      * @param nt     non terminal id
+     * @param sidx   start index
+     * @param eidx   end index
      * @param label  label
      */
     protected ParseTreeNode(ParseTree tree, ParseTreeNode parent, String nt, String label, int
