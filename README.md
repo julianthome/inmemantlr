@@ -78,7 +78,7 @@ the maven package.
 <dependency>
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr-api</artifactId>
-    <version>1.3.8</version>
+    <version>1.3.9</version>
 </dependency>
 ```
 
