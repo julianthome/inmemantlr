@@ -77,6 +77,7 @@ public class TestExternalGrammars {
             "mysql", // handled by extra testcase
             "html", // handled by extra testcase
             "r", // handled by extra testcase
+            "javascript", // skip for the time being
 
             "antlr3", // skip
             "python3alt" //skip
@@ -883,6 +884,68 @@ public class TestExternalGrammars {
         gp.setParserName("RParser");
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
+    }
+
+    @Test
+    public void testJavascript() {
+
+//        if (!toCheck("javascript"))
+//            return;
+//
+//        Subject s = subjects.get("javascript");
+//
+//        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+//                "JavaScript" + "(Lexer|Parser).g4")).collect
+//                (Collectors.toSet());
+//
+//        assertTrue(mfiles.size() > 0);
+//
+//        GenericParser jParser = null;
+//        try {
+//            jParser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+//        } catch (FileNotFoundException e) {
+//            assertTrue(false);
+//        }
+//
+//        jParser.setParserName("JavaScriptParser");
+//        jParser.setLexerName("JavaScriptLexer");
+//
+//
+//        File util1 = new File
+//                ("src/test/resources/grammars-v4/javascript/Java" +
+//                        "/JavaScriptBaseLexer.java");
+//        File util2 = new File
+//                ("src/test/resources/grammars-v4/javascript/Java" +
+//                        "/JavaScriptBaseParser.java");
+//
+//        try {
+//            jParser.addUtilityJavaFiles(util1, util2);
+//        } catch (FileNotFoundException e) {
+//            LOGGER.error(e.getMessage());
+//            Assert.assertTrue(false);
+//        }
+//
+//
+//        assertNotNull(jParser);
+//
+//        DefaultTreeListener mdt = new DefaultTreeListener();
+//
+//        boolean compile;
+//        try {
+//            jParser.compile();
+//            compile = true;
+//        } catch (CompilationException e) {
+//            LOGGER.error(e.getMessage());
+//            compile = false;
+//        }
+//
+//
+//        jParser.setListener(mdt);
+//
+//
+//        assertTrue(compile);
+//
+//        verify(jParser, s.examples, s.nexamples, "program");
     }
 
 }
