@@ -24,7 +24,8 @@
  * SOFTWARE.
  **/
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -35,7 +36,6 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertFalse;
 
 public class TestBroken {
 
@@ -65,7 +65,7 @@ public class TestBroken {
             compile = false;
         }
 
-        assertFalse(compile);
+        Assertions.assertFalse(compile);
     }
 
 }

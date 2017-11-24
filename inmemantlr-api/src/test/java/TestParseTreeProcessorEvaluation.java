@@ -24,14 +24,15 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
@@ -42,8 +43,6 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestParseTreeProcessorEvaluation {
 
@@ -73,7 +72,7 @@ public class TestParseTreeProcessorEvaluation {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
 
         // this example shows you how one could use inmemantlr for incremental parsing
@@ -118,10 +117,10 @@ public class TestParseTreeProcessorEvaluation {
             try {
                 processor.process();
             } catch (ParseTreeProcessorException e) {
-                Assert.assertFalse(true);
+                Assertions.assertFalse(true);
             }
-            assertEquals(parseTree.getNodes().size(), 7);
-            assertEquals(processor.getResult(), "103");
+            Assertions.assertEquals(parseTree.getNodes().size(), 7);
+            Assertions.assertEquals(processor.getResult(), "103");
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);
         }

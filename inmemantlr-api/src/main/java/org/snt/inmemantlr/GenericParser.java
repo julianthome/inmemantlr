@@ -34,10 +34,7 @@ import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.comp.CunitProvider;
-import org.snt.inmemantlr.comp.FileProvider;
-import org.snt.inmemantlr.comp.StringCodeGenPipeline;
-import org.snt.inmemantlr.comp.StringCompiler;
+import org.snt.inmemantlr.comp.*;
 import org.snt.inmemantlr.exceptions.*;
 import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
@@ -75,6 +72,9 @@ public class GenericParser {
     private InmemantlrTool antlr = new InmemantlrTool();
     private DefaultListener listener = new DefaultListener();
     private StringCompiler sc = new StringCompiler();
+    private CompilerOptionsProvider oprov = new
+            DefaultCompilerOptionsProvider();
+
     private FileProvider fp = new FileProvider();
     private StreamProvider provider = new DefaultStreamProvider();
     private boolean useCached = true;
@@ -264,7 +264,7 @@ public class GenericParser {
      * @param cp list of items to add to classpath
      */
     public void setClassPath(List cp) {
-        sc.setClassPath(cp);
+        oprov.setClassPath(cp);
     }
 
 
@@ -330,7 +330,7 @@ public class GenericParser {
 
         cu.addAll(antlr.getCompilationUnits());
 
-        sc.compile(cu);
+        sc.compile(cu,oprov);
     }
 
     /**

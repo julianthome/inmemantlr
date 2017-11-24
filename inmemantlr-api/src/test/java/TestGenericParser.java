@@ -24,8 +24,8 @@
  * SOFTWARE.
  **/
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -35,7 +35,10 @@ import org.snt.inmemantlr.listener.DefaultListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.fail;
+
+;
+
 
 public class TestGenericParser {
 
@@ -45,9 +48,8 @@ public class TestGenericParser {
     static File fgrammar = null;
     static File sfile = null;
 
-    @Before
-    public void init() {
-        ClassLoader classLoader = getClass().getClassLoader();
+    static {
+        ClassLoader classLoader = TestGenericParser.class.getClassLoader();
         grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
         fgrammar = new File(classLoader.getResource("inmemantlr/Fail.g4")
                 .getFile());
@@ -63,7 +65,7 @@ public class TestGenericParser {
             e.printStackTrace();
         }
 
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         // Incorrect workflows
         boolean thrown = false;
@@ -74,7 +76,7 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
 
 
         boolean compile;
@@ -85,7 +87,7 @@ public class TestGenericParser {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         // Incorrect workflows
         thrown = false;
@@ -106,7 +108,7 @@ public class TestGenericParser {
                 compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
 
         thrown = false;
@@ -116,13 +118,13 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertFalse(thrown);
+        Assertions.assertFalse(thrown);
         thrown = false;
-        assertNotSame(gp.getListener(), null);
+        Assertions.assertNotSame(gp.getListener(), null);
 
         // Correct workflow
         gp.setListener(new DefaultListener());
-        assertNotNull(gp.getListener());
+        Assertions.assertNotNull(gp.getListener());
 
 
         try {
@@ -136,7 +138,7 @@ public class TestGenericParser {
                 compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         try {
             gp.parse(sfile);
@@ -145,7 +147,7 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertFalse(thrown);
+        Assertions.assertFalse(thrown);
     }
 
     @Test
@@ -158,7 +160,7 @@ public class TestGenericParser {
         } catch (NullPointerException | DeserializationException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
     }
 
     @Test
@@ -171,7 +173,7 @@ public class TestGenericParser {
         } catch (NullPointerException | FileNotFoundException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
     }
 
     @Test
@@ -184,7 +186,7 @@ public class TestGenericParser {
         } catch (NullPointerException | Error e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
     }
 
     @Test
@@ -196,7 +198,7 @@ public class TestGenericParser {
         } catch (NullPointerException | Error e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
     }
 
     @Test
@@ -208,7 +210,7 @@ public class TestGenericParser {
         } catch (NullPointerException | Error e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
     }
 
     @Test
@@ -220,7 +222,7 @@ public class TestGenericParser {
             e.printStackTrace();
         }
 
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         // Incorrect workflows
         boolean thrown = false;
@@ -230,7 +232,7 @@ public class TestGenericParser {
             thrown = true;
         }
 
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
 
         boolean compile = true;
         try {
@@ -242,7 +244,7 @@ public class TestGenericParser {
             }
         }
 
-        assertFalse(compile);
+        Assertions.assertFalse(compile);
 
     }
 

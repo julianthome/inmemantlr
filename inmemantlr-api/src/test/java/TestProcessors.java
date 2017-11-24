@@ -27,8 +27,8 @@
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -47,30 +47,27 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TestProcessors {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestProcessors.class);
 
-    String sgrammarcontent = "";
-    String s = "";
-
-    @Before
-    public void init() throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
-             InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
-            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-            s = FileUtils.getStringFromStream(sfile);
-        }
-    }
+    private static String sgrammarcontent = "";
+    private static String s = "";
 
     private static ParseTree parseTree = null;
 
-    @Before
-    public void prepare() {
+    static {
+        ClassLoader classLoader = TestProcessors.class.getClassLoader();
+        try {
+            try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
+                 InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
+                sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+                s = FileUtils.getStringFromStream(sfile);
+            }
+        } catch (IOException e) {
+            Assertions.assertFalse(true);
+        }
         GenericParser gp = new GenericParser(sgrammarcontent);
 
         boolean compile;
@@ -81,8 +78,8 @@ public class TestProcessors {
             compile = false;
         }
 
-        assertTrue(compile);
-        assertTrue(s != null && !s.isEmpty());
+        Assertions.assertTrue(compile);
+        Assertions.assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
@@ -91,11 +88,12 @@ public class TestProcessors {
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
         parseTree = dlist.getParseTree();
     }
+
 
     @Test
     public void testXmlProcessor() {
@@ -112,12 +110,12 @@ public class TestProcessors {
             newDocumentBuilder.parse(new ByteArrayInputStream(xml
                     .getBytes()));
         } catch (SAXException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         } catch (IOException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
-        assertTrue(xml.length() > 1);
+        Assertions.assertTrue(xml.length() > 1);
     }
 
     @Test
@@ -128,8 +126,8 @@ public class TestProcessors {
         try {
             new JsonParser().parse(json);
         } catch ( JsonIOException | JsonSyntaxException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
-        assertTrue(json.length() > 1);
+        Assertions.assertTrue(json.length() > 1);
     }
 }

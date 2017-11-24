@@ -24,30 +24,13 @@
  * SOFTWARE.
  **/
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.snt.inmemantlr.utils.EscapeUtils;
-import org.snt.inmemantlr.utils.FileUtils;
+package org.snt.inmemantlr.comp;
 
+import java.util.Collection;
 
-public class TestUtils {
-
-    @Test
-    public void testEscapeUtils() {
-        String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
-        String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        Assertions.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
-        String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
-        Assertions.assertEquals(suesc, sorig);
-
-        Assertions.assertEquals(EscapeUtils.escapeSpecialCharacters(null), "");
-        Assertions.assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "");
-    }
-
-    @Test
-    public void testFileUtils() {
-        Assertions.assertEquals(FileUtils.loadFileContent(""), null);
-        Assertions.assertEquals(FileUtils.getStringFromStream(null), null);
-    }
+public interface CompilerOptionsProvider {
+    Collection<String> getOptions();
+    void setClassPath(Collection<String> cp);
+    Collection<String> getClassPath();
 
 }

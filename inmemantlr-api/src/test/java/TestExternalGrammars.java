@@ -27,9 +27,8 @@
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -53,7 +52,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+
 
 public class TestExternalGrammars {
 
@@ -89,7 +88,7 @@ public class TestExternalGrammars {
 
     private Set<String> specialCases = new HashSet(Arrays.asList(special));
 
-    private Map<String, Subject> subjects = new HashMap<>();
+    private static Map<String, Subject> subjects = new HashMap<>();
 
     private static class Subject {
 
@@ -142,10 +141,10 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(tc, gs);
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
-        Assert.assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         return gp;
     }
@@ -175,7 +174,7 @@ public class TestExternalGrammars {
                 ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
                         .parse(e,ep, GenericParser.CaseSensitiveType.NONE) :
                         p.parse(e, t);
-                //Assert.assertNotNull(ctx);
+                //Assert.Assertions.assertNotNull(ctx);
                 if(ctx == null)
                     parses = false;
                 else
@@ -186,26 +185,23 @@ public class TestExternalGrammars {
                 parses = false;
             }
 
-            assertEquals(shouldParse, parses);
+            Assertions.assertEquals(shouldParse, parses);
 
 
             if(shouldParse) {
                 ParseTree parseTree = dt.getParseTree();
-                Assert.assertNotNull(parseTree);
+                Assertions.assertNotNull(parseTree);
                 LOGGER.debug(parseTree.toDot());
-                assertTrue(parseTree.getNodes().size() > 1);
+                Assertions.assertTrue(parseTree.getNodes().size() > 1);
             }
         }
     }
 
-    @Before
-    public void init() {
-        ClassLoader classLoader = getClass().getClassLoader();
+    static {
+        if (TestExternalGrammars.class.getClassLoader().getResource("grammars-v4") == null)
+           Assertions.assertFalse(true);
 
-        if (classLoader.getResource("grammars-v4") == null)
-            return;
-
-        grammar = new File(classLoader.getResource("grammars-v4").getFile());
+        grammar = new File(TestExternalGrammars.class.getClassLoader().getResource("grammars-v4").getFile());
 
         File[] files = grammar.listFiles(File::isDirectory);
 
@@ -216,7 +212,7 @@ public class TestExternalGrammars {
         for (File f : files) {
 
 
-            assertTrue(f.isDirectory());
+            Assertions.assertTrue(f.isDirectory());
             Subject subject = new Subject();
             subject.name = f.getName();
 
@@ -232,11 +228,11 @@ public class TestExternalGrammars {
                 try {
                     doc = dbf.newDocumentBuilder().parse(xmls.get(0));
                 } catch (ParserConfigurationException e) {
-                    Assert.assertTrue(false);
+                    Assertions.assertTrue(false);
                 } catch (SAXException e) {
-                    Assert.assertTrue(false);
+                    Assertions.assertTrue(false);
                 } catch (IOException e) {
-                    Assert.assertTrue(false);
+                    Assertions.assertTrue(false);
                 }
 
                 NodeList nl = doc.getElementsByTagName("entryPoint");
@@ -311,7 +307,7 @@ public class TestExternalGrammars {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
         LOGGER.debug("successfully compiled grammar");
 
         DefaultTreeListener dt = new DefaultTreeListener();
@@ -349,14 +345,14 @@ public class TestExternalGrammars {
                 "(ANTLRv4" +
                 "(Lexer|Parser)|LexBasic).g4")).collect(Collectors.toSet());
 
-        assertTrue(files.size() > 0);
+        Assertions.assertTrue(files.size() > 0);
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(tc, files.toArray(new File[files
                     .size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
         DefaultTreeListener dt = new DefaultTreeListener();
@@ -370,7 +366,7 @@ public class TestExternalGrammars {
                             "/antlr/parser/antlr4/LexerAdaptor.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         boolean compile;
@@ -383,7 +379,7 @@ public class TestExternalGrammars {
 
         s.examples.removeIf(f -> f.getName().contains("three.g4"));
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
@@ -415,7 +411,7 @@ public class TestExternalGrammars {
                             "src/main/java/org/antlr/parser/st4/LexerAdaptor.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         boolean compile;
@@ -430,7 +426,7 @@ public class TestExternalGrammars {
         LOGGER.debug("name {}", gp.getParserName());
         gp.setParserName("org.antlr.parser.st4.STParser");
         gp.setLexerName("org.antlr.parser.st4.STLexer");
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         s.examples = s.examples.stream().filter( f -> f.getName().contains
                 ("example1.st")
@@ -451,7 +447,7 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
@@ -461,7 +457,7 @@ public class TestExternalGrammars {
                             "/SwiftSupport.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         boolean compile;
@@ -472,7 +468,7 @@ public class TestExternalGrammars {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
@@ -489,7 +485,7 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
@@ -499,7 +495,7 @@ public class TestExternalGrammars {
                             "/SwiftSupport.java");
             gp.addUtilityJavaFiles(util);
         } catch (FileNotFoundException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         boolean compile;
@@ -510,7 +506,7 @@ public class TestExternalGrammars {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
@@ -534,7 +530,7 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
         boolean compile;
@@ -549,7 +545,7 @@ public class TestExternalGrammars {
         gp.setStreamProvider(new CasedStreamProvider(GenericParser
                 .CaseSensitiveType.LOWER));
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
 
         s.examples = s.examples.stream().filter( f -> !f.getName().contains
@@ -569,13 +565,13 @@ public class TestExternalGrammars {
         Subject s = subjects.get("z");
 
 
-        //assertTrue(mfiles.size() > 0);
+        //Assertions.assertTrue(mfiles.size() > 0);
 
         GenericParser gp = null;
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
@@ -590,10 +586,10 @@ public class TestExternalGrammars {
             gp.addUtilityJavaFiles(util1, util2);
 
         } catch (FileNotFoundException e) {
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         DefaultTreeListener mdt = new DefaultTreeListener();
 
@@ -607,7 +603,7 @@ public class TestExternalGrammars {
 
         gp.setListener(mdt);
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
@@ -630,7 +626,7 @@ public class TestExternalGrammars {
         try {
             gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
@@ -647,7 +643,7 @@ public class TestExternalGrammars {
 
         gp.setListener(mdt);
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         s.examples.removeIf(p -> p.getName().contains("AllInOne.m"));
 
@@ -672,17 +668,17 @@ public class TestExternalGrammars {
                 "CSharp" + "(Lexer|PreprocessorParser|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        Assertions.assertTrue(mfiles.size() > 0);
 
         GenericParser mparser = null;
         try {
             mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
-        assertNotNull(mparser);
+        Assertions.assertNotNull(mparser);
 
         DefaultTreeListener mdt = new DefaultTreeListener();
 
@@ -698,7 +694,7 @@ public class TestExternalGrammars {
 
         mparser.setParserName("CSharpParser");
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
@@ -717,17 +713,17 @@ public class TestExternalGrammars {
                 "TSql" + "(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        Assertions.assertTrue(mfiles.size() > 0);
 
         GenericParser mparser = null;
         try {
             mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
-        assertNotNull(mparser);
+        Assertions.assertNotNull(mparser);
 
         DefaultTreeListener mdt = new DefaultTreeListener();
 
@@ -744,7 +740,7 @@ public class TestExternalGrammars {
 
         mparser.setListener(mdt);
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         // seems to cause issues when running on windows
         s.examples.removeIf(f -> f.getName().equals("full_width_chars.sql"));
@@ -764,17 +760,17 @@ public class TestExternalGrammars {
                 "PlSql" + "(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        Assertions.assertTrue(mfiles.size() > 0);
 
         GenericParser mparser = null;
         try {
             mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
-        assertNotNull(mparser);
+        Assertions.assertNotNull(mparser);
 
         DefaultTreeListener mdt = new DefaultTreeListener();
 
@@ -791,7 +787,7 @@ public class TestExternalGrammars {
 
         mparser.setListener(mdt);
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
@@ -808,17 +804,17 @@ public class TestExternalGrammars {
                 "MySql" + "(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        Assertions.assertTrue(mfiles.size() > 0);
 
         GenericParser mparser = null;
         try {
             mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
         } catch (FileNotFoundException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
 
-        assertNotNull(mparser);
+        Assertions.assertNotNull(mparser);
 
         DefaultTreeListener mdt = new DefaultTreeListener();
 
@@ -835,7 +831,7 @@ public class TestExternalGrammars {
 
         mparser.setListener(mdt);
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
@@ -858,7 +854,7 @@ public class TestExternalGrammars {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
     }
 
     @Test
@@ -879,7 +875,7 @@ public class TestExternalGrammars {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         gp.setParserName("RParser");
 
@@ -898,13 +894,13 @@ public class TestExternalGrammars {
 //                "JavaScript" + "(Lexer|Parser).g4")).collect
 //                (Collectors.toSet());
 //
-//        assertTrue(mfiles.size() > 0);
+//        Assertions.assertTrue(mfiles.size() > 0);
 //
 //        GenericParser jParser = null;
 //        try {
 //            jParser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
 //        } catch (FileNotFoundException e) {
-//            assertTrue(false);
+//            Assertions.assertTrue(false);
 //        }
 //
 //        jParser.setParserName("JavaScriptParser");
@@ -922,11 +918,11 @@ public class TestExternalGrammars {
 //            jParser.addUtilityJavaFiles(util1, util2);
 //        } catch (FileNotFoundException e) {
 //            LOGGER.error(e.getMessage());
-//            Assert.assertTrue(false);
+//            Assert.Assertions.assertTrue(false);
 //        }
 //
 //
-//        assertNotNull(jParser);
+//        Assertions.assertNotNull(jParser);
 //
 //        DefaultTreeListener mdt = new DefaultTreeListener();
 //
@@ -943,7 +939,7 @@ public class TestExternalGrammars {
 //        jParser.setListener(mdt);
 //
 //
-//        assertTrue(compile);
+//        Assertions.assertTrue(compile);
 //
 //        verify(jParser, s.examples, s.nexamples, "program");
     }

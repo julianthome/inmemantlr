@@ -24,8 +24,9 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -36,10 +37,12 @@ import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Vector;
 
-import static org.junit.Assert.assertTrue;
 
 public class TestSimpleMixed {
 
@@ -58,6 +61,15 @@ public class TestSimpleMixed {
         GenericParser gp = new GenericParser(sgrammarcontent);
         DefaultTreeListener t = new DefaultTreeListener();
 
+        List cp = new Vector<String>();
+
+        final File f = new File(getClass().getProtectionDomain().getCodeSource()
+                .getLocation().getPath());
+
+        LOGGER.debug(f.toString());
+
+        //gp.setClassPath(cp);
+
         gp.setListener(t);
         boolean compile;
         try {
@@ -67,7 +79,7 @@ public class TestSimpleMixed {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         // this example shows you how one could use inmemantlr for sequential
         // parsing
@@ -75,7 +87,7 @@ public class TestSimpleMixed {
             ParseTree parseTree;
             gp.parse("jan 1999 12");
             parseTree = t.getParseTree();
-            Assert.assertEquals(parseTree.getNodes().size(), 6);
+            Assertions.assertEquals(parseTree.getNodes().size(), 6);
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (ParsingException e) {

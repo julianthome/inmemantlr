@@ -24,8 +24,9 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -55,7 +56,7 @@ public class TestGrammarImport {
         try {
             gp = new GenericParser(fls);
         } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
 
@@ -97,7 +98,7 @@ public class TestGrammarImport {
             thrown = true;
         }
 
-        Assert.assertFalse(thrown);
+        Assertions.assertFalse(thrown);
 
         try {
             gp.compile();
@@ -117,7 +118,7 @@ public class TestGrammarImport {
             thrown = true;
         }
 
-        Assert.assertFalse(thrown);
+        Assertions.assertFalse(thrown);
 
     }
 

@@ -24,30 +24,33 @@
  * SOFTWARE.
  **/
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.snt.inmemantlr.utils.EscapeUtils;
-import org.snt.inmemantlr.utils.FileUtils;
+package org.snt.inmemantlr.comp;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class TestUtils {
+public class DefaultCompilerOptionsProvider implements CompilerOptionsProvider {
 
-    @Test
-    public void testEscapeUtils() {
-        String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
-        String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        Assertions.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
-        String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
-        Assertions.assertEquals(suesc, sorig);
+    private List cp = new ArrayList();
 
-        Assertions.assertEquals(EscapeUtils.escapeSpecialCharacters(null), "");
-        Assertions.assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "");
+    public Collection<String> getClassPath() {
+        return cp;
     }
 
-    @Test
-    public void testFileUtils() {
-        Assertions.assertEquals(FileUtils.loadFileContent(""), null);
-        Assertions.assertEquals(FileUtils.getStringFromStream(null), null);
+    public void setClassPath(Collection<String> cp) {
+        this.cp.addAll(cp);
     }
 
+    @Override
+    public Collection<String> getOptions() {
+        List<String> optionList = new ArrayList<>();
+        //optionList.addAll(cp);
+        //String cpstring = cp.stream().map(c -> c + ":").reduce(String::new);
+        optionList.add("-source");
+        optionList.add("1.7");
+        optionList.add("-classpath");
+        optionList.add(String.join(":", cp));
+        return optionList;
+    }
 }

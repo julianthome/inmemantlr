@@ -24,13 +24,13 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
@@ -41,20 +41,22 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertTrue;
 
 public class TestParseTreeProcessor {
 
-    String sgrammarcontent = "";
-    String s = "";
+    private static String sgrammarcontent = "";
+    private static String s = "";
 
-    @Before
-    public void init() throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
-             InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
-            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-            s = FileUtils.getStringFromStream(sfile);
+    static {
+        ClassLoader classLoader = TestParseTreeProcessor.class.getClassLoader();
+        try {
+            try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
+                 InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
+                sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+                s = FileUtils.getStringFromStream(sfile);
+            }
+        } catch (IOException e) {
+            Assertions.assertFalse(true);
         }
     }
 
@@ -70,8 +72,8 @@ public class TestParseTreeProcessor {
             compile = false;
         }
 
-        assertTrue(compile);
-        assertTrue(s != null && !s.isEmpty());
+        Assertions.assertTrue(compile);
+        Assertions.assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
@@ -80,7 +82,7 @@ public class TestParseTreeProcessor {
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         }
 
         ParseTree parseTree = dlist.getParseTree();
@@ -105,15 +107,15 @@ public class TestParseTreeProcessor {
             protected void process(ParseTreeNode n) {
                 cnt++;
                 simpleProp(n);
-                assertTrue(getElement(n) != null);
+                Assertions.assertTrue(getElement(n) != null);
             }
         };
 
         try {
             processor.process();
         } catch (ParseTreeProcessorException e) {
-            Assert.assertFalse(true);
+            Assertions.assertFalse(true);
         }
-        assertTrue(processor.debug() != null);
+        Assertions.assertTrue(processor.debug() != null);
     }
 }

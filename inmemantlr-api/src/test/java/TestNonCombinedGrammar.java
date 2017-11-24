@@ -24,7 +24,9 @@
  * SOFTWARE.
  **/
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -37,8 +39,6 @@ import org.snt.inmemantlr.tree.ParseTree;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestNonCombinedGrammar {
 
@@ -67,13 +67,13 @@ public class TestNonCombinedGrammar {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         try {
             ParseTree parseTree;
             gp.parse("select a from b;");
             parseTree = t.getParseTree();
-            assertEquals(parseTree.getNodes().size(), 13);
+            Assertions.assertEquals(parseTree.getNodes().size(), 13);
             LOGGER.debug(parseTree.toDot());
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);

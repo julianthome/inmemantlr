@@ -24,8 +24,9 @@
  * SOFTWARE.
  **/
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -38,9 +39,6 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class TestMalformed {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestMalformed.class);
@@ -48,9 +46,8 @@ public class TestMalformed {
     static File grammar = null;
     static File sfile = null;
 
-    @Before
-    public void init() {
-        ClassLoader classLoader = getClass().getClassLoader();
+    static {
+        ClassLoader classLoader = TestMalformed.class.getClassLoader();
         grammar = new File(classLoader.getResource("inmemantlr/Java.g4")
                 .getFile());
         sfile = new File(classLoader.getResource("inmemantlr/Malformed.java")
@@ -67,7 +64,7 @@ public class TestMalformed {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         boolean compile;
         try {
@@ -77,11 +74,11 @@ public class TestMalformed {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        assertTrue(s != null && !s.isEmpty());
+        Assertions.assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
@@ -92,13 +89,13 @@ public class TestMalformed {
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException e) {
-            assertTrue(false);
+            Assertions.assertTrue(false);
         } catch (ParsingException e) {
             LOGGER.error(e.getMessage());
             thrown = true;
         }
 
-        assertTrue(thrown);
+        Assertions.assertTrue(thrown);
 
     }
 }

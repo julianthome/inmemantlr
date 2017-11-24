@@ -63,15 +63,7 @@ public class StringCompiler {
     private Map<String, Lexer> lexer = null;
     private Map<String, Parser> parser = null;
     private Map<String, Class<?>> classes = new HashMap<>();
-    private List cp = new ArrayList();
 
-    public List getClassPath() {
-        return cp;
-    }
-
-    public void setClassPath(List cp) {
-        this.cp.addAll(cp);
-    }
 
     /**
      * constructors
@@ -98,7 +90,9 @@ public class StringCompiler {
      * @param units string code generation pipeline
      * @throws CompilationErrorException if the compilation was not successful
      */
-    public void compile(Set<CunitProvider> units) throws
+    public void compile(Set<CunitProvider> units, CompilerOptionsProvider
+            oprov)
+            throws
             CompilationErrorException {
         JavaCompiler javac = new EclipseCompiler();
 
@@ -123,9 +117,8 @@ public class StringCompiler {
         Writer out = new StringWriter();
 
         List<String> optionList = new ArrayList<>();
-        optionList.addAll(cp);
-        optionList.add("-source");
-        optionList.add("1.7");
+
+        optionList.addAll(oprov.getOptions());
 
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,

@@ -24,10 +24,9 @@
  * SOFTWARE.
  **/
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
@@ -43,7 +42,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
-import static org.junit.Assert.*;
 
 public class TestMemObjects {
 
@@ -54,12 +52,9 @@ public class TestMemObjects {
 
     private String fname = "temp.gout";
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
-    @Before
-    public void init() {
-        ClassLoader classLoader = getClass().getClassLoader();
+    static {
+        ClassLoader classLoader = TestMemObjects.class.getClassLoader();
         grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
         sfile = new File(classLoader.getResource("inmemantlr/HelloWorld.java").getFile());
     }
@@ -73,7 +68,7 @@ public class TestMemObjects {
             e.printStackTrace();
         }
 
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
         boolean compile;
         try {
@@ -83,15 +78,15 @@ public class TestMemObjects {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        assertTrue(s != null && !s.isEmpty());
+        Assertions.assertTrue(s != null && !s.isEmpty());
 
         MemoryTupleSet set = gp.getAllCompiledObjects();
 
-        assertTrue(set != null && set.size() == 4);
+        Assertions.assertTrue(set != null && set.size() == 4);
 
         for (MemoryTuple tup : set) {
             LOGGER.debug("tuple name {}", tup.getClassName());
@@ -120,8 +115,18 @@ public class TestMemObjects {
             e.printStackTrace();
         }
 
-        assertNotNull(gp);
+        Assertions.assertNotNull(gp);
 
+        File file = null;
+        try {
+            file = File.createTempFile("temp", Long.toString(System
+                    .nanoTime
+                    ()));
+        } catch (IOException e) {
+            Assertions.assertTrue(false);
+        }
+
+        file.mkdir();
 
         boolean compile;
         try {
@@ -131,33 +136,25 @@ public class TestMemObjects {
             compile = false;
         }
 
-        assertTrue(compile);
+        Assertions.assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        assertTrue(s != null && !s.isEmpty());
+        Assertions.assertTrue(s != null && !s.isEmpty());
 
-        File file = null;
-
-        try {
-            file = folder.newFile(fname);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-            assertFalse(true);
-        }
 
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage());
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         try {
             gp.store(file.getAbsolutePath(), true);
         } catch (SerializationException e) {
             LOGGER.error(e.getMessage());
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         GenericParser cgp = null;
@@ -166,14 +163,14 @@ public class TestMemObjects {
             cgp = GenericParser.load(file.getAbsolutePath());
         } catch (DeserializationException e) {
             LOGGER.error(e.getMessage());
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         try {
             cgp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage());
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
         DefaultTreeListener dlist = new DefaultTreeListener();
@@ -183,10 +180,10 @@ public class TestMemObjects {
             cgp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage());
-            assertFalse(true);
+            Assertions.assertFalse(true);
         }
 
-        assertTrue(dlist.getParseTree() != null);
+        Assertions.assertTrue(dlist.getParseTree() != null);
 
         LOGGER.debug(dlist.getParseTree().toDot());
     }
