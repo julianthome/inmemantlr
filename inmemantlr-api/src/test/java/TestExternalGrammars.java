@@ -76,10 +76,11 @@ public class TestExternalGrammars {
             "mysql", // handled by extra testcase
             "html", // handled by extra testcase
             "r", // handled by extra testcase
-            "javascript", // skip for the time being
 
+            "javascript", // skip for the time being
             "antlr3", // skip
-            "python3alt" //skip
+            "python3alt", //skip
+            "r" //skip
     };
 
 
