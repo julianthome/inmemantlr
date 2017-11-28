@@ -284,6 +284,10 @@ public class GenericParser {
         this.provider = provider;
     }
 
+    public void setCompilerOptionsProvider(CompilerOptionsProvider oprov) {
+        this.oprov = oprov;
+    }
+
     /**
      * compile generic parser
      *
@@ -683,8 +687,13 @@ public class GenericParser {
         } catch (IOException e) {
             throw new DeserializationException(e.getMessage(), e);
         } finally {
-            closeQuietly(o_in);
-            closeQuietly(f_in);
+            try {
+                o_in.close();
+                f_in.close();
+            } catch (IOException e) {
+               ;
+            }
+
         }
 
         if (!(toread instanceof GenericParserSerialize))
