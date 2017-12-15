@@ -85,10 +85,10 @@ public class StringCompiler {
     /**
      * do the compilation for the antlr artifacts
      * @param units string code generation pipeline
+     * @param oprov compiler option provider
      * @throws CompilationErrorException if the compilation was not successful
      */
-    public void compile(Set<CunitProvider> units, CompilerOptionsProvider
-            oprov)
+    public void compile(Set<CunitProvider> units, CompilerOptionsProvider oprov)
             throws
             CompilationErrorException {
         JavaCompiler javac = new EclipseCompiler();

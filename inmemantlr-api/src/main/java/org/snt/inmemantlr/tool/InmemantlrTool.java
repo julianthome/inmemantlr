@@ -26,8 +26,15 @@
 
 package org.snt.inmemantlr.tool;
 
+import org.antlr.v4.analysis.AnalysisPipeline;
+import org.antlr.v4.automata.ATNFactory;
+import org.antlr.v4.automata.LexerATNFactory;
+import org.antlr.v4.automata.ParserATNFactory;
+import org.antlr.v4.codegen.CodeGenPipeline;
+import org.antlr.v4.codegen.CodeGenerator;
 import org.antlr.v4.misc.Graph;
 import org.antlr.v4.parse.ANTLRParser;
+import org.antlr.v4.semantics.SemanticPipeline;
 import org.antlr.v4.tool.*;
 import org.antlr.v4.tool.ast.GrammarAST;
 import org.antlr.v4.tool.ast.GrammarASTErrorNode;
@@ -346,5 +353,57 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
     public void exit(int e) {
         System.exit(e);
     }
+
+
+    /**
+     * this method is taken from the superclass
+     * @param g grammar to process
+     * @param gencode flag to switch on codegeneration
+     */
+    public void processNonCombinedGrammar(Grammar g, boolean gencode) {
+        if ( g.ast==null || g.ast.hasErrors ) return;
+        if ( internalOption_PrintGrammarTree ) System.out.println(g.ast.toStringTree());
+
+        boolean ruleFail = checkForRuleIssues(g);
+        if ( ruleFail ) return;
+
+        int prevErrors = errMgr.getNumErrors();
+        // MAKE SURE GRAMMAR IS SEMANTICALLY CORRECT (FILL IN GRAMMAR OBJECT)
+        SemanticPipeline sem = new SemanticPipeline(g);
+        sem.process();
+
+        String language = g.getOptionString("language");
+        if ( !CodeGenerator.targetExists(language) ) {
+            errMgr.toolError(ErrorType.CANNOT_CREATE_TARGET_GENERATOR, language);
+            return;
+        }
+
+        if ( errMgr.getNumErrors()>prevErrors ) return;
+
+        // BUILD ATN FROM AST
+        ATNFactory factory;
+        if ( g.isLexer() ) factory = new LexerATNFactory((LexerGrammar)g);
+        else factory = new ParserATNFactory(g);
+        g.atn = factory.createATN();
+
+        if ( generate_ATN_dot ) generateATNs(g);
+
+        //if ( g.tool.getNumErrors()==0 ) generateInterpreterData(g);
+
+        // PERFORM GRAMMAR ANALYSIS ON ATN: BUILD DECISION DFAs
+        AnalysisPipeline anal = new AnalysisPipeline(g);
+        anal.process();
+
+        //if ( generate_DFA_dot ) generateDFAs(g);
+
+        if ( g.tool.getNumErrors()>prevErrors ) return;
+
+        // GENERATE CODE
+        if ( gencode ) {
+            CodeGenPipeline gen = new CodeGenPipeline(g);
+            gen.process();
+        }
+    }
+
 
 }

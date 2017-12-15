@@ -89,7 +89,7 @@ public final class FileUtils {
      * writes string to file
      * @param string string to write
      * @param file file to which the string shall be written
-     * @throws FileExistsException
+     * @throws FileExistsException is thrown if file already exists
      */
     public static void writeStringToFile(String string, String file) throws
             FileExistsException {

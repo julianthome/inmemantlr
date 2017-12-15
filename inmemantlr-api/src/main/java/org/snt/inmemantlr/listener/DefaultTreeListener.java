@@ -65,6 +65,7 @@ public class DefaultTreeListener extends DefaultListener {
 
     /**
      * constructor
+     * @param includeTerminals include terminal nodes in resulting tree
      */
     public DefaultTreeListener(boolean includeTerminals) {
         this(x -> !x.isEmpty());
