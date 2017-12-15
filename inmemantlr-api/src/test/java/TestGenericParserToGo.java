@@ -40,23 +40,20 @@ public class TestGenericParserToGo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestGenericParserToGo.class);
 
-    static File grammar = null;
-    static File fgrammar = null;
-    static File sfile = null;
-
-    static {
-        ClassLoader classLoader = TestGenericParserToGo.class.getClassLoader();
-        grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
-        fgrammar = new File(classLoader.getResource("inmemantlr/Fail.g4")
-                .getFile());
-        sfile = new File(classLoader.getResource("inmemantlr/HelloWorld.java").getFile());
-    }
 
     @Test
     public void testParser() {
-        GenericParserToGo g1 = new GenericParserToGo(grammar);
-        ParseTree pt = g1.parse(sfile);
-        LOGGER.info(pt.toDot());
+
+        File gfile = new File(TestGenericParserToGo.class.getClassLoader()
+                .getResource
+                ("inmemantlr/Java.g4").getFile());
+
+        File cfile = new File(TestGenericParserToGo.class.getClassLoader()
+                .getResource("inmemantlr/HelloWorld.java").getFile());
+
+
+        ParseTree pt = new GenericParserToGo(gfile).parse(cfile);
+
         Assertions.assertEquals(pt.getNodes().size(), 60);
     }
 
