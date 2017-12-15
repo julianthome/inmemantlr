@@ -253,6 +253,13 @@ public class ParseTreeNode {
         return eidx;
     }
 
+
+    /**
+     * check whether node is terminal
+     * @return true if node is a terminal node
+     */
+    public boolean isTerminal() { return isLeaf() && getRule().isEmpty(); }
+
     /**
      * get label
      *

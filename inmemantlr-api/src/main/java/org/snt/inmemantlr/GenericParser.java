@@ -31,6 +31,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.tool.ast.GrammarRootAST;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import org.snt.inmemantlr.exceptions.*;
 import org.snt.inmemantlr.listener.DefaultListener;
 import org.snt.inmemantlr.memobjects.GenericParserSerialize;
 import org.snt.inmemantlr.memobjects.MemorySource;
+import org.snt.inmemantlr.memobjects.MemoryTuple;
 import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.stream.DefaultStreamProvider;
 import org.snt.inmemantlr.stream.StreamProvider;
@@ -51,13 +53,14 @@ import org.snt.inmemantlr.utils.Tuple;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
 /**
- * generic parser - an antlr parser representation
+ * generic parser
  */
 public class GenericParser {
 
@@ -416,6 +419,26 @@ public class GenericParser {
         return parse(toParse, null, cs);
     }
 
+
+    /**
+     * write antlr artifacts to destination
+     * @param dest directory to which the artifacts should be written
+     */
+    public void writeAntlrAritfactsTo(String dest) {
+        MemoryTupleSet ms = getAllCompiledObjects();
+
+        for(MemoryTuple tup : ms) {
+            MemorySource src = tup.getSource();
+
+            try {
+                FileUtils.writeStringToFile(src.getCharContent(false).toString(),
+                        Paths.get(dest, src.getClassName()).toString() + "" +
+                                ".java");
+            } catch (FileExistsException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+    }
 
 
     /**

@@ -24,69 +24,62 @@
  * SOFTWARE.
  **/
 
-package org.snt.inmemantlr.graal;
-
+import org.antlr.v4.Tool;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tool.ToolCustomizer;
-import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
-
-public enum GraalParser {
-    INSTANCE;
+import java.io.IOException;
+import java.io.InputStream;
 
 
-    private static File [] files = {
-            GraalUtils.getResource("ANTLRv4Lexer.g4"),
-            GraalUtils.getResource("ANTLRv4Parser.g4"),
-            GraalUtils.getResource("LexBasic.g4")
-    };
+public class TestArtifactSerialization {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestArtifactSerialization.class);
 
-    private static GenericParser gp;
-    private static DefaultTreeListener dt = new DefaultTreeListener();
+    String sgrammarcontent = "";
 
+    @Test
+    public void testBroken() throws IOException {
 
-    static {
-        // Exam
-        ToolCustomizer tc = t -> t.genPackage = "org.antlr.parser.antlr4";
-
-        try {
-            gp = new GenericParser(tc,files);
-        } catch (FileNotFoundException e) {
-            assert false;
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/Simple.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 
-        gp.setListener(dt);
+        ToolCustomizer tc = new ToolCustomizer() {
+            @Override
+            public void customize(Tool t) {
+                t.genPackage = "com.github.inmemantlr.parser";
+            }
+        };
 
-        try {
-            File util =  GraalUtils.getResource("src/main/java/org/antlr/parser/antlr4/LexerAdaptor.java");
-            gp.addUtilityJavaFiles(util);
-        } catch (FileNotFoundException e) {
-            assert false;
-        }
+
+        GenericParser gp = new GenericParser(tc,sgrammarcontent);
+
+        DefaultTreeListener t = new DefaultTreeListener();
+
+        gp.setListener(t);
+
+        boolean compile;
 
         try {
             gp.compile();
+            compile = true;
         } catch (CompilationException e) {
-            assert false;
+            compile = false;
         }
-    }
 
-    public ParseTree getAstForGrammar(File grammar) throws FileNotFoundException {
-        try {
-            gp.parse(grammar);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            assert false;
-        }
-        return dt.getParseTree();
-    }
 
+
+        gp.writeAntlrAritfactsTo("/tmp/test/out");
+
+
+    }
 
 }

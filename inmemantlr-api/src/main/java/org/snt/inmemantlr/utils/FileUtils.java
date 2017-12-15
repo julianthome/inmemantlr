@@ -26,14 +26,19 @@
 
 package org.snt.inmemantlr.utils;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public final class FileUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 
     private FileUtils() {
     }
@@ -77,6 +82,35 @@ public final class FileUtils {
             return IOUtils.toString(is, StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * writes string to file
+     * @param string string to write
+     * @param file file to which the string shall be written
+     * @throws FileExistsException
+     */
+    public static void writeStringToFile(String string, String file) throws
+            FileExistsException {
+
+        LOGGER.debug("file " + file);
+
+        if(Files.exists(Paths.get(file)))
+            throw new FileExistsException("File " + file + "already exists");
+
+
+        File f = new File(file);
+
+        f.getParentFile().mkdirs();
+
+        try {
+            PrintWriter out = new PrintWriter(f);
+            out.write(string);
+            out.close();
+        } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            assert false;
         }
     }
 }

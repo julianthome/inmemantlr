@@ -56,8 +56,24 @@ public enum ParseTreeSerializer {
                 sb.append(n.getEscapedLabel());
                 sb.append("\\n");
             }
-            sb.append(n.getRule());
-            sb.append("\"];\n");
+
+            // terminal nodes
+            if(n.isTerminal()) {
+                sb.append(n.getEscapedLabel());
+            } else {
+                sb.append(n.getRule());
+            }
+
+            sb.append("\",");
+
+            // terminal nodes
+            if(!n.isTerminal()) {
+                sb.append("shape=ellipse");
+            } else {
+                sb.append("shape=box");
+            }
+
+            sb.append("];\n");
         }
 
         nodes.forEach(n -> n.getChildren().stream()
@@ -74,8 +90,9 @@ public enum ParseTreeSerializer {
         return sb.toString();
     }
 
+
     public String toDot(ParseTree parseTree) {
-        return toDot(parseTree, false);
+        return toDot(parseTree, true);
     }
 
     public String toJson(ParseTree parseTree) {

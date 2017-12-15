@@ -49,17 +49,26 @@ public class DefaultTreeListener extends DefaultListener {
 
     private static final long serialVersionUID = 5637734678821255670L;
 
-    private Stack<String> sctx = new Stack<>();
-    private StringBuffer glob = new StringBuffer();
-    private ParseTree parseTree = null;
-    private ParseTreeNode nodeptr = null;
-    private Predicate<String> filter = null;
+    protected Stack<String> sctx = new Stack<>();
+    protected StringBuffer glob = new StringBuffer();
+    protected ParseTree parseTree = null;
+    protected ParseTreeNode nodeptr = null;
+    protected Predicate<String> filter = null;
+    protected boolean includeTerminals = false;
 
     /**
      * constructor
      */
     public DefaultTreeListener() {
+        this(false);
+    }
+
+    /**
+     * constructor
+     */
+    public DefaultTreeListener(boolean includeTerminals) {
         this(x -> !x.isEmpty());
+        this.includeTerminals = includeTerminals;
     }
 
     /**
@@ -76,6 +85,13 @@ public class DefaultTreeListener extends DefaultListener {
 
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
+        if(includeTerminals) {
+            ParseTreeNode n = parseTree.newNode(nodeptr,"",
+                    terminalNode.toString(),
+                    terminalNode.getSymbol().getStartIndex(),
+                    terminalNode.getSymbol().getStopIndex());
+            nodeptr.addChild(n);
+        }
     }
 
     @Override

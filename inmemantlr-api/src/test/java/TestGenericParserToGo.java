@@ -24,33 +24,41 @@
  * SOFTWARE.
  **/
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.graal.GraalParser;
-import org.snt.inmemantlr.graal.GraalUtils;
+import org.snt.inmemantlr.GenericParserToGo;
 import org.snt.inmemantlr.tree.ParseTree;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 
-public class TestGraalParser {
+;
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestGraalParser.class);
+public class TestGenericParserToGo {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestGenericParserToGo.class);
+
+    static File grammar = null;
+    static File fgrammar = null;
+    static File sfile = null;
+
+    static {
+        ClassLoader classLoader = TestGenericParserToGo.class.getClassLoader();
+        grammar = new File(classLoader.getResource("inmemantlr/Java.g4").getFile());
+        fgrammar = new File(classLoader.getResource("inmemantlr/Fail.g4")
+                .getFile());
+        sfile = new File(classLoader.getResource("inmemantlr/HelloWorld.java").getFile());
+    }
 
     @Test
-    public void testGraal() {
-
-        ParseTree agr = null;
-        try {
-            agr = GraalParser.INSTANCE.getAstForGrammar(GraalUtils
-                    .getResource("Simple.g4"));
-        } catch (FileNotFoundException e) {
-            Assert.assertFalse(true);
-        }
-
-
-        LOGGER.debug(agr.toDot());
+    public void testParser() {
+        GenericParserToGo g1 = new GenericParserToGo(grammar);
+        ParseTree pt = g1.parse(sfile);
+        LOGGER.info(pt.toDot());
+        Assertions.assertEquals(pt.getNodes().size(), 60);
     }
+
+
 }
