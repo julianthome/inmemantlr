@@ -25,23 +25,11 @@
  **/
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
-import org.snt.inmemantlr.tree.ParseTree;
-import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Vector;
 
 
 public class TestLexerGrammar {
@@ -92,5 +80,5 @@ public class TestLexerGrammar {
 //
 //        Assertions.assertTrue(compile);
 //
-//    }
+    }
 }
