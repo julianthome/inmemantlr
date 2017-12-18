@@ -43,7 +43,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 [Integration](#integration)
 
 [API Usage Scenarios](#api-usage-scenarios)
-<!--  * [Get started](#get-started) -->
+  * [Get started](#get-started)
   * [Simple parsing](#simple-parsing)
   * [Parse tree generation](#parse-tree-generation)
   * [Parse tree serialization](#parse-tree-serialization)
@@ -89,20 +89,22 @@ The following code snippets shows an example how to use the API of inmemantlr;
 descriptions are provided as source code comments. For the sake of simplicity,
 exception handling is omitted for all of the following examples.
 
-<!--## Get started
+## Get started
 
 The code sample below shows how you could get started with inmemantlr. The
 class `GenericParserToGo` provides a very simple API that should be sufficient
 for most of the use cases: you only have to provide the ANTLR grammar file in
-conjunction with the file/string to parse, and a call to `parse()` will return
-the corresponding parse tree.
+conjunction with the file/string to parse, and a call to `parse()` (with
+the string and starting-rule as parameters) will returnthe corresponding parse
+tree.
+
 
 ```java
 File gfile = new File("Java.4");
 File cfile = new File("HelloWorld.java");
-ParseTree pt = new GenericParserToGo(gfile).parse(cfile);
+ParseTree pt = new GenericParserToGo(gfile).parse(cfile, "compilationUnit");
 ```
--->
+
 
 ## Simple parsing
 

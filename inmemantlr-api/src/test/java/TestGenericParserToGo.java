@@ -52,7 +52,7 @@ public class TestGenericParserToGo {
                 .getResource("inmemantlr/HelloWorld.java").getFile());
 
 
-        ParseTree pt = new GenericParserToGo(gfile).parse(cfile);
+        ParseTree pt = new GenericParserToGo(gfile).parse(cfile,"compilationUnit");
 
         Assertions.assertEquals(pt.getNodes().size(), 60);
     }

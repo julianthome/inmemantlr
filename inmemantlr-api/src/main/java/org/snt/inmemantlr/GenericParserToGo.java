@@ -59,9 +59,9 @@ public class GenericParserToGo {
      * @param s a string to parse
      * @return parse tree of s
      */
-    public ParseTree parse(String s){
+    public ParseTree parse(String s, String rule){
         try {
-            gp.parse(s);
+            gp.parse(s, rule, GenericParser.CaseSensitiveType.NONE);
             return dl.getParseTree();
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage());
@@ -77,9 +77,9 @@ public class GenericParserToGo {
      * @param f a file to parse
      * @return parse tree of f'c content
      */
-    public ParseTree parse(File f){
+    public ParseTree parse(File f, String rule){
         try {
-            gp.parse(f);
+            gp.parse(f, rule, GenericParser.CaseSensitiveType.NONE);
             return dl.getParseTree();
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage());
