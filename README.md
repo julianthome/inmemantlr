@@ -19,16 +19,16 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 
 # Status
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)][licence]
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)][licence] -->
 [![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)][maven]
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr-api/badge.svg)][javadoc]
+<!--[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/inmemantlr-api/badge.svg)][javadoc] -->
 [![Linux Build Status](https://img.shields.io/travis/julianthome/inmemantlr/master.svg?label=Linux%20build)][travis]
 [![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/inmemantlr/master.svg?label=Windows%20build)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
 
-[licence]: https://opensource.org/licenses/MIT
+<!-- [licence]: https://opensource.org/licenses/MIT -->
 [maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr
-[javadoc]: http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api
+<!-- [javadoc]: http://www.javadoc.io/doc/com.github.julianthome/inmemantlr-api -->
 [travis]: https://travis-ci.org/julianthome/inmemantlr
 [appveyor]: https://ci.appveyor.com/project/julianthome/inmemantlr
 [coverage]: https://codecov.io/gh/julianthome/inmemantlr
