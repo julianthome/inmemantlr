@@ -18,8 +18,7 @@ All of the above-mentioned inmemantlr features are illustrated by
 examples please have a look at [grammars-v4](#grammars-v4)).
 
 # Status
-
-[![Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/github/julianthome/inmemantlr/maven-metadata.xml.svg)][maven]
+[![Maven](https://img.shields.io/maven-central/v/com.github.julianthome/inmemantlr.svg)][maven]
 [![Linux Build Status](https://api.travis-ci.org/julianthome/inmemantlr.svg?branch=master)][travis]
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/github/julianthome/inmemantlr?branch=master&svg=true)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
