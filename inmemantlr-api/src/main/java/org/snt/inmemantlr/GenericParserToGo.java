@@ -57,6 +57,7 @@ public class GenericParserToGo {
     /**
      * parse a string
      * @param s a string to parse
+     * @param rule parsing rule to start
      * @return parse tree of s
      */
     public ParseTree parse(String s, String rule){
@@ -75,6 +76,7 @@ public class GenericParserToGo {
     /**
      * parse a string
      * @param f a file to parse
+     * @param rule parsing rule to start
      * @return parse tree of f'c content
      */
     public ParseTree parse(File f, String rule){

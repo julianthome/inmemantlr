@@ -6,9 +6,7 @@ import org.snt.inmemantlr.tree.ParseTreeNode;
 
 public enum ParseTreeManipulator {
 
-
     INTANCE;
-
 
     private void expand(ParseTree orig, ParseTreeNode par,
                                 ParseTreeNode toinj) {
@@ -35,7 +33,7 @@ public enum ParseTreeManipulator {
      * @param injectionPoint injection point that defines the node
      *                       after/before the tree should be injected
      * @param toinject the tree to inject
-     * @throws InjectionException
+     * @throws InjectionException parse tree could not be injected
      */
     public void inject(ParseTree rcv,
                        InjectionPointDetector injectionPoint,
