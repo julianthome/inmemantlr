@@ -26,11 +26,9 @@
 
 package org.snt.inmemantlr.tree;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -126,7 +124,8 @@ public class ParseTree {
      * @return set of leaf nodes
      */
     public Set<ParseTreeNode> getLeafs() {
-        return nodes.stream().filter(n -> !n.hasChildren()).collect(toSet());
+        return nodes.stream().filter(n -> !n.hasChildren()).collect
+                (Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -263,6 +262,29 @@ public class ParseTree {
     @Override
     public int hashCode() {
         return root.getId();
+    }
+
+
+    /**
+     * recursive helper function for sorting the tree topologically
+     * @param ns in/out list to keep sorted nodes
+     * @param n node to consider
+     */
+    private void topoSortRec(List<ParseTreeNode> ns, ParseTreeNode n) {
+
+        ns.add(n);
+
+        for(ParseTreeNode cc : n.getChildren()) {
+            topoSortRec(ns, cc);
+        }
+
+    }
+
+    public void topoSort() {
+        List<ParseTreeNode> nods = new Vector<>();
+        topoSortRec(nods, this.getRoot());
+        assert nods.size() == this.nodes.size();
+        this.nodes = nods;
     }
 
     @Override

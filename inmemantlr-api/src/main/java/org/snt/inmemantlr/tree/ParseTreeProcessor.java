@@ -66,6 +66,10 @@ public abstract class ParseTreeProcessor<R, T> {
      * an ast node
      */
     public R process() throws ParseTreeProcessorException {
+
+        // sort nodes topologically first
+        this.parseTree.topoSort();
+
         initialize();
 
         for (ParseTreeNode rn : parseTree.getNodes()) {

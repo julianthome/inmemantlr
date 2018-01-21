@@ -30,61 +30,69 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
-import java.util.List;
-
 public enum ParseTreeSerializer {
 
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseTreeSerializer.class);
 
+
+    public String getStringForEdge(ParseTreeNode par, ParseTreeNode c) {
+        return "\tn" + c.getParent().getId() + " -- n" + c.getId() + ";\n";
+    }
+
+    public String getStringForNode(ParseTreeNode n, boolean rulesOnly) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\tn");
+        sb.append(n.getId());
+        sb.append(" [label=\"");
+
+        if(!rulesOnly) {
+            sb.append("(");
+            sb.append(n.getId());
+            sb.append(")\\n");
+            sb.append(n.getEscapedLabel());
+            sb.append("\\n");
+        }
+
+        // terminal nodes
+        if(n.isTerminal()) {
+            sb.append(n.getEscapedLabel());
+        } else {
+            sb.append(n.getRule());
+        }
+
+        sb.append("\",");
+
+        // terminal nodes
+        if(!n.isTerminal()) {
+            sb.append("shape=ellipse");
+        } else {
+            sb.append("shape=box");
+        }
+
+        sb.append("];\n");
+
+        return sb.toString();
+    }
+
+
+    public void toDotRec(StringBuilder sb, ParseTreeNode par, boolean
+            rulesOnly) {
+        sb.append(getStringForNode(par, rulesOnly));
+
+        for(ParseTreeNode cc : par.getChildren()) {
+            toDotRec(sb,cc,rulesOnly);
+            sb.append(getStringForEdge(par, cc));
+        }
+    }
+
     public String toDot(ParseTree parseTree, boolean rulesOnly) {
-        List<ParseTreeNode> nodes = parseTree.getNodes();
         StringBuilder sb = new StringBuilder()
                 .append("graph {\n")
                 .append("\tnode [fontname=Helvetica,fontsize=11];\n")
                 .append("\tedge [fontname=Helvetica,fontsize=10];\n");
-
-        for(ParseTreeNode n : nodes ) {
-            sb.append("\tn");
-            sb.append(n.getId());
-            sb.append(" [label=\"");
-            if(!rulesOnly) {
-                sb.append("(");
-                sb.append(n.getId());
-                sb.append(")\\n");
-                sb.append(n.getEscapedLabel());
-                sb.append("\\n");
-            }
-
-            // terminal nodes
-            if(n.isTerminal()) {
-                sb.append(n.getEscapedLabel());
-            } else {
-                sb.append(n.getRule());
-            }
-
-            sb.append("\",");
-
-            // terminal nodes
-            if(!n.isTerminal()) {
-                sb.append("shape=ellipse");
-            } else {
-                sb.append("shape=box");
-            }
-
-            sb.append("];\n");
-        }
-
-        nodes.forEach(n -> n.getChildren().stream()
-                .filter(ParseTreeNode::hasParent)
-                .forEach(c -> sb
-                        .append("\tn")
-                        .append(c.getParent().getId())
-                        .append(" -- n")
-                        .append(c.getId())
-                        .append(";\n")));
-
+        toDotRec(sb, parseTree.getRoot(), rulesOnly);
         sb.append("}\n");
 
         return sb.toString();

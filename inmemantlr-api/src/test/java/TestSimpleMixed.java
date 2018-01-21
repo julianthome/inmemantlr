@@ -93,5 +93,6 @@ public class TestSimpleMixed {
         } catch (ParsingException e) {
             LOGGER.error(e.getMessage());
         }
+
     }
 }
