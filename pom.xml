@@ -6,7 +6,7 @@
 
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr</artifactId>
-    <version>1.4</version>
+    <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
