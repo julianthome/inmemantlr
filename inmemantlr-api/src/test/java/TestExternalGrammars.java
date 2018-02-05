@@ -80,7 +80,8 @@ public class TestExternalGrammars {
             "javascript", // skip
             "antlr3", // skip
             "python3alt", //skip
-            "python3-py",// skip"
+            "python3-py",// skip"  - @TODO: investigate this one
+            "solidity" //skip - @TODO: investigate this one
     };
 
 
@@ -321,7 +322,7 @@ public class TestExternalGrammars {
     @Test
     public void testGeneration() {
         subjects.values().stream().filter(Subject::hasExamples).
-                forEach(s -> testSubject(s,true));
+                    forEach(s -> testSubject(s,true));
     }
 
     private boolean toCheck(String tcase) {
@@ -709,52 +710,53 @@ public class TestExternalGrammars {
     @Test
     public void testTSql() {
 
-//        if (!toCheck("tsql"))
-//            return;
-//
-//        Subject s = subjects.get("tsql");
-//
-//        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
-//                "TSql" + "(Lexer|Parser).g4")).collect
-//                (Collectors.toSet());
-//
-//        Assertions.assertTrue(mfiles.size() > 0);
-//
-//        GenericParser mparser = null;
-//        try {
-//            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
-//        } catch (FileNotFoundException e) {
-//            Assertions.assertTrue(false);
-//        }
-//
-//
-//        Assertions.assertNotNull(mparser);
-//
-//        DefaultTreeListener mdt = new DefaultTreeListener();
-//
-//        boolean compile;
-//        try {
-//            mparser.compile();
-//            compile = true;
-//        } catch (CompilationException e) {
-//            compile = false;
-//        }
-//
-//        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
-//                        .CaseSensitiveType.UPPER));
-//
-//        mparser.setListener(mdt);
-//
-//        Assertions.assertTrue(compile);
-//
-//        // seems to cause issues when running on windows
-//        s.examples.removeIf(f -> f.getName().equals("full_width_chars.sql"));
-//
-//        verify(mparser, s.examples, s.nexamples, s.entrypoint);
+        if (!toCheck("tsql"))
+            return;
+
+        Subject s = subjects.get("tsql");
+
+        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
+                "TSql" + "(Lexer|Parser).g4")).collect
+                (Collectors.toSet());
+
+        Assertions.assertTrue(mfiles.size() > 0);
+
+        GenericParser mparser = null;
+        try {
+            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
+        } catch (FileNotFoundException e) {
+            Assertions.assertTrue(false);
+        }
+
+
+        Assertions.assertNotNull(mparser);
+
+        DefaultTreeListener mdt = new DefaultTreeListener();
+
+        boolean compile;
+        try {
+            mparser.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
+                        .CaseSensitiveType.UPPER));
+
+        mparser.setListener(mdt);
+
+        Assertions.assertTrue(compile);
+
+        // seems to cause issues when running on windows
+        s.examples.removeIf(f -> f.getName().equals("full_width_chars.sql"));
+
+        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
     public void testPlsql() {
+
 
         if (!toCheck("plsql"))
             return;
@@ -865,26 +867,26 @@ public class TestExternalGrammars {
     @Test
     public void testR() {
 
-//        if (!toCheck("r"))
-//            return;
-//
-//        Subject s = subjects.get("r");
-//
-//        GenericParser gp = getParserForSubject(s, null);
-//
-//        boolean compile;
-//        try {
-//            gp.compile();
-//            compile = true;
-//        } catch (CompilationException e) {
-//            compile = false;
-//        }
-//
-//        Assertions.assertTrue(compile);
-//
-//        gp.setParserName("RParser");
-//
-//        verify(gp, s.examples, s.nexamples, s.entrypoint);
+        if (!toCheck("r"))
+            return;
+
+        Subject s = subjects.get("r");
+
+        GenericParser gp = getParserForSubject(s, null);
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        Assertions.assertTrue(compile);
+
+        gp.setParserName("RParser");
+
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -923,7 +925,7 @@ public class TestExternalGrammars {
 //            jParser.addUtilityJavaFiles(util1, util2);
 //        } catch (FileNotFoundException e) {
 //            LOGGER.error(e.getMessage());
-//            Assert.Assertions.assertTrue(false);
+//            Assertions.assertTrue(false);
 //        }
 //
 //
