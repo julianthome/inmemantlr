@@ -108,7 +108,7 @@ public class StringCompiler {
 
         mset.addAll(cunit);
 
-        DiagnosticListener<? super JavaFileObject> dianosticListener = null;
+        DiagnosticListener<? super JavaFileObject> dlistener = null;
         Iterable<String> classes = null;
 
         Writer out = new StringWriter();
@@ -119,7 +119,7 @@ public class StringCompiler {
 
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
-                dianosticListener, optionList, classes, cunit);
+                dlistener, optionList, classes, cunit);
 
         boolean ret = compile.call();
 
@@ -128,7 +128,7 @@ public class StringCompiler {
         }
 
         // note that for the memory-source -- we just store the class name
-        // the corresponding yte code
+        // the corresponding byte code
         for (MemorySource ms : mset) {
             Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
             if (mb.size() == 0)

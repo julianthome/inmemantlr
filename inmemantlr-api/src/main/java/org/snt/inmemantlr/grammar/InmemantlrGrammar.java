@@ -68,11 +68,11 @@ public class InmemantlrGrammar extends Grammar {
                 if (t.charAt(0) == '\'') {
                     ret = defineStringLiteral(t, tokens.get(t));
                     if (ret == Token.INVALID_TYPE)
-                        throw new IllegalArgumentException("Token must not be INVAlID_TYPE");
+                        throw new IllegalArgumentException("Token must not be INVALID_TYPE");
                 } else {
                     ret = defineTokenName(t, tokens.get(t));
                     if (ret == Token.INVALID_TYPE)
-                        throw new IllegalArgumentException("Token must not be INVAlID_TYPE");
+                        throw new IllegalArgumentException("Token must not be INVALID_TYPE");
                 }
                 LOGGER.debug("token {} {}", t, tokens.get(t));
             }

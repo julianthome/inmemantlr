@@ -105,7 +105,7 @@ public class ParseTree {
      * create new ast node
      *
      * @param parent parent node
-     * @param nt     name of node to be crated
+     * @param nt     name of node to be created
      * @param label  value of node to be created
      * @param sidx   start index
      * @param eidx   end index

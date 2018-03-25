@@ -70,7 +70,7 @@ public class InmemantlrLexerGrammar extends LexerGrammar {
                     defineTokenName(t, tokens.get(t));
             }
         } else {
-            LOGGER.debug("token vocab emtpy");
+            LOGGER.debug("token vocab empty");
         }
     }
 }

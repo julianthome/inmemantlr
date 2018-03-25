@@ -155,16 +155,17 @@ public class GenericParser {
     private void addUtilityJavaFile(File f) throws
             FileNotFoundException {
 
-        String name = FilenameUtils.removeExtension(f
-                .getName());
-        String content = FileUtils.loadFileContent(f);
-
         if (!f.exists()) {
             throw new FileNotFoundException("File " + f.getName() + " does " +
                     "not exist");
         }
 
-        LOGGER.debug("add utiltiy {}", name);
+        String name = FilenameUtils.removeExtension(f
+                .getName());
+        String content = FileUtils.loadFileContent(f);
+
+
+        LOGGER.debug("add utility {}", name);
         fp.addFiles(new MemorySource(name, content));
     }
 
@@ -241,7 +242,7 @@ public class GenericParser {
     }
 
     /**
-     * a signle instance of a generic parser
+     * a single instance of a generic parser
      *
      * @param tlc     a ToolCustomizer
      * @param content grammar content
@@ -310,7 +311,7 @@ public class GenericParser {
         Set<StringCodeGenPipeline> pip = antlr.getPipelines();
 
         if (pip.isEmpty())
-            throw new CompilationException("No string code pipeline availabe");
+            throw new CompilationException("No string code pipeline available");
 
         for (StringCodeGenPipeline p : pip) {
             for (MemorySource ms : p.getItems()) {
@@ -676,12 +677,14 @@ public class GenericParser {
         File loc = new File(file);
         File path = loc.getParentFile();
 
-        if (!loc.exists()) {
-            throw new DeserializationException("File " + file + " does not exist");
-        }
         if (!path.exists()) {
             throw new DeserializationException("Cannot find path " + path.getAbsolutePath());
         }
+
+        if (!loc.exists()) {
+            throw new DeserializationException("File " + file + " does not exist");
+        }
+
 
         LOGGER.debug("load file {}", loc.getAbsolutePath());
 

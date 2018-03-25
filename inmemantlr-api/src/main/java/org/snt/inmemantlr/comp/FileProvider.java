@@ -28,7 +28,6 @@ package org.snt.inmemantlr.comp;
 
 import org.snt.inmemantlr.memobjects.MemorySource;
 
-import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +37,7 @@ public class FileProvider implements CunitProvider {
 
     private List<MemorySource> ret = new Vector<>();
 
-    public void addFiles(MemorySource... ms) throws FileNotFoundException {
+    public void addFiles(MemorySource... ms) {
         Arrays.stream(ms).forEach(f -> ret.add(f));
     }
 
