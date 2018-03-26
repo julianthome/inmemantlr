@@ -433,7 +433,7 @@ public class GenericParser {
 
             try {
                 FileUtils.writeStringToFile(src.getCharContent(false).toString(),
-                        Paths.get(dest, src.getClassName()).toString() + "" +
+                        Paths.get(dest, src.getClassName()).toString() +
                                 ".java");
             } catch (FileExistsException e) {
                 LOGGER.error(e.getMessage());

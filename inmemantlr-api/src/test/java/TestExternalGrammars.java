@@ -862,6 +862,9 @@ public class TestExternalGrammars {
         }
 
         Assertions.assertTrue(compile);
+
+        s.examples.removeIf(p -> !p.getName().contains("antlr"));
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
