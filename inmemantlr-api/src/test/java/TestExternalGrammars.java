@@ -62,7 +62,6 @@ public class TestExternalGrammars {
             "antlr4", // antlr4 is handled by an extra test case
             "aspectj", // have to manually adapt Java grammar
             "csharp", // csharp is handled by an extra test case
-            "ecmascript", // ecmascript is handled by an extra test case
             "objc", // objc is handled by an extra test case
             "php",  // php is handled by an extra test case
             "stringtemplate",  // stringtemplate is handled by an extra case
@@ -389,7 +388,7 @@ public class TestExternalGrammars {
     @Test
     public void testStringTemplate() {
 
-        // skip for the time being -- gramar issue
+        // skip for the time being -- grammar issue
         if(true)
             return;
 
@@ -503,6 +502,37 @@ public class TestExternalGrammars {
         } catch (FileNotFoundException e) {
             Assertions.assertFalse(true);
         }
+
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        Assertions.assertTrue(compile);
+
+        verify(gp, s.examples, s.nexamples, s.entrypoint);
+    }
+
+
+
+    @Test
+    public void testEcma() {
+
+        if (!toCheck("ecmascript"))
+            return;
+
+        Subject s = subjects.get("ecmascript");
+
+        GenericParser gp = null;
+        try {
+            gp = new GenericParser(s.g4.toArray(new File[s.g4.size()]));
+        } catch (FileNotFoundException e) {
+            Assertions.assertTrue(false);
+        }
+
 
         boolean compile;
         try {
@@ -661,7 +691,7 @@ public class TestExternalGrammars {
     public void testCSharp() {
 
         // skipt this test if the runtime environment is windows for the time
-        // being -- cshar grammar is runtime dependent
+        // being -- csharp grammar is runtime dependent
         if(System.getProperty("os.name").toLowerCase().startsWith("win"))
             return;
 
