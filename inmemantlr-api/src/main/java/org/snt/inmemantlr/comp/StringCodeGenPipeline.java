@@ -310,7 +310,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return visitor name
      */
     public String getVisitorName() {
-        VisitorFile f = (VisitorFile) listener.getAttributes().get("file");
+        VisitorFile f = (VisitorFile) visitor.getAttributes().get("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
     }
@@ -321,7 +321,7 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
      * @return base visitor name
      */
     public String getBaseVisitorName() {
-        BaseVisitorFile f = (BaseVisitorFile) listener.getAttributes().get("file");
+        BaseVisitorFile f = (BaseVisitorFile) baseVisitor.getAttributes().get("file");
         LOGGER.debug("listener name {}", modFile(f));
         return modFile(f);
     }
