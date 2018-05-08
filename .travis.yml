@@ -2,10 +2,14 @@ language: java
 
 sudo : false
 
-addons:
-  apt:
-    packages:
-      - oracle-java10-installer
+# https://medium.com/@jonashavers/how-to-use-java-10-with-travis-ci-363c7dc2f708
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+
+matrix:
+  include:
+    - env: JDK='Oracle JDK 10'
+      install: . ./install-jdk.sh -F 10 -L BCL
 
 install:
   - git submodule init
