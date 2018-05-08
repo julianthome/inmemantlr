@@ -26,6 +26,9 @@
 
 package org.snt.inmemantlr.comp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +36,8 @@ import java.util.List;
 public class DefaultCompilerOptionsProvider implements CompilerOptionsProvider {
 
     private List cp = new ArrayList();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCompilerOptionsProvider.class);
 
     public Collection<String> getClassPath() {
         return cp;
@@ -49,8 +54,6 @@ public class DefaultCompilerOptionsProvider implements CompilerOptionsProvider {
         //String cpstring = cp.stream().map(c -> c + ":").reduce(String::new);
         optionList.add("-source");
         optionList.add("1.7");
-        optionList.add("-classpath");
-        optionList.add(String.join(":", cp));
         return optionList;
     }
 }

@@ -30,7 +30,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.exceptions.CompilationErrorException;
@@ -91,7 +90,7 @@ public class StringCompiler {
     public void compile(Set<CunitProvider> units, CompilerOptionsProvider oprov)
             throws
             CompilationErrorException {
-        JavaCompiler javac = new EclipseCompiler();
+        JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
         SpecialJavaFileManager fileManager = new SpecialJavaFileManager(sjfm, cl);
@@ -116,7 +115,6 @@ public class StringCompiler {
         List<String> optionList = new ArrayList<>();
 
         optionList.addAll(oprov.getOptions());
-
 
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
                 dlistener, optionList, classes, cunit);

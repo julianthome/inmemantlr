@@ -389,9 +389,6 @@ public class TestExternalGrammars {
     public void testStringTemplate() {
 
         // skip for the time being -- grammar issue
-        if(true)
-            return;
-
 
         if (!toCheck("stringtemplate"))
             return;

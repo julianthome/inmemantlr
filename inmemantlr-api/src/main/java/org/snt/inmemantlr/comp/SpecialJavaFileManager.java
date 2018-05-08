@@ -93,7 +93,8 @@ class SpecialJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
      */
     public Set<MemoryByteCode> getByteCodeFromClass(String cname) {
         Set<MemoryByteCode> ret = mb.values().stream()
-                .filter(m -> m.getClassName().matches("(([a-zA-Z_0-9]+)/)*" + cname + "(\\$.*)?"))
+                .filter(m -> m.getClassName().matches("(([a-zA-Z_0-9\\.]+)/?)*"
+                        + cname + "(\\$.*)?"))
                 .collect(toSet());
         if (ret.isEmpty())
             throw new IllegalArgumentException("bytecode of class " + cname + " is empty");
