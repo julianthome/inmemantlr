@@ -22,9 +22,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>10</java.version>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
+        <java.version>9</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <gpgplugin.version>1.6</gpgplugin.version>
         <javadocplugin.version>2.10.4</javadocplugin.version>
         <slf4j.version>1.7.25</slf4j.version>
