@@ -1,19 +1,21 @@
 version: "{build}"
 
-clone_depth: 10
+clone_depth: 2
+
+build: off
+
+install:
+  - cinst jdk9 -params 'installdir=C:\\jdk9'
+  - SET JAVA_HOME=C:\jdk9
+  - SET PATH=C:\jdk9\bin;%PATH%
 
 branches:
   only:
     - master
 
-configuration:
-  - Java9
-      
 install:
     - git submodule init
     - git submodule update
-
-build: off
 
 test_script:
   - mvn clean package
