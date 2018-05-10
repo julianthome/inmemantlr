@@ -8,14 +8,14 @@ install:
   - cinst jdk9 -params 'installdir=C:\\jdk9'
   - SET JAVA_HOME=C:\jdk9
   - SET PATH=C:\jdk9\bin;%PATH%
+  - git submodule init
+  - git submodule update
 
 branches:
   only:
     - master
 
 install:
-    - git submodule init
-    - git submodule update
 
 test_script:
   - mvn clean package
