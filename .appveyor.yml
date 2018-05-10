@@ -5,9 +5,8 @@ clone_depth: 2
 build: off
 
 install:
-  - cinst jdk9 -params 'installdir=C:\\jdk9'
-  - SET JAVA_HOME=C:\jdk9
-  - SET PATH=C:\jdk9\bin;%PATH%
+  - SET JAVA_HOME=C:\Program Files\Java\jdk9
+  - SET PATH=C:\Program Files\Java\jdk9\bin;%PATH%
   - git submodule init
   - git submodule update
 
