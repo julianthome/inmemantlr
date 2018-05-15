@@ -21,11 +21,13 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 <!--[![Maven](https://img.shields.io/maven-central/v/com.github.julianthome/inmemantlr.svg)][maven]-->
 [![Linux Build Status](https://api.travis-ci.org/julianthome/inmemantlr.svg?branch=master)][travis]
 [![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr)][mcentral]
+
 
 <!--[maven]: https://mvnrepository.com/artifact/com.github.julianthome/inmemantlr-->
 [travis]: https://travis-ci.org/julianthome/inmemantlr
 [coverage]: https://codecov.io/gh/julianthome/inmemantlr
-
+[mcentral]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr
 
 # TOC
 
