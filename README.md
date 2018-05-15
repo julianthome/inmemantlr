@@ -91,7 +91,7 @@ tree.
 
 
 ```java
-File gfile = new File("Java.4");
+File gfile = new File("Java.g4");
 File cfile = new File("HelloWorld.java");
 ParseTree pt = new GenericParserToGo(gfile).parse(cfile, "compilationUnit");
 ```
