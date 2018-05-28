@@ -110,7 +110,7 @@ gp.setListener(new DefaultListener());
 // 4. compile Lexer and parser in-memory
 gp.compile();
 // 5. parse the string that represents the content of HelloWorld.java
-ParserRuleContext ctx = gp.parse(s);
+ParserRuleContext ctx = gp.parse(s, "compilationUnit");
 ```
 
 ## Parse tree generation
