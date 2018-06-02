@@ -289,12 +289,6 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
             }
         }
 
-        if (lexerName.isEmpty())
-            throw new IllegalArgumentException("lexerName must not be empty");
-
-        if (parserName.isEmpty())
-            throw new IllegalArgumentException("parserName must not be empty");
-
         return new Tuple<>(parserName, lexerName);
     }
 

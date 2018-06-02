@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- * <p>
+ *
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -325,11 +325,11 @@ public class GenericParser {
         parserName = parserLexer.getFirst();
         lexerName = parserLexer.getSecond();
 
+
+        // parser name can be empty for lexer grammars
         if (lexerName.isEmpty())
             throw new IllegalArgumentException("lexerName must not be empty");
 
-        if (parserName.isEmpty())
-            throw new IllegalArgumentException("parserName must not be empty");
 
         Set<CunitProvider> cu = new LinkedHashSet<>();
 
@@ -338,7 +338,7 @@ public class GenericParser {
 
         cu.addAll(antlr.getCompilationUnits());
 
-        sc.compile(cu,oprov);
+        sc.compile(cu, oprov);
     }
 
     /**
@@ -428,7 +428,7 @@ public class GenericParser {
     public void writeAntlrAritfactsTo(String dest) {
         MemoryTupleSet ms = getAllCompiledObjects();
 
-        for(MemoryTuple tup : ms) {
+        for (MemoryTuple tup : ms) {
             MemorySource src = tup.getSource();
 
             try {
@@ -439,6 +439,32 @@ public class GenericParser {
                 LOGGER.error(e.getMessage());
             }
         }
+    }
+
+
+    public List<Token> lex(String toParse) throws IllegalWorkflowException {
+
+        if (lexerName.isEmpty())
+            throw new IllegalWorkflowException("lexerName must not be empty " +
+                    "-- did you already run compile?");
+
+        InmemantlrErrorListener el = new InmemantlrErrorListener();
+        listener.reset();
+        //CodePointCharStream input = CharStreams.fromString(toParse);
+        CharStream input = provider.getCharStream(toParse);
+
+        Objects.requireNonNull(input, "char stream must not be null");
+
+        LOGGER.debug("load lexer {}", lexerName);
+
+        Lexer lex = sc.instanciateLexer(input, lexerName, useCached);
+        lex.addErrorListener(el);
+
+        Objects.requireNonNull(lex, "lex must not be null");
+
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        tokens.fill();
+        return tokens.getTokens();
     }
 
 
@@ -459,6 +485,16 @@ public class GenericParser {
         if (!antrlObjectsAvailable()) {
             throw new IllegalWorkflowException("No antlr objects have been compiled or loaded");
         }
+
+
+        if (lexerName.isEmpty())
+            throw new IllegalWorkflowException("lexerName must not be empty " +
+                    "-- did you already run compile?");
+
+        if (parserName.isEmpty())
+            throw new IllegalWorkflowException("parserName must not be empty " +
+                    "-- run lex() in case you would like to run the lexer " +
+                    "only.");
 
         switch (cs) {
             case NONE:
@@ -717,7 +753,7 @@ public class GenericParser {
                 o_in.close();
                 f_in.close();
             } catch (IOException e) {
-               ;
+                ;
             }
 
         }

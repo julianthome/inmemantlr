@@ -33,8 +33,6 @@ import org.snt.inmemantlr.tree.ParseTree;
 
 import java.io.File;
 
-;
-
 
 public class TestGenericParserToGo {
 

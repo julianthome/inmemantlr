@@ -25,11 +25,21 @@
  **/
 
 
+import org.antlr.v4.runtime.Token;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.GenericParser;
+import org.snt.inmemantlr.exceptions.CompilationException;
+import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
+import org.snt.inmemantlr.listener.DefaultTreeListener;
+import org.snt.inmemantlr.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 
 public class TestLexerGrammar {
@@ -41,44 +51,39 @@ public class TestLexerGrammar {
     @Test
     public void testInterpreter() throws IOException {
 
-//        try (InputStream sgrammar = getClass().getClassLoader()
-//                .getResourceAsStream("inmemantlr/LexerGrammar.g4")) {
-//            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-//        }
-//
-//        GenericParser gp = new GenericParser(sgrammarcontent);
-//        DefaultTreeListener t = new DefaultTreeListener();
-//
-//        List cp = new Vector<String>();
-//
-//        final File f = new File(getClass().getProtectionDomain().getCodeSource()
-//                .getLocation().getPath());
-//
-//        LOGGER.debug(f.toString());
-//
-//        //gp.setClassPath(cp);
-//
-//        gp.setListener(t);
-//        boolean compile;
-//        try {
-//            gp.compile();
-//            compile = true;
-//        } catch (CompilationException e) {
-//            compile = false;
-//        }
-//
-//        try {
-//             gp.parse("a");
-//
-//             ParseTree pt = t.getParseTree();
-//             LOGGER.debug(pt.toDot());
-//        } catch (IllegalWorkflowException e) {
-//            e.printStackTrace();
-//        } catch (ParsingException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Assertions.assertTrue(compile);
-//
+        try (InputStream sgrammar = getClass().getClassLoader()
+                .getResourceAsStream("inmemantlr/LexerGrammar.g4")) {
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+        }
+
+        GenericParser gp = new GenericParser(sgrammarcontent);
+        DefaultTreeListener t = new DefaultTreeListener();
+
+
+        final File f = new File(getClass().getProtectionDomain().getCodeSource()
+                .getLocation().getPath());
+
+        LOGGER.debug(f.toString());
+
+        //gp.setClassPath(cp);
+
+        gp.setListener(t);
+        boolean compile;
+        try {
+            gp.compile();
+            compile = true;
+        } catch (CompilationException e) {
+            compile = false;
+        }
+
+        Assertions.assertTrue(compile);
+
+        try {
+            List<Token> tokens = gp.lex("a09");
+            Assertions.assertEquals(tokens.size(), 2);
+        } catch (IllegalWorkflowException e) {
+            Assertions.assertFalse(true);
+        }
+
     }
 }
