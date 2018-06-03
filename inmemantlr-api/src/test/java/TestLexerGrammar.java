@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
@@ -57,17 +56,10 @@ public class TestLexerGrammar {
         }
 
         GenericParser gp = new GenericParser(sgrammarcontent);
-        DefaultTreeListener t = new DefaultTreeListener();
-
-
+        
         final File f = new File(getClass().getProtectionDomain().getCodeSource()
                 .getLocation().getPath());
 
-        LOGGER.debug(f.toString());
-
-        //gp.setClassPath(cp);
-
-        gp.setListener(t);
         boolean compile;
         try {
             gp.compile();
