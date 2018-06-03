@@ -37,23 +37,15 @@ public enum ParseTreeSerializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseTreeSerializer.class);
 
 
-    public String getStringForEdge(ParseTreeNode par, ParseTreeNode c) {
+    private String getStringForEdge(ParseTreeNode c) {
         return "\tn" + c.getParent().getId() + " -- n" + c.getId() + ";\n";
     }
 
-    public String getStringForNode(ParseTreeNode n, boolean rulesOnly) {
+    private String getStringForNode(ParseTreeNode n) {
         StringBuilder sb = new StringBuilder();
         sb.append("\tn");
         sb.append(n.getId());
         sb.append(" [label=\"");
-
-        if(!rulesOnly) {
-            sb.append("(");
-            sb.append(n.getId());
-            sb.append(")\\n");
-            sb.append(n.getEscapedLabel());
-            sb.append("\\n");
-        }
 
         // terminal nodes
         if(n.isTerminal()) {
@@ -77,30 +69,24 @@ public enum ParseTreeSerializer {
     }
 
 
-    public void toDotRec(StringBuilder sb, ParseTreeNode par, boolean
-            rulesOnly) {
-        sb.append(getStringForNode(par, rulesOnly));
+    public void toDotRec(StringBuilder sb, ParseTreeNode par) {
+        sb.append(getStringForNode(par));
 
         for(ParseTreeNode cc : par.getChildren()) {
-            toDotRec(sb,cc,rulesOnly);
-            sb.append(getStringForEdge(par, cc));
+            toDotRec(sb,cc);
+            sb.append(getStringForEdge(cc));
         }
     }
 
-    public String toDot(ParseTree parseTree, boolean rulesOnly) {
+    public String toDot(ParseTree parseTree) {
         StringBuilder sb = new StringBuilder()
                 .append("graph {\n")
                 .append("\tnode [fontname=Helvetica,fontsize=11];\n")
                 .append("\tedge [fontname=Helvetica,fontsize=10];\n");
-        toDotRec(sb, parseTree.getRoot(), rulesOnly);
+        toDotRec(sb, parseTree.getRoot());
         sb.append("}\n");
 
         return sb.toString();
-    }
-
-
-    public String toDot(ParseTree parseTree) {
-        return toDot(parseTree, true);
     }
 
     public String toJson(ParseTree parseTree) {

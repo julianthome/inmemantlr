@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,11 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
-import org.snt.inmemantlr.listener.DefaultTreeListener;
+import org.snt.inmemantlr.GenericParserToGo;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
 import org.xml.sax.SAXException;
@@ -52,53 +48,59 @@ public class TestProcessors {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestProcessors.class);
 
-    private static String sgrammarcontent = "";
-    private static String s = "";
+    private static String javagcontent = "";
+    private static String javafcontent = "";
 
-    private static ParseTree parseTree = null;
+    private static String phplcontent = "";
+    private static String phpgcontent = "";
+    private static String phpfcontent = "";
+
+    private static ParseTree phpParseTree = null, javaParseTree = null;
 
     static {
         ClassLoader classLoader = TestProcessors.class.getClassLoader();
-        try {
-            try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
-                 InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
-                sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
-                s = FileUtils.getStringFromStream(sfile);
-            }
-        } catch (IOException e) {
-            Assertions.assertFalse(true);
-        }
-        GenericParser gp = new GenericParser(sgrammarcontent);
 
-        boolean compile;
-        try {
-            gp.compile();
-            compile = true;
-        } catch (CompilationException e) {
-            compile = false;
-        }
+        InputStream javasgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
+        InputStream javasfile = classLoader.getResourceAsStream
+                ("inmemantlr/HelloWorld.java");
+        javagcontent = FileUtils.getStringFromStream(javasgrammar);
+        javafcontent = FileUtils.getStringFromStream(javasfile);
 
-        Assertions.assertTrue(compile);
-        Assertions.assertTrue(s != null && !s.isEmpty());
+        InputStream phpslexer = classLoader.getResourceAsStream
+                ("inmemantlr/PHPLexer.g4");
 
-        DefaultTreeListener dlist = new DefaultTreeListener();
+        InputStream phpsparser = classLoader.getResourceAsStream
+                ("inmemantlr/PHPParser.g4");
+        InputStream phpsfile = classLoader.getResourceAsStream
+                ("inmemantlr/test.php");
 
-        gp.setListener(dlist);
 
-        try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            Assertions.assertTrue(false);
-        }
+        phplcontent = FileUtils.getStringFromStream(phpslexer);
+        phpgcontent = FileUtils.getStringFromStream(phpsparser);
+        phpfcontent = FileUtils.getStringFromStream(phpsfile);
 
-        parseTree = dlist.getParseTree();
+
+        javaParseTree = new GenericParserToGo(javagcontent).parse(javafcontent, "compilationUnit");
+        phpParseTree = new GenericParserToGo(phplcontent, phpgcontent).parse
+                (phpfcontent, "htmlDocument");
+
+
     }
 
 
     @Test
     public void testXmlProcessor() {
-        String xml = parseTree.toXml();
-        LOGGER.debug(xml);
+        String jxml = javaParseTree.toXml();
+        String pxml = phpParseTree.toXml();
+
+        Assertions.assertNotNull(jxml);
+        Assertions.assertNotNull(pxml);
+
+        Assertions.assertFalse(jxml.isEmpty());
+        Assertions.assertFalse(pxml.isEmpty());
+
+        LOGGER.debug(jxml);
+        LOGGER.debug(pxml);
 
         DocumentBuilder newDocumentBuilder = null;
         try {
@@ -106,8 +108,9 @@ public class TestProcessors {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
+
         try {
-            newDocumentBuilder.parse(new ByteArrayInputStream(xml
+            newDocumentBuilder.parse(new ByteArrayInputStream(jxml
                     .getBytes()));
         } catch (SAXException e) {
             Assertions.assertFalse(true);
@@ -115,19 +118,44 @@ public class TestProcessors {
             Assertions.assertFalse(true);
         }
 
-        Assertions.assertTrue(xml.length() > 1);
+
+        try {
+            newDocumentBuilder.parse(new ByteArrayInputStream(pxml
+                    .getBytes()));
+        } catch (SAXException e) {
+            Assertions.assertFalse(true);
+        } catch (IOException e) {
+            Assertions.assertFalse(true);
+        }
+
     }
 
     @Test
     public void testJsonProcessor() {
-        String json = parseTree.toJson();
-        LOGGER.debug(json);
+        String jjson = javaParseTree.toJson();
+        String pjson = phpParseTree.toJson();
+
+        Assertions.assertNotNull(jjson);
+        Assertions.assertNotNull(pjson);
+
+        Assertions.assertFalse(jjson.isEmpty());
+        Assertions.assertFalse(pjson.isEmpty());
+
+        LOGGER.debug(jjson);
+        LOGGER.debug(pjson);
 
         try {
-            new JsonParser().parse(json);
-        } catch ( JsonIOException | JsonSyntaxException e) {
+            new JsonParser().parse(jjson);
+        } catch (JsonIOException | JsonSyntaxException e) {
             Assertions.assertFalse(true);
         }
-        Assertions.assertTrue(json.length() > 1);
+
+
+        try {
+            new JsonParser().parse(pjson);
+        } catch (JsonIOException | JsonSyntaxException e) {
+            Assertions.assertFalse(true);
+        }
+
     }
 }

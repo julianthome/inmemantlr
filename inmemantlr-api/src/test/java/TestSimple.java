@@ -170,7 +170,7 @@ public class TestSimple {
 
         Assertions.assertEquals(a.getNodes().size(), 4);
 
-        LOGGER.debug(ParseTreeSerializer.INSTANCE.toDot(a, true));
+        LOGGER.debug(ParseTreeSerializer.INSTANCE.toDot(a));
     }
 
 }

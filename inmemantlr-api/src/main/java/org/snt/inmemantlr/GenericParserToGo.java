@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -50,17 +50,29 @@ public class GenericParserToGo {
 
     /**
      * constructor
-     * @param grammar file path to antlr grammar
+     * @param grammar grammar provided as String
      */
-    public GenericParserToGo(String grammar) {
-        this(new File(grammar));
+    public GenericParserToGo(String ... grammar) {
+
+        gp = new GenericParser(grammar);
+
+        try {
+            gp.compile();
+        } catch (CompilationException e) {
+            LOGGER.error(e.getMessage());
+            System.exit(-1);
+        }
+
+        dl = new DefaultTreeListener(true);
+        gp.setListener(dl);
+
     }
 
     /**
      * constructor
      * @param grammar file path to antlr grammar
      */
-    public GenericParserToGo(File grammar) {
+    public GenericParserToGo(File ... grammar) {
         try {
             gp = new GenericParser(grammar);
         } catch (FileNotFoundException e) {
@@ -86,7 +98,7 @@ public class GenericParserToGo {
      * @param rule parsing rule to start
      * @return parse tree of s
      */
-    public ParseTree parse(String s, String rule){
+    public ParseTree parse(String s, String rule) {
         try {
             gp.parse(s, rule, GenericParser.CaseSensitiveType.NONE);
             return dl.getParseTree();
@@ -105,7 +117,7 @@ public class GenericParserToGo {
      * @param rule parsing rule to start
      * @return parse tree of f'c content
      */
-    public ParseTree parse(File f, String rule){
+    public ParseTree parse(File f, String rule) {
         try {
             gp.parse(f, rule, GenericParser.CaseSensitiveType.NONE);
             return dl.getParseTree();
