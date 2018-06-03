@@ -396,7 +396,7 @@ public class GenericParser {
     /**
      * parse string and create a context
      *
-     * @param toParse string to parseFile
+     * @param toParse string to parse
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
      * @throws ParsingException         if an error occurs while parsing
@@ -409,7 +409,7 @@ public class GenericParser {
     /**
      * parse string and create a context
      *
-     * @param toParse string to parseFile
+     * @param toParse string to parse
      * @param cs         case sensitivity
      * @return context
      * @throws IllegalWorkflowException if compilation did not take place
@@ -471,7 +471,7 @@ public class GenericParser {
     /**
      * parse string and create a context
      *
-     * @param toParse    string to parseFile
+     * @param toParse    string to parse
      * @param production production name to parseFile
      * @param cs         case sensitivity
      * @return context
@@ -510,8 +510,6 @@ public class GenericParser {
         InmemantlrErrorListener el = new InmemantlrErrorListener();
 
         listener.reset();
-
-        //CodePointCharStream input = CharStreams.fromString(toParse);
 
         CharStream input = provider.getCharStream(toParse);
 

@@ -39,7 +39,7 @@ import java.io.FileNotFoundException;
 
 
 /**
- * a simpler generic parser representation to get going quicly
+ * a simpler generic parser representation to get going quickly
  */
 public class GenericParserToGo {
 
@@ -50,7 +50,7 @@ public class GenericParserToGo {
 
     /**
      * constructor
-     * @param grammar grammar provided as String
+     * @param grammar grammar(s) content
      */
     public GenericParserToGo(String ... grammar) {
 
@@ -70,7 +70,7 @@ public class GenericParserToGo {
 
     /**
      * constructor
-     * @param grammar file path to antlr grammar
+     * @param grammar ANTLR file(s)
      */
     public GenericParserToGo(File ... grammar) {
         try {
@@ -112,7 +112,7 @@ public class GenericParserToGo {
     }
 
     /**
-     * parse a string
+     * parse a file
      * @param f a file to parse
      * @param rule parsing rule to start
      * @return parse tree of f'c content
