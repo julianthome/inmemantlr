@@ -56,7 +56,7 @@ public class TestLexerGrammar {
         }
 
         GenericParser gp = new GenericParser(sgrammarcontent);
-        
+
         final File f = new File(getClass().getProtectionDomain().getCodeSource()
                 .getLocation().getPath());
 
