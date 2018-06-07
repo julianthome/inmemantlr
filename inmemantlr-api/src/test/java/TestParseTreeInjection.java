@@ -1,16 +1,3 @@
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.snt.inmemantlr.GenericParserToGo;
-import org.snt.inmemantlr.exceptions.InjectionException;
-import org.snt.inmemantlr.tree.ParseTree;
-import org.snt.inmemantlr.tree.ParseTreeNode;
-import org.snt.inmemantlr.utils.InjectionPointDetector;
-import org.snt.inmemantlr.utils.ParseTreeManipulator;
-
-import java.io.File;
-
 /**
  * Inmemantlr - In memory compiler for Antlr 4
  *
@@ -36,6 +23,19 @@ import java.io.File;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snt.inmemantlr.GenericParserToGo;
+import org.snt.inmemantlr.exceptions.InjectionException;
+import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.tree.ParseTreeNode;
+import org.snt.inmemantlr.utils.InjectionPointDetector;
+import org.snt.inmemantlr.utils.ParseTreeManipulator;
+
+import java.io.File;
 
 
 public class TestParseTreeInjection {
