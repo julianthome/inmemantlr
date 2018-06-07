@@ -28,6 +28,8 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParserToGo;
@@ -56,7 +58,9 @@ public class TestProcessors {
 
     private static ParseTree phpParseTree = null, javaParseTree = null;
 
-    static {
+
+    @BeforeAll
+    public static void setUp(){
         ClassLoader classLoader = TestProcessors.class.getClassLoader();
 
         InputStream javasgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
@@ -82,12 +86,10 @@ public class TestProcessors {
         javaParseTree = new GenericParserToGo(javagcontent).parse(javafcontent, "compilationUnit");
         phpParseTree = new GenericParserToGo(phplcontent, phpgcontent).parse
                 (phpfcontent, "htmlDocument");
-
-
     }
 
 
-    //@Test
+    @Test
     public void testXmlProcessor() {
         String jxml = javaParseTree.toXml();
         String pxml = phpParseTree.toXml();
@@ -129,7 +131,7 @@ public class TestProcessors {
 
     }
 
-    //@Test
+    @Test
     public void testJsonProcessor() {
         String jjson = javaParseTree.toJson();
         String pjson = phpParseTree.toJson();

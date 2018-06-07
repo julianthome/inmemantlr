@@ -75,8 +75,7 @@ public class TestExternalGrammars {
             "mysql", // handled by extra testcase
             "html", // handled by extra testcase
             "r", // handled by extra testcase
-
-            "cobol85", // skip runs forever
+            
             "javascript", // skip
             "antlr3", // skip
             "python3alt", //skip
@@ -897,6 +896,7 @@ public class TestExternalGrammars {
 
     @Test
     public void testR() {
+
 
         if (!toCheck("r"))
             return;
