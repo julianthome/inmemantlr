@@ -75,7 +75,7 @@ public class TestExternalGrammars {
             "mysql", // handled by extra testcase
             "html", // handled by extra testcase
             "r", // handled by extra testcase
-            
+
             "javascript", // skip
             "antlr3", // skip
             "python3alt", //skip

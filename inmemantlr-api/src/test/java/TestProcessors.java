@@ -70,10 +70,10 @@ public class TestProcessors {
         javafcontent = FileUtils.getStringFromStream(javasfile);
 
         InputStream phpslexer = classLoader.getResourceAsStream
-                ("inmemantlr/PHPLexer.g4");
+                ("inmemantlr/PhpLexer.g4");
 
         InputStream phpsparser = classLoader.getResourceAsStream
-                ("inmemantlr/PHPParser.g4");
+                ("inmemantlr/PhpParser.g4");
         InputStream phpsfile = classLoader.getResourceAsStream
                 ("inmemantlr/test.php");
 
