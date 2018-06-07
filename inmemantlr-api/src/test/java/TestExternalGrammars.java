@@ -76,6 +76,7 @@ public class TestExternalGrammars {
             "html", // handled by extra testcase
             "r", // handled by extra testcase
 
+            "cobol85", // skip runs forever
             "javascript", // skip
             "antlr3", // skip
             "python3alt", //skip
