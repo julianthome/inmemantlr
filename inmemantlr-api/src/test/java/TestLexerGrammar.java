@@ -35,7 +35,6 @@ import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -56,9 +55,6 @@ public class TestLexerGrammar {
         }
 
         GenericParser gp = new GenericParser(sgrammarcontent);
-
-        final File f = new File(getClass().getProtectionDomain().getCodeSource()
-                .getLocation().getPath());
 
         boolean compile;
         try {

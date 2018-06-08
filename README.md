@@ -42,6 +42,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
   * [Parse tree processing](#parse-tree-processing)
   * [Sequential parsing](#sequential-parsing)
   * [Non-combined grammars](#non-combined-grammars)
+  * [Lexer-only grammars](#lexer-only-grammars)
   * [Accessing ANTLR objects](#accessing-antlr-objects)
   * [Parser serialization](#parser-serialization)
   * [grammars-v4](#grammars-v4)
@@ -307,6 +308,23 @@ File files [] = {
 GenericParser gp = new GenericParser(files);
 // parser is ready to use
 ```
+
+## Lexer-only grammars
+
+In case you are interested in only using a lexer grammar, you can use the 
+`lex` method which will provide you with a list of tokens.
+
+``` java
+GenericParser gp = new GenericParser(new File("LexerGrammar"));
+gp.compile();
+try {
+    List<Token> tokens = gp.lex("a09");
+    Assertions.assertEquals(tokens.size(), 2);
+} catch (IllegalWorkflowException e) {
+    Assertions.assertFalse(true);
+}
+```
+
 
 ## Accessing ANTLR objects
 
