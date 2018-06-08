@@ -442,6 +442,12 @@ public class GenericParser {
     }
 
 
+    /**
+     * get the tokens for a string -- only for lexer grammars
+     * @param toParse string to be tokenized
+     * @return a list of tokens
+     * @throws IllegalWorkflowException in case no lexername is provided
+     */
     public List<Token> lex(String toParse) throws IllegalWorkflowException {
 
         if (lexerName.isEmpty())

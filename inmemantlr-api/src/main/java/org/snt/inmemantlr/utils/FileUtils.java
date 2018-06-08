@@ -97,7 +97,7 @@ public final class FileUtils {
         LOGGER.debug("file " + file);
 
         if(Files.exists(Paths.get(file)))
-            throw new FileExistsException("File " + file + "already exists");
+            throw new FileExistsException("File " + file + " already exists");
 
 
         File f = new File(file);

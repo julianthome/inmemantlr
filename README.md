@@ -346,6 +346,20 @@ for(MemoryTuple tup : set) {
 }
 ```
 
+Through the method `writeAntlrArtifactsTo`, which belongs to the `GenericParser`
+class, inmemantlr also offers the possibility to write the ANTLR artifacts,
+i.e., the Java source files for a grammar/lexer, to a file.
+
+``` java
+// ...
+GenericParser gp = new GenericParser(tc,sgrammarcontent);
+// ...
+gp.writeAntlrAritfactsTo("/tmp/grammar");
+```
+
+After the call above, you will find the `.java` files in the specified
+destination `/tmp/grammar`.
+
 ## Parser serialization
 
 For avoiding unnecessary compilation and for enabling the re-use of a generic

@@ -6,7 +6,7 @@
 
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -90,6 +90,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadocplugin.version}</version>
+                <configuration>
+                    <additionalparam>-html5</additionalparam>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

@@ -24,7 +24,7 @@
  * SOFTWARE.
  **/
 
-import org.antlr.v4.Tool;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +36,8 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 public class TestArtifactSerialization {
@@ -45,19 +47,14 @@ public class TestArtifactSerialization {
     String sgrammarcontent = "";
 
     @Test
-    public void testBroken() throws IOException {
+    public void testArtifactSerialization() throws IOException {
 
         try (InputStream sgrammar = getClass().getClassLoader()
                 .getResourceAsStream("inmemantlr/Simple.g4")) {
             sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
         }
 
-        ToolCustomizer tc = new ToolCustomizer() {
-            @Override
-            public void customize(Tool t) {
-                t.genPackage = "com.github.inmemantlr.parser";
-            }
-        };
+        ToolCustomizer tc = t -> t.genPackage = "com.github.inmemantlr.parser";
 
 
         GenericParser gp = new GenericParser(tc,sgrammarcontent);
@@ -75,10 +72,11 @@ public class TestArtifactSerialization {
             compile = false;
         }
 
-
+        Assertions.assertTrue(compile);
 
         gp.writeAntlrAritfactsTo("/tmp/test/out");
 
+        Assertions.assertTrue(Files.exists(Paths.get("/tmp/test/out")));
 
     }
 
