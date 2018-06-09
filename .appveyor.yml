@@ -5,8 +5,7 @@ clone_depth: 2
 build: off
 
 install:
-  - SET JAVA_HOME=C:\Program Files\Java\jdk9
-  - SET PATH=C:\Program Files\Java\jdk9\bin;%PATH%
+  - choco install jdk10
   - git submodule init
   - git submodule update
 
