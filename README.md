@@ -20,12 +20,13 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 # Status
 <!--[![Maven](https://img.shields.io/maven-central/v/com.github.julianthome/inmemantlr.svg)][maven]-->
 [![Linux Build Status](https://api.travis-ci.org/julianthome/inmemantlr.svg?branch=master)][travis]
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/julianthome/inmemantlr?branch=master&svg=true)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)][mcentral]
 
-
 <!--[maven]: https://mvnrepository.com/artifact/com.github.julianthome/inmemantlr-->
 [travis]: https://travis-ci.org/julianthome/inmemantlr
+[appveyor]: https://ci.appveyor.com/api/projects/status/github/julianthome/inmemantlr
 [coverage]: https://codecov.io/gh/julianthome/inmemantlr
 [mcentral]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr
 
