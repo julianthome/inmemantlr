@@ -25,7 +25,6 @@
  **/
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
@@ -38,8 +37,9 @@ import org.snt.inmemantlr.tree.ParseTreeNode;
 import org.snt.inmemantlr.tree.ParseTreeProcessor;
 import org.snt.inmemantlr.utils.FileUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestParseTreeProcessor {
@@ -49,15 +49,14 @@ public class TestParseTreeProcessor {
 
     static {
         ClassLoader classLoader = TestParseTreeProcessor.class.getClassLoader();
-        try {
+
+        assertDoesNotThrow(() -> {
             try (InputStream sgrammar = classLoader.getResourceAsStream("inmemantlr/Java.g4");
                  InputStream sfile = classLoader.getResourceAsStream("inmemantlr/HelloWorld.java")) {
                 sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
                 s = FileUtils.getStringFromStream(sfile);
             }
-        } catch (IOException e) {
-            Assertions.assertFalse(true);
-        }
+        });
     }
 
     @Test
@@ -72,8 +71,8 @@ public class TestParseTreeProcessor {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
-        Assertions.assertTrue(s != null && !s.isEmpty());
+        assertTrue(compile);
+        assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
@@ -82,13 +81,13 @@ public class TestParseTreeProcessor {
         try {
             gp.parse(s);
         } catch (IllegalWorkflowException | ParsingException e) {
-            Assertions.assertTrue(false);
+            fail();
         }
 
         ParseTree parseTree = dlist.getParseTree();
 
         // Process the tree bottom up
-        ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<String, String>(parseTree) {
+        ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<>(parseTree) {
             int cnt = 0;
 
             @Override
@@ -107,15 +106,15 @@ public class TestParseTreeProcessor {
             protected void process(ParseTreeNode n) {
                 cnt++;
                 simpleProp(n);
-                Assertions.assertTrue(getElement(n) != null);
+                assertNotNull(getElement(n));
             }
         };
 
         try {
             processor.process();
         } catch (ParseTreeProcessorException e) {
-            Assertions.assertFalse(true);
+            fail();
         }
-        Assertions.assertTrue(processor.debug() != null);
+        assertNotNull(processor.debug());
     }
 }

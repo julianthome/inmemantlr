@@ -40,8 +40,8 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 
 public class TestSimpleMixed {
@@ -61,9 +61,9 @@ public class TestSimpleMixed {
         GenericParser gp = new GenericParser(sgrammarcontent);
         DefaultTreeListener t = new DefaultTreeListener();
 
-        List cp = new Vector<String>();
+        List<String> cp = new ArrayList<>();
 
-        final File f = new File(getClass().getProtectionDomain().getCodeSource()
+        File f = new File(getClass().getProtectionDomain().getCodeSource()
                 .getLocation().getPath());
 
         LOGGER.debug(f.toString());
@@ -87,7 +87,7 @@ public class TestSimpleMixed {
             ParseTree parseTree;
             gp.parse("jan 1999 12");
             parseTree = t.getParseTree();
-            Assertions.assertEquals(parseTree.getNodes().size(), 6);
+            Assertions.assertEquals(6, parseTree.getNodes().size());
         } catch (IllegalWorkflowException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (ParsingException e) {

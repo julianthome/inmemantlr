@@ -24,22 +24,20 @@
  * SOFTWARE.
  **/
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
-import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.tree.ParseTreeNode;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestTreeGeneration {
@@ -62,15 +60,11 @@ public class TestTreeGeneration {
     @Test
     public void testGeneration() {
 
-        Assertions.assertNotNull(grammar);
+        assertNotNull(grammar);
 
-        GenericParser gp = null;
-        try {
-            gp = new GenericParser(grammar);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Assertions.assertNotNull(gp);
+        GenericParser gp = assertDoesNotThrow(() -> new GenericParser(grammar));
+
+        assertNotNull(gp);
 
         boolean compile;
         try {
@@ -80,25 +74,19 @@ public class TestTreeGeneration {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assertions.assertTrue(s != null && !s.isEmpty());
+        assertTrue(s != null && !s.isEmpty());
 
         DefaultTreeListener dlist = new DefaultTreeListener();
 
         gp.setListener(dlist);
 
-
-        try {
+        assertDoesNotThrow(() -> {
             gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            Assertions.assertTrue(false);
-        } catch (ParsingException e) {
-            Assertions.assertTrue(false);
-        }
-
+        });
 
         ParseTree parseTree = dlist.getParseTree();
 
@@ -107,16 +95,16 @@ public class TestTreeGeneration {
         // create copy
         ParseTree cast = new ParseTree(parseTree);
 
-        Assertions.assertTrue(parseTree != null);
-        Assertions.assertEquals(parseTree.getNodes().size(), cast.getNodes().size());
+        assertNotNull(parseTree);
+        assertEquals(parseTree.getNodes().size(), cast.getNodes().size());
 
         Set<ParseTree> parseTrees = parseTree.getSubtrees(n -> "expression".equals(n.getRule()));
 
-        Assertions.assertTrue(parseTrees.size() == 5);
+        assertEquals(5, parseTrees.size());
 
         for (ParseTree a : parseTrees) {
-            Assertions.assertTrue(parseTree.hasSubtree(a));
-            Assertions.assertFalse(parseTree.getSubtree(a) == null);
+            assertTrue(parseTree.hasSubtree(a));
+            assertNotNull(parseTree.getSubtree(a));
         }
 
         int sizeBefore = parseTree.getNodes().size();
@@ -125,44 +113,42 @@ public class TestTreeGeneration {
 
         parseTree.removeSubtree(first);
 
-        Assertions.assertTrue(parseTree.getNodes().size() + first.getNodes().size() == sizeBefore);
+        assertEquals(parseTree.getNodes().size() + first.getNodes().size(), sizeBefore);
 
         ParseTree repl = new ParseTree("replacement", "replacement");
 
         cast.replaceSubtree(first, repl);
 
-        Assertions.assertTrue(cast.getNodes().size() == parseTree.getNodes().size() + 1);
-        Assertions.assertTrue(cast.getDominatingSubtrees(n -> "classBody".equals(n.getRule())).size() == 1);
-        Assertions.assertTrue(cast.toDot() != null && !cast.toDot().isEmpty());
+        assertEquals(cast.getNodes().size(), parseTree.getNodes().size() + 1);
+        assertEquals(1, cast.getDominatingSubtrees(n -> "classBody".equals(n.getRule())).size());
+        assertTrue(cast.toDot() != null && !cast.toDot().isEmpty());
 
         ParseTreeNode root = cast.getRoot();
 
-        Assertions.assertTrue(root.hasChildren());
-        Assertions.assertFalse(root.hasParent());
+        assertTrue(root.hasChildren());
+        assertFalse(root.hasParent());
 
         for (ParseTreeNode n : cast.getNodes()) {
-            Assertions.assertTrue(n.getLabel() != null);
-            Assertions.assertTrue(n.getRule() != null);
+            assertNotNull(n.getLabel());
+            assertNotNull(n.getRule());
             for (int i = 0; i < n.getChildren().size(); i++) {
                 if (i == 0)
-                    Assertions.assertTrue(n.getChild(i).equals(n.getFirstChild()));
+                    assertEquals(n.getChild(i), n.getFirstChild());
                 if (i == n.getChildren().size() - 1)
-                    Assertions.assertTrue(n.getChild(i).equals(n.getLastChild()));
+                    assertEquals(n.getChild(i), n.getLastChild());
             }
         }
 
         for (ParseTreeNode c : cast.getLeafs()) {
-            Assertions.assertTrue(c.hasParent());
-            Assertions.assertFalse(c.hasChildren());
-            Assertions.assertTrue(c.isLeaf());
-            Assertions.assertFalse(c.equals(null));
-            Assertions.assertFalse(c.equals(null));
-            Assertions.assertNull(c.getLastChild());
-            Assertions.assertNull(c.getFirstChild());
+            assertTrue(c.hasParent());
+            assertFalse(c.hasChildren());
+            assertTrue(c.isLeaf());
+            assertNull(c.getLastChild());
+            assertNull(c.getFirstChild());
         }
 
         ParseTreeNode croot = cast.getRoot();
         croot.setParent(parseTree.getRoot());
-        Assertions.assertTrue(croot.getParent().equals(parseTree.getRoot()));
+        assertEquals(croot.getParent(), parseTree.getRoot());
     }
 }

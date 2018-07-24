@@ -25,12 +25,11 @@
  **/
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
-import org.snt.inmemantlr.exceptions.*;
+import org.snt.inmemantlr.exceptions.CompilationException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.memobjects.MemoryByteCode;
 import org.snt.inmemantlr.memobjects.MemoryTuple;
@@ -39,9 +38,9 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMemObjects {
 
@@ -68,7 +67,7 @@ public class TestMemObjects {
             e.printStackTrace();
         }
 
-        Assertions.assertNotNull(gp);
+        assertNotNull(gp);
 
         boolean compile;
         try {
@@ -78,15 +77,15 @@ public class TestMemObjects {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assertions.assertTrue(s != null && !s.isEmpty());
+        assertTrue(s != null && !s.isEmpty());
 
         MemoryTupleSet set = gp.getAllCompiledObjects();
 
-        Assertions.assertTrue(set != null && set.size() == 4);
+        assertTrue(set != null && set.size() == 4);
 
         for (MemoryTuple tup : set) {
             LOGGER.debug("tuple name {}", tup.getClassName());
@@ -97,93 +96,55 @@ public class TestMemObjects {
                 Objects.requireNonNull(mc, "MemoryByteCode must not be null");
                 LOGGER.debug("bc name: {}", mc.getClassName());
 
-                if (!mc.isInnerClass()) {
-                    mc.getClassName().equals(tup.getSource().getClassName());
+                if (mc.isInnerClass()) {
+                    assertTrue(mc.getClassName().startsWith(tup.getSource().getClassName()));
                 } else {
-                    mc.getClassName().startsWith(tup.getSource().getClassName());
+                    assertEquals(tup.getSource().getClassName(), mc.getClassName());
                 }
             }
         }
     }
 
     @Test
-    public void testStoreAndLoad() {
-        GenericParser gp = null;
-        try {
-            gp = new GenericParser(grammar);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void testStoreAndLoad() throws CompilationException {
+        GenericParser gp = assertDoesNotThrow(() -> new GenericParser(grammar));
 
-        Assertions.assertNotNull(gp);
+        assertNotNull(gp);
 
-        File file = null;
-        try {
-            file = File.createTempFile("temp", Long.toString(System
-                    .nanoTime
-                    ()));
-        } catch (IOException e) {
-            Assertions.assertTrue(false);
-        }
+        File file = assertDoesNotThrow(() -> File.createTempFile("temp", Long.toString(System.nanoTime())));
 
         file.mkdir();
 
-        boolean compile;
-        try {
-            gp.compile();
-            compile = true;
-        } catch (CompilationException e) {
-            compile = false;
-        }
-
-        Assertions.assertTrue(compile);
+        gp.compile();
 
         String s = FileUtils.loadFileContent(sfile.getAbsolutePath());
 
-        Assertions.assertTrue(s != null && !s.isEmpty());
+        assertTrue(s != null && !s.isEmpty());
 
 
-        try {
+        assertDoesNotThrow(() -> {
             gp.parse(s);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.assertFalse(true);
-        }
+        });
 
-        try {
+        assertDoesNotThrow(() -> {
             gp.store(file.getAbsolutePath(), true);
-        } catch (SerializationException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.assertFalse(true);
-        }
+        });
 
-        GenericParser cgp = null;
+        GenericParser cgp = assertDoesNotThrow(() -> GenericParser.load(file.getAbsolutePath()));
 
-        try {
-            cgp = GenericParser.load(file.getAbsolutePath());
-        } catch (DeserializationException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.assertFalse(true);
-        }
 
-        try {
+        assertDoesNotThrow(() -> {
             cgp.parse(s);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.assertFalse(true);
-        }
+        });
 
         DefaultTreeListener dlist = new DefaultTreeListener();
         cgp.setListener(dlist);
 
-        try {
+        assertDoesNotThrow(() -> {
             cgp.parse(s);
-        } catch (IllegalWorkflowException | ParsingException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.assertFalse(true);
-        }
+        });
 
-        Assertions.assertTrue(dlist.getParseTree() != null);
+        assertNotNull(dlist.getParseTree());
 
         LOGGER.debug(dlist.getParseTree().toDot());
     }

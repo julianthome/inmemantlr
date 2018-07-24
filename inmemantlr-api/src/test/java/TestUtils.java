@@ -36,18 +36,18 @@ public class TestUtils {
     public void testEscapeUtils() {
         String sorig = "+{}()[]&^-?*\"$<>.|#\\\"";
         String sesc = EscapeUtils.escapeSpecialCharacters(sorig);
-        Assertions.assertEquals(sesc, "\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"");
+        Assertions.assertEquals("\\+\\{\\}\\(\\)\\[\\]\\&\\^\\-\\?\\*\\\"\\$\\<\\>\\.\\|\\#\\\\\"", sesc);
         String suesc = EscapeUtils.unescapeSpecialCharacters(sesc);
-        Assertions.assertEquals(suesc, sorig);
+        Assertions.assertEquals(sorig, suesc);
 
-        Assertions.assertEquals(EscapeUtils.escapeSpecialCharacters(null), "");
-        Assertions.assertEquals(EscapeUtils.unescapeSpecialCharacters(null), "");
+        Assertions.assertEquals("", EscapeUtils.escapeSpecialCharacters(null));
+        Assertions.assertEquals("", EscapeUtils.unescapeSpecialCharacters(null));
     }
 
     @Test
     public void testFileUtils() {
-        Assertions.assertEquals(FileUtils.loadFileContent(""), null);
-        Assertions.assertEquals(FileUtils.getStringFromStream(null), null);
+        Assertions.assertNull(FileUtils.loadFileContent(""));
+        Assertions.assertNull(FileUtils.getStringFromStream(null));
     }
 
 }

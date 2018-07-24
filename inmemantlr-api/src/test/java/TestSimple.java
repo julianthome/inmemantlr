@@ -25,7 +25,6 @@
  **/
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +39,8 @@ import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestSimple {
@@ -68,7 +69,7 @@ public class TestSimple {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         // this example shows you how one could use inmemantlr for incremental parsing
         try {
@@ -76,11 +77,11 @@ public class TestSimple {
             gp.parse("PRINT a+b");
             parseTree = t.getParseTree();
             LOGGER.debug(parseTree.toDot());
-            Assertions.assertEquals(parseTree.getNodes().size(), 6);
+            assertEquals(6, parseTree.getNodes().size());
             gp.parse("PRINT \"test\"");
             parseTree = t.getParseTree();
             LOGGER.debug(parseTree.toDot());
-            Assertions.assertEquals(parseTree.getNodes().size(), 4);
+            assertEquals(4, parseTree.getNodes().size());
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -104,28 +105,15 @@ public class TestSimple {
 
         gp.setListener(t);
 
-        boolean compile;
-        try {
-            gp.compile();
-            compile = true;
-        } catch (CompilationException e) {
-            compile = false;
-            LOGGER.debug(e.getMessage());
-        }
+        assertDoesNotThrow(gp::compile);
 
-        Assertions.assertTrue(compile);
+        ParserRuleContext ctx = assertDoesNotThrow(() -> gp.parse(toParse));
 
-        try {
-            ParserRuleContext ctx = gp.parse(toParse);
-
-            LOGGER.info("ctx {}", ctx.getChild(0).getText());
-        } catch (IllegalWorkflowException | ParsingException e) {
-            Assertions.assertTrue(false);
-        }
+        LOGGER.info("ctx {}", ctx.getChild(0).getText());
 
         ParseTree a = t.getParseTree();
 
-        Assertions.assertTrue(a.getNodes().size() > 1);
+        assertTrue(a.getNodes().size() > 1);
 
         LOGGER.debug(a.toDot());
 
@@ -158,7 +146,7 @@ public class TestSimple {
             LOGGER.debug(e.getMessage());
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         try {
             gp.parse(toParse);
@@ -168,7 +156,7 @@ public class TestSimple {
 
         ParseTree a = t.getParseTree();
 
-        Assertions.assertEquals(a.getNodes().size(), 4);
+        assertEquals(4, a.getNodes().size());
 
         LOGGER.debug(ParseTreeSerializer.INSTANCE.toDot(a));
     }

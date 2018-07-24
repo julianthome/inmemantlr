@@ -24,7 +24,6 @@
  * SOFTWARE.
  **/
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
@@ -32,11 +31,12 @@ import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.exceptions.ParsingException;
 import org.snt.inmemantlr.listener.DefaultTreeListener;
 import org.snt.inmemantlr.tree.ParseTree;
+import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.snt.inmemantlr.utils.FileUtils.getStringFromStream;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestDoubleParse {
 
@@ -51,9 +51,9 @@ public class TestDoubleParse {
                 ("inmemantlr/Java.g4");
              InputStream sfile1 = classLoader.getResourceAsStream("inmemantlr//HelloWorld.java");
              InputStream sfile2 = classLoader.getResourceAsStream("inmemantlr/HelloUniverse.java")) {
-            sgrammarcontent = getStringFromStream(sgrammar);
-            s1 = getStringFromStream(sfile1);
-            s2 = getStringFromStream(sfile2);
+            sgrammarcontent = FileUtils.getStringFromStream(sgrammar);
+            s1 = FileUtils.getStringFromStream(sfile1);
+            s2 = FileUtils.getStringFromStream(sfile2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +70,7 @@ public class TestDoubleParse {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         GenericParser gp2 = new GenericParser(sgrammarcontent);
 
@@ -81,13 +81,13 @@ public class TestDoubleParse {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
         DefaultTreeListener l1 = new DefaultTreeListener();
         DefaultTreeListener l2 = new DefaultTreeListener();
 
-        Assertions.assertFalse(l1.toString() == null);
-        Assertions.assertEquals(l1.toString(), "");
+        assertNotNull(l1.toString());
+        assertEquals("", l1.toString());
 
         gp1.setListener(l1);
         gp2.setListener(l2);
@@ -101,6 +101,6 @@ public class TestDoubleParse {
 
         ParseTree out1 = l1.getParseTree();
         ParseTree out2 = l2.getParseTree();
-        Assertions.assertFalse(out1.equals(out2));
+        assertNotEquals(out1, out2);
     }
 }
