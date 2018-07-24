@@ -24,18 +24,18 @@
  * SOFTWARE.
  **/
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParserToGo;
-import org.snt.inmemantlr.exceptions.InjectionException;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.tree.ParseTreeNode;
 import org.snt.inmemantlr.utils.InjectionPointDetector;
 import org.snt.inmemantlr.utils.ParseTreeManipulator;
 
 import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestParseTreeInjection {
@@ -92,15 +92,12 @@ public class TestParseTreeInjection {
                 "blockStatement");
 
 
-        try {
+        assertDoesNotThrow(() -> {
             ParseTreeManipulator.INTANCE.inject(pt,ipdb,inj);
             ParseTreeManipulator.INTANCE.inject(pt,ipda,inj);
-        } catch (InjectionException e) {
-            Assertions.assertTrue(false);
-            LOGGER.error(e.getMessage());
-        }
+        });
         
-        Assertions.assertEquals(pt.getNodes().size(), 94);
+        assertEquals(94, pt.getNodes().size());
 
     }
 

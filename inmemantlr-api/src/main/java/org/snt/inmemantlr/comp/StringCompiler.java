@@ -79,7 +79,7 @@ public class StringCompiler {
         mset.forEach(tup -> tup.getByteCodeObjects().forEach(bc -> cl.addClass(bc)));
     }
 
-    private static final Class[] parameters = new Class[]{URL.class};
+    private static final Class<?>[] parameters = new Class[]{URL.class};
 
     /**
      * do the compilation for the antlr artifacts
@@ -119,9 +119,9 @@ public class StringCompiler {
         JavaCompiler.CompilationTask compile = javac.getTask(out, fileManager,
                 dlistener, optionList, classes, cunit);
 
-        boolean ret = compile.call();
+        boolean failedCompilation = !compile.call();
 
-        if(!ret) {
+        if (failedCompilation) {
             throw new CompilationErrorException(out.toString());
         }
 
@@ -129,7 +129,7 @@ public class StringCompiler {
         // the corresponding byte code
         for (MemorySource ms : mset) {
             Set<MemoryByteCode> mb = fileManager.getByteCodeFromClass(ms.getClassName());
-            if (mb.size() == 0)
+            if (mb.isEmpty())
                 throw new IllegalArgumentException("MemoryByteCode must not be empty");
 
             // book keeping of source-bytecode tuples
@@ -144,7 +144,7 @@ public class StringCompiler {
      * @return a class
      */
     private Class<?> findClass(String cname) {
-        Class clazz;
+        Class<?> clazz;
         try {
             if (classes.containsKey(cname)) {
                 clazz = classes.get(cname);
@@ -214,7 +214,7 @@ public class StringCompiler {
 
         int cidx = 0;
 
-        for (Constructor c : cstr) {
+        for (Constructor<?> c : cstr) {
             LOGGER.debug(c.getParameters()[0].getType().toString());
             if (c.getParameterCount() == 1 && c.getParameters()[0].getType()
                     .toString().equals(CONSTRUCTOR_ARG)) {

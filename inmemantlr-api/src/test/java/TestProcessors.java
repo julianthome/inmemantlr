@@ -24,10 +24,7 @@
  * SOFTWARE.
  **/
 
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -35,14 +32,13 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParserToGo;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.utils.FileUtils;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestProcessors {
@@ -94,41 +90,24 @@ public class TestProcessors {
         String jxml = javaParseTree.toXml();
         String pxml = phpParseTree.toXml();
 
-        Assertions.assertNotNull(jxml);
-        Assertions.assertNotNull(pxml);
+        assertNotNull(jxml);
+        assertNotNull(pxml);
 
-        Assertions.assertFalse(jxml.isEmpty());
-        Assertions.assertFalse(pxml.isEmpty());
+        assertFalse(jxml.isEmpty());
+        assertFalse(pxml.isEmpty());
 
         LOGGER.debug(jxml);
         LOGGER.debug(pxml);
 
-        DocumentBuilder newDocumentBuilder = null;
-        try {
-            newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
+        DocumentBuilder newDocumentBuilder = assertDoesNotThrow(() -> DocumentBuilderFactory.newInstance().newDocumentBuilder());
 
-        try {
-            newDocumentBuilder.parse(new ByteArrayInputStream(jxml
-                    .getBytes()));
-        } catch (SAXException e) {
-            Assertions.assertFalse(true);
-        } catch (IOException e) {
-            Assertions.assertFalse(true);
-        }
+        assertDoesNotThrow(() -> {
+            newDocumentBuilder.parse(new ByteArrayInputStream(jxml.getBytes()));
+        });
 
-
-        try {
-            newDocumentBuilder.parse(new ByteArrayInputStream(pxml
-                    .getBytes()));
-        } catch (SAXException e) {
-            Assertions.assertFalse(true);
-        } catch (IOException e) {
-            Assertions.assertFalse(true);
-        }
-
+        assertDoesNotThrow(() -> {
+            newDocumentBuilder.parse(new ByteArrayInputStream(pxml.getBytes()));
+        });
     }
 
     @Test
@@ -136,27 +115,21 @@ public class TestProcessors {
         String jjson = javaParseTree.toJson();
         String pjson = phpParseTree.toJson();
 
-        Assertions.assertNotNull(jjson);
-        Assertions.assertNotNull(pjson);
+        assertNotNull(jjson);
+        assertNotNull(pjson);
 
-        Assertions.assertFalse(jjson.isEmpty());
-        Assertions.assertFalse(pjson.isEmpty());
+        assertFalse(jjson.isEmpty());
+        assertFalse(pjson.isEmpty());
 
         LOGGER.debug(jjson);
         LOGGER.debug(pjson);
 
-        try {
+        assertDoesNotThrow(() -> {
             new JsonParser().parse(jjson);
-        } catch (JsonIOException | JsonSyntaxException e) {
-            Assertions.assertFalse(true);
-        }
+        });
 
-
-        try {
+        assertDoesNotThrow(() -> {
             new JsonParser().parse(pjson);
-        } catch (JsonIOException | JsonSyntaxException e) {
-            Assertions.assertFalse(true);
-        }
-
+        });
     }
 }

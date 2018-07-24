@@ -35,7 +35,7 @@ import java.util.List;
 
 public class DefaultCompilerOptionsProvider implements CompilerOptionsProvider {
 
-    private List cp = new ArrayList();
+    private final Collection<String> cp = new ArrayList<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCompilerOptionsProvider.class);
 

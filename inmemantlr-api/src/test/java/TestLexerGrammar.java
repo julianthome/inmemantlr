@@ -26,18 +26,18 @@
 
 
 import org.antlr.v4.runtime.Token;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.GenericParser;
 import org.snt.inmemantlr.exceptions.CompilationException;
-import org.snt.inmemantlr.exceptions.IllegalWorkflowException;
 import org.snt.inmemantlr.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestLexerGrammar {
@@ -64,14 +64,9 @@ public class TestLexerGrammar {
             compile = false;
         }
 
-        Assertions.assertTrue(compile);
+        assertTrue(compile);
 
-        try {
-            List<Token> tokens = gp.lex("a09");
-            Assertions.assertEquals(tokens.size(), 2);
-        } catch (IllegalWorkflowException e) {
-            Assertions.assertFalse(true);
-        }
-
+        List<Token> tokens = assertDoesNotThrow(() -> gp.lex("a09"));
+        assertEquals(2, tokens.size());
     }
 }

@@ -35,7 +35,11 @@ import org.antlr.v4.codegen.CodeGenerator;
 import org.antlr.v4.misc.Graph;
 import org.antlr.v4.parse.ANTLRParser;
 import org.antlr.v4.semantics.SemanticPipeline;
-import org.antlr.v4.tool.*;
+import org.antlr.v4.tool.ANTLRMessage;
+import org.antlr.v4.tool.ErrorType;
+import org.antlr.v4.tool.Grammar;
+import org.antlr.v4.tool.GrammarTransformPipeline;
+import org.antlr.v4.tool.LexerGrammar;
 import org.antlr.v4.tool.ast.GrammarAST;
 import org.antlr.v4.tool.ast.GrammarASTErrorNode;
 import org.antlr.v4.tool.ast.GrammarRootAST;
@@ -47,7 +51,13 @@ import org.snt.inmemantlr.grammar.InmemantlrLexerGrammar;
 import org.snt.inmemantlr.utils.Tuple;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toCollection;
 
@@ -64,7 +74,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     private Map<String, String> tokvok = new HashMap<>();
 
-    private List<String> order = new Vector<>();
+    private List<String> order = new ArrayList<>();
     private Set<String> imported = new HashSet<>();
 
     private String parserName = "";
@@ -85,7 +95,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
     @Override
     public Grammar createGrammar(GrammarRootAST ast) {
-        final Grammar g;
+        Grammar g;
 
         LOGGER.debug("ast " + ast.getGrammarName());
 
@@ -186,7 +196,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
 
         LOGGER.debug("create grammar {}", ast.getGrammarName());
 
-        final Grammar g = createGrammar(ast);
+        Grammar g = createGrammar(ast);
         g.fileName = g.name;
 
         g.loadImportedGrammars();

@@ -119,7 +119,7 @@ public class TestGenericParser {
 
         Assertions.assertFalse(thrown);
         thrown = false;
-        Assertions.assertNotSame(gp.getListener(), null);
+        Assertions.assertNotSame(null, gp.getListener());
 
         // Correct workflow
         gp.setListener(new DefaultListener());

@@ -28,7 +28,13 @@ package org.snt.inmemantlr.comp;
 
 import org.antlr.v4.codegen.CodeGenPipeline;
 import org.antlr.v4.codegen.CodeGenerator;
-import org.antlr.v4.codegen.model.*;
+import org.antlr.v4.codegen.model.BaseListenerFile;
+import org.antlr.v4.codegen.model.BaseVisitorFile;
+import org.antlr.v4.codegen.model.LexerFile;
+import org.antlr.v4.codegen.model.ListenerFile;
+import org.antlr.v4.codegen.model.OutputFile;
+import org.antlr.v4.codegen.model.ParserFile;
+import org.antlr.v4.codegen.model.VisitorFile;
 import org.antlr.v4.parse.ANTLRParser;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -43,7 +49,11 @@ import org.snt.inmemantlr.grammar.InmemantlrGrammar;
 import org.snt.inmemantlr.memobjects.MemorySource;
 import org.stringtemplate.v4.ST;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * extended code gen pipeline for compiling
@@ -386,30 +396,30 @@ public class StringCodeGenPipeline extends CodeGenPipeline implements CunitProvi
 
     @Override
     public Collection<MemorySource> getItems() {
-        List<MemorySource> ret = new Vector<>();
+        Collection<MemorySource> ret = new ArrayList<>();
         if (hasLexer()) {
-            ret.add(new MemorySource(getLexerName(), getLexer().render()));
+            ret.add(new MemorySource(getLexerName(), lexer.render()));
         }
         if (hasBaseListener()) {
-            ret.add(new MemorySource(getBaseListenerName(), getBaseListener().render()));
+            ret.add(new MemorySource(getBaseListenerName(), baseListener.render()));
         }
         if (hasBaseVisitor()) {
-            ret.add(new MemorySource(getBaseVisitorName(), getBaseVisitor().render()));
+            ret.add(new MemorySource(getBaseVisitorName(), baseVisitor.render()));
         }
         if (hasParser()) {
-            ret.add(new MemorySource(getParserName(), getParser().render()));
+            ret.add(new MemorySource(getParserName(), parser.render()));
         }
         if (hasListener()) {
-            ret.add(new MemorySource(getListenerName(), getListener().render()));
+            ret.add(new MemorySource(getListenerName(), listener.render()));
         }
         if (hasVisitor()) {
-            ret.add(new MemorySource(getVisitorName(), getVisitor().render()));
+            ret.add(new MemorySource(getVisitorName(), visitor.render()));
         }
         return ret;
     }
 
     @Override
     public boolean hasItems() {
-        return getItems().size() > 0;
+        return !getItems().isEmpty();
     }
 }

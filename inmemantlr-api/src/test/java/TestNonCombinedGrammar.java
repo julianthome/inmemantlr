@@ -73,7 +73,7 @@ public class TestNonCombinedGrammar {
             ParseTree parseTree;
             gp.parse("select a from b;");
             parseTree = t.getParseTree();
-            Assertions.assertEquals(parseTree.getNodes().size(), 13);
+            Assertions.assertEquals(13, parseTree.getNodes().size());
             LOGGER.debug(parseTree.toDot());
         } catch (IllegalWorkflowException | ParsingException e) {
             LOGGER.error(e.getMessage(), e);

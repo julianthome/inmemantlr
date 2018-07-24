@@ -28,9 +28,10 @@ package org.snt.inmemantlr.tree;
 
 import org.snt.inmemantlr.exceptions.ParseTreeProcessorException;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * processor for processing a parse tree
@@ -42,7 +43,7 @@ public abstract class ParseTreeProcessor<R, T> {
 
     protected ParseTree parseTree = null;
     protected Map<ParseTreeNode, T> smap;
-    protected LinkedList<ParseTreeNode> active;
+    protected Queue<ParseTreeNode> active;
 
     private Map<ParseTreeNode, Integer> nmap;
 
@@ -55,7 +56,7 @@ public abstract class ParseTreeProcessor<R, T> {
         this.parseTree = parseTree;
         nmap = new HashMap<>();
         smap = new HashMap<>();
-        active = new LinkedList<>();
+        active = new ArrayDeque<>();
     }
 
     /**

@@ -39,6 +39,9 @@ import org.snt.inmemantlr.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class TestMalformed {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestMalformed.class);
@@ -58,12 +61,8 @@ public class TestMalformed {
     public void testGeneration() {
 
 
-        GenericParser gp = null;
-        try {
-            gp = new GenericParser(grammar);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        GenericParser gp = assertDoesNotThrow(() -> new GenericParser(grammar));
+
         Assertions.assertNotNull(gp);
 
         boolean compile;
@@ -84,18 +83,6 @@ public class TestMalformed {
 
         gp.setListener(dlist);
 
-        boolean thrown = false;
-
-        try {
-            gp.parse(s);
-        } catch (IllegalWorkflowException e) {
-            Assertions.assertTrue(false);
-        } catch (ParsingException e) {
-            LOGGER.error(e.getMessage());
-            thrown = true;
-        }
-
-        Assertions.assertTrue(thrown);
-
+        assertThrows(ParsingException.class, () -> gp.parse(s));
     }
 }

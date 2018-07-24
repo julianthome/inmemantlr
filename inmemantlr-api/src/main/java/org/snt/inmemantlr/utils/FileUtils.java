@@ -61,11 +61,10 @@ public final class FileUtils {
      */
     public static String loadFileContent(String path) {
         byte[] bytes;
-        try {
-            RandomAccessFile f = new RandomAccessFile(path, "r");
+        try (RandomAccessFile f = new RandomAccessFile(path, "r")) {
             bytes = new byte[(int) f.length()];
             f.read(bytes);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
         return new String(bytes);
@@ -94,7 +93,7 @@ public final class FileUtils {
     public static void writeStringToFile(String string, String file) throws
             FileExistsException {
 
-        LOGGER.debug("file " + file);
+        LOGGER.debug("file {}", file);
 
         if(Files.exists(Paths.get(file)))
             throw new FileExistsException("File " + file + " already exists");
@@ -104,10 +103,8 @@ public final class FileUtils {
 
         f.getParentFile().mkdirs();
 
-        try {
-            PrintWriter out = new PrintWriter(f);
+        try (PrintWriter out = new PrintWriter(f)) {
             out.write(string);
-            out.close();
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
             assert false;

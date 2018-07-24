@@ -52,7 +52,7 @@ public class TestGenericParserToGo {
 
         ParseTree pt = new GenericParserToGo(gfile).parse(cfile,"compilationUnit");
 
-        Assertions.assertEquals(pt.getNodes().size(), 60);
+        Assertions.assertEquals(60, pt.getNodes().size());
     }
 
 

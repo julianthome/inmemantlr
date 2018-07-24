@@ -41,7 +41,6 @@ public class MemoryTuple implements Serializable {
 
     private MemorySource source;
     private Set<MemoryByteCode> bytecodeObjects = new HashSet<>();
-    ;
     private String cname;
 
     public MemoryTuple() {
