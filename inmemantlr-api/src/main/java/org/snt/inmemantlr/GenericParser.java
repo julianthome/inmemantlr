@@ -650,11 +650,11 @@ public class GenericParser {
             GenericParserSerialize towrite = new GenericParserSerialize(getAllCompiledObjects(), parserName, lexerName);
             oOut.writeObject(towrite);
         } catch (NotSerializableException e) {
-            LOGGER.error("Not serializable!", e);
+            LOGGER.error("Not serializable:", e.getMessage());
         } catch (FileNotFoundException e) {
-            LOGGER.error("Output file cannot be found!", e);
+            LOGGER.error("Output file cannot be found: {}", e.getMessage());
         } catch (IOException e) {
-            LOGGER.error("IO Error", e);
+            LOGGER.error("IO Error: {}", e.getMessage());
         }
     }
 
