@@ -26,7 +26,11 @@
 
 package org.snt.inmemantlr.tree;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,12 +41,8 @@ import static java.util.stream.Collectors.toSet;
  */
 public class ParseTree {
 
-    private ParseTreeNode root = null;
-    List<ParseTreeNode> nodes = null;
-
-    private ParseTree() {
-        nodes = new Vector<>();
-    }
+    private final ParseTreeNode root;
+    List<ParseTreeNode> nodes = new ArrayList<>();
 
     /**
      * constructor
@@ -53,7 +53,6 @@ public class ParseTree {
      * @param label value of root non-terminal node
      */
     public ParseTree(String nt, String label) {
-        this();
         root = newNode(null, nt, label,0,0);
     }
 
@@ -65,8 +64,7 @@ public class ParseTree {
      * @param tree tree to be duplicated
      */
     public ParseTree(ParseTree tree) {
-        this();
-        root = newNode(tree.getRoot());
+        root = newNode(tree.root);
     }
 
     /**
@@ -76,7 +74,6 @@ public class ParseTree {
      * @param nod root node
      */
     private ParseTree(ParseTreeNode nod) {
-        this();
         root = newNode(nod);
     }
 
@@ -175,8 +172,8 @@ public class ParseTree {
     public boolean replaceSubtree(ParseTree oldTree, ParseTree newTree) {
         if (hasSubtree(oldTree)) {
             nodes.stream()
-                    .filter(n -> oldTree.getRoot().equals(n))
-                    .forEach(n -> n.getParent().replaceChild(oldTree.getRoot(), newTree.getRoot()));
+                    .filter(oldTree.root::equals)
+                    .forEach(n -> n.getParent().replaceChild(oldTree.root, newTree.root));
             nodes.addAll(newTree.nodes);
             return nodes.removeAll(oldTree.nodes);
         }
@@ -192,7 +189,7 @@ public class ParseTree {
     public boolean removeSubtree(ParseTree subtree) {
         if (hasSubtree(subtree)) {
             nodes.stream()
-                    .filter(n -> subtree.getRoot().equals(n))
+                    .filter(subtree.root::equals)
                     .forEach(n -> n.getParent().delChild(n));
             return nodes.removeAll(subtree.nodes);
         }
@@ -244,8 +241,8 @@ public class ParseTree {
      * @return true if subtree is present in actual one, false otherwise
      */
     public boolean hasSubtree(ParseTree subtree) {
-        Set<ParseTree> subtrees = getSubtrees(n -> subtree.getRoot().equals(n));
-        return subtrees.stream().filter(subtree::equals).count() > 0;
+        Set<ParseTree> subtrees = getSubtrees(subtree.root::equals);
+        return subtrees.stream().anyMatch(subtree::equals);
     }
 
     /**
@@ -255,7 +252,7 @@ public class ParseTree {
      * @return subree
      */
     public ParseTree getSubtree(ParseTree subtree) {
-        Set<ParseTree> subtrees = getSubtrees(n -> n.equals(subtree.getRoot()));
+        Set<ParseTree> subtrees = getSubtrees(n -> n.equals(subtree.root));
         return subtrees.stream().filter(subtree::equals).findFirst().orElse(null);
     }
 
@@ -281,8 +278,8 @@ public class ParseTree {
     }
 
     public void topoSort() {
-        List<ParseTreeNode> nods = new Vector<>();
-        topoSortRec(nods, this.getRoot());
+        List<ParseTreeNode> nods = new ArrayList<>();
+        topoSortRec(nods, root);
         assert nods.size() == this.nodes.size();
         this.nodes = nods;
     }
@@ -294,6 +291,6 @@ public class ParseTree {
 
         ParseTree parseTree = (ParseTree) o;
         // will recursively check AST nodes
-        return root.equals(parseTree.getRoot());
+        return root.equals(parseTree.root);
     }
 }

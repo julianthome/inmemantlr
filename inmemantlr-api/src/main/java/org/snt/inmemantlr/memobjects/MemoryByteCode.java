@@ -40,11 +40,8 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
     private static final long serialVersionUID = 2268365481259432191L;
 
     private transient ByteArrayOutputStream baos;
-    private String cname;
+    private final String cname;
     private byte[] bytebuf = null;
-
-    public MemoryByteCode() {
-    }
 
     /**
      * constructor
@@ -112,7 +109,7 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
 
     @Override
     public int hashCode() {
-        return getClassName().hashCode();
+        return cname.hashCode();
     }
 
     @Override
@@ -121,6 +118,6 @@ public class MemoryByteCode extends MemoryFile implements Serializable {
             return false;
 
         MemoryByteCode mb = (MemoryByteCode) o;
-        return mb.getClassName().equals(cname);
+        return mb.cname.equals(cname);
     }
 }

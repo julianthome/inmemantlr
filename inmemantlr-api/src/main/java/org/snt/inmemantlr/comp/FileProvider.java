@@ -28,17 +28,16 @@ package org.snt.inmemantlr.comp;
 
 import org.snt.inmemantlr.memobjects.MemorySource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
 
 public class FileProvider implements CunitProvider {
 
-    private List<MemorySource> ret = new Vector<>();
+    private final Collection<MemorySource> ret = new ArrayList<>();
 
     public void addFiles(MemorySource... ms) {
-        Arrays.stream(ms).forEach(f -> ret.add(f));
+        ret.addAll(Arrays.asList(ms));
     }
 
     @Override
@@ -48,7 +47,7 @@ public class FileProvider implements CunitProvider {
 
     @Override
     public boolean hasItems() {
-        return ret.size() > 0;
+        return !ret.isEmpty();
     }
 
     @Override

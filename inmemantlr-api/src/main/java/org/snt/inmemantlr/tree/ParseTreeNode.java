@@ -28,8 +28,8 @@ package org.snt.inmemantlr.tree;
 
 import org.snt.inmemantlr.utils.EscapeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class ParseTreeNode {
 
@@ -53,7 +53,7 @@ public class ParseTreeNode {
     private ParseTreeNode(ParseTree tree) {
         this.tree = tree;
         id = cnt++;
-        children = new Vector<>();
+        children = new ArrayList<>();
     }
 
     /**
@@ -258,7 +258,8 @@ public class ParseTreeNode {
      * check whether node is terminal
      * @return true if node is a terminal node
      */
-    public boolean isTerminal() { return isLeaf() && getRule().isEmpty(); }
+    public boolean isTerminal() {
+        return isLeaf() && ntype.isEmpty(); }
 
     /**
      * get label
@@ -280,7 +281,7 @@ public class ParseTreeNode {
             return false;
 
         ParseTreeNode n = (ParseTreeNode) o;
-        return n.getId() == getId() && n.ntype.equals(ntype) &&
+        return n.id == id && n.ntype.equals(ntype) &&
                 n.label.equals(label) && children.equals(n.children);
     }
 

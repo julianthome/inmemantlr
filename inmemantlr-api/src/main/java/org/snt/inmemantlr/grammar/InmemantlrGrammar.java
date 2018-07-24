@@ -67,13 +67,11 @@ public class InmemantlrGrammar extends Grammar {
             for (String t : tokens.keySet()) {
                 if (t.charAt(0) == '\'') {
                     ret = defineStringLiteral(t, tokens.get(t));
-                    if (ret == Token.INVALID_TYPE)
-                        throw new IllegalArgumentException("Token must not be INVALID_TYPE");
                 } else {
                     ret = defineTokenName(t, tokens.get(t));
-                    if (ret == Token.INVALID_TYPE)
-                        throw new IllegalArgumentException("Token must not be INVALID_TYPE");
                 }
+                if (ret == Token.INVALID_TYPE)
+                    throw new IllegalArgumentException("Token must not be INVALID_TYPE");
                 LOGGER.debug("token {} {}", t, tokens.get(t));
             }
         }

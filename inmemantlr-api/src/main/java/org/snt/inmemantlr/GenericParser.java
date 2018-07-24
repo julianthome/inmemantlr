@@ -45,6 +45,7 @@ import org.snt.inmemantlr.memobjects.MemoryTupleSet;
 import org.snt.inmemantlr.stream.DefaultStreamProvider;
 import org.snt.inmemantlr.stream.StreamProvider;
 import org.snt.inmemantlr.tool.InmemantlrErrorListener;
+import org.snt.inmemantlr.tool.InmemantlrErrorListener.Type;
 import org.snt.inmemantlr.tool.InmemantlrTool;
 import org.snt.inmemantlr.tool.ToolCustomizer;
 import org.snt.inmemantlr.utils.FileUtils;
@@ -55,9 +56,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
-import static org.apache.commons.io.IOUtils.closeQuietly;
 
 /**
  * generic parser
@@ -267,7 +267,7 @@ public class GenericParser {
      * set classpath
      * @param cp list of items to add to classpath
      */
-    public void setClassPath(List cp) {
+    public void setClassPath(Collection<String> cp) {
         oprov.setClassPath(cp);
     }
 
@@ -572,10 +572,11 @@ public class GenericParser {
             return null;
         }
 
-        Set<String> msgs = el.getLog().entrySet().stream().filter(e -> e.getKey
-                () ==
-                InmemantlrErrorListener.Type.SYNTAX_ERROR).map(e -> e
-                .getValue()).collect(Collectors.toSet());
+        Set<String> msgs = el.getLog().entrySet()
+                .stream()
+                .filter(e -> e.getKey() == Type.SYNTAX_ERROR)
+                .map(Entry::getValue)
+                .collect(Collectors.toSet());
 
 
         if (msgs.size() > 0) {
@@ -644,33 +645,16 @@ public class GenericParser {
             throw new SerializationException("You have not compiled your grammar yet - there are no antlr objects available");
         }
 
-        FileOutputStream f_out;
-        ObjectOutputStream o_out;
 
-        try {
-            f_out = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new SerializationException("output file cannot be found");
-        }
-
-        try {
-            o_out = new ObjectOutputStream(f_out);
-        } catch (IOException e) {
-            throw new SerializationException("object output stream cannot be created");
-        }
-
-        GenericParserSerialize towrite = new GenericParserSerialize
-                (getAllCompiledObjects(), parserName, lexerName);
-
-        try {
-            o_out.writeObject(towrite);
+        try (FileOutputStream fOut = new FileOutputStream(file); ObjectOutput oOut = new ObjectOutputStream(fOut)) {
+            GenericParserSerialize towrite = new GenericParserSerialize(getAllCompiledObjects(), parserName, lexerName);
+            oOut.writeObject(towrite);
         } catch (NotSerializableException e) {
-            LOGGER.error("Not serializable {}", e.getMessage());
+            LOGGER.error("Not serializable!", e);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Output file cannot be found!", e);
         } catch (IOException e) {
-            throw new SerializationException("error occurred while writing object", e);
-        } finally {
-            closeQuietly(o_out);
-            closeQuietly(f_out);
+            LOGGER.error("IO Error", e);
         }
     }
 
@@ -728,52 +712,30 @@ public class GenericParser {
 
         LOGGER.debug("load file {}", loc.getAbsolutePath());
 
-        FileInputStream f_in;
-        ObjectInputStream o_in;
+        try (FileInputStream f_in = new FileInputStream(file); ObjectInputStream o_in = new ObjectInputStream(f_in)) {
+            Object toread = o_in.readObject();
 
-        try {
-            f_in = new FileInputStream(file);
+            if (!(toread instanceof GenericParserSerialize))
+                throw new IllegalArgumentException("toread must be an instance of GenericParserSerialize");
+
+            GenericParserSerialize gin = (GenericParserSerialize) toread;
+
+            GenericParser gp = new GenericParser(gin.getMemoryTupleSet(), gin
+                    .getParserName(), gin.getLexerName());
+
+            if (!gp.antrlObjectsAvailable()) {
+                throw new DeserializationException("there are no antlr objects available in " + file);
+            }
+
+            return gp;
         } catch (FileNotFoundException e) {
-            throw new DeserializationException("input file " + file + " cannot be found");
-        }
-
-        try {
-            o_in = new ObjectInputStream(f_in);
-        } catch (IOException e) {
-            throw new DeserializationException("object input stream cannot be found", e);
-        }
-
-        Object toread;
-        try {
-            toread = o_in.readObject();
+            throw new DeserializationException(String.format("Problem loading %s", file), e);
         } catch (NotSerializableException e) {
             throw new DeserializationException("cannot read object", e);
         } catch (ClassNotFoundException e) {
             throw new DeserializationException("cannot find class", e);
         } catch (IOException e) {
             throw new DeserializationException(e.getMessage(), e);
-        } finally {
-            try {
-                o_in.close();
-                f_in.close();
-            } catch (IOException e) {
-                ;
-            }
-
         }
-
-        if (!(toread instanceof GenericParserSerialize))
-            throw new IllegalArgumentException("toread must be an instance of GenericParserSerialize");
-
-        GenericParserSerialize gin = (GenericParserSerialize) toread;
-
-        GenericParser gp = new GenericParser(gin.getMemoryTupleSet(), gin
-                .getParserName(), gin.getLexerName());
-
-        if (!gp.antrlObjectsAvailable()) {
-            throw new DeserializationException("there are no antlr objects available in " + file);
-        }
-
-        return gp;
     }
 }
