@@ -84,7 +84,7 @@ The code sample below shows how you could get started with inmemantlr. The
 class `GenericParserToGo` provides a very simple API that should be sufficient
 for most of the use cases: you only have to provide the ANTLR grammar file in
 conjunction with the file/string to parse, and a call to `parse()` (with
-the string and starting-rule as parameters) will returnthe corresponding parse
+the string and starting-rule as parameters) will return the corresponding parse
 tree.
 
 
