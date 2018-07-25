@@ -586,8 +586,7 @@ public class GenericParser {
             throw new ParsingException(result);
         }
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(listener, data);
+        ParseTreeWalker.DEFAULT.walk(listener, data);
         return data;
     }
 
