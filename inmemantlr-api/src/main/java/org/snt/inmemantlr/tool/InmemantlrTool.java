@@ -179,9 +179,7 @@ public class InmemantlrTool extends org.antlr.v4.Tool {
      * @return package prefix
      */
     public String getPackagePrefix() {
-        return genPackage != null && genPackage.length() > 0 ? genPackage + "" +
-                "." :
-                "";
+        return genPackage != null && !genPackage.isEmpty() ? genPackage + "." : "";
     }
 
     /**

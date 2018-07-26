@@ -579,11 +579,8 @@ public class GenericParser {
                 .collect(Collectors.toSet());
 
 
-        if (msgs.size() > 0) {
-            String result = msgs
-                    .stream()
-                    .collect(Collectors.joining());
-            throw new ParsingException(result);
+        if (!msgs.isEmpty()) {
+            throw new ParsingException(String.join("", msgs));
         }
 
         ParseTreeWalker.DEFAULT.walk(listener, data);
