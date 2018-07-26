@@ -35,9 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.snt.inmemantlr.tree.ParseTree;
 import org.snt.inmemantlr.tree.ParseTreeNode;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 import java.util.function.Predicate;
 
 /**
@@ -49,8 +50,8 @@ public class DefaultTreeListener extends DefaultListener {
 
     private static final long serialVersionUID = 5637734678821255670L;
 
-    protected Stack<String> sctx = new Stack<>();
-    protected StringBuffer glob = new StringBuffer();
+    protected Deque<String> sctx = new ArrayDeque<>();
+    protected StringBuilder glob = new StringBuilder();
     protected ParseTree parseTree = null;
     protected ParseTreeNode nodeptr = null;
     protected Predicate<String> filter = null;
