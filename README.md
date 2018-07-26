@@ -18,6 +18,7 @@ All of the above-mentioned inmemantlr features are illustrated by
 examples please have a look at [grammars-v4](#grammars-v4)).
 
 # Status
+
 [![Linux Build Status](https://api.travis-ci.org/julianthome/inmemantlr.svg?branch=master)][travis]
 [![Test Coverage](https://codecov.io/gh/julianthome/inmemantlr/branch/master/graph/badge.svg)][coverage]
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr/badge.svg)][mcentral]
@@ -25,6 +26,13 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 [travis]: https://travis-ci.org/julianthome/inmemantlr
 [coverage]: https://codecov.io/gh/julianthome/inmemantlr
 [mcentral]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/inmemantlr
+
+# Authors and major contributors
+
+- Julian Thome, julian.thome@gmail.com, main author
+- [Alan Steward](https://github.com/alankstewart)(code style improvements, performance improvements, Tool customization)
+- Radoslaw Cymer (bugfixes, code style improvements, typos in Javadoc)
+- [Nikolas Havrikov](https://github.com/havrikov) (code style, performance improvements)
 
 # TOC
 
