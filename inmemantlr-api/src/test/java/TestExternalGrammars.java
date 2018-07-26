@@ -583,7 +583,7 @@ public class TestExternalGrammars {
                 "CSharp" + "(Lexer|PreprocessorParser|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        assertFalse(mfiles.isEmpty());
 
         GenericParser mparser = null;
         try {
@@ -619,7 +619,7 @@ public class TestExternalGrammars {
         Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches("TSql(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        assertFalse(mfiles.isEmpty());
 
         GenericParser mparser = null;
         try {
@@ -693,7 +693,7 @@ public class TestExternalGrammars {
                 "MySql" + "(Lexer|Parser).g4")).collect
                 (Collectors.toSet());
 
-        assertTrue(mfiles.size() > 0);
+        assertFalse(mfiles.isEmpty());
 
         GenericParser mparser = null;
         try {

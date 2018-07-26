@@ -85,7 +85,7 @@ public class MemoryTokenVocabParser extends TokenVocabParser {
                 maxTokenType = Math.max(maxTokenType, tokenType);
                 lineNum++;
             } else {
-                if (tokenDef.length() > 0) { // ignore blank lines
+                if (!tokenDef.isEmpty()) { // ignore blank lines
                     LOGGER.error(vocabName + CodeGenerator.VOCAB_FILE_EXTENSION,
                             " bad token def: " + tokenDef,
                             lineNum);
