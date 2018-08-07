@@ -89,7 +89,7 @@ exception handling is omitted for all of the following examples.
 ## Get started
 
 The code sample below shows how you could get started with inmemantlr. The
-class `GenericParserToGo` provides a very simple API that should be sufficient
+class `GenericParserToGo` (available as of release 1.6) provides a very simple API that should be sufficient
 for most of the use cases: you only have to provide the ANTLR grammar file in
 conjunction with the file/string to parse, and a call to `parse()` (with
 the string and starting-rule as parameters) will return the corresponding parse
@@ -116,7 +116,7 @@ gp.setListener(new DefaultListener());
 // 4. compile Lexer and parser in-memory
 gp.compile();
 // 5. parse the string that represents the content of HelloWorld.java
-ParserRuleContext ctx = gp.parse(s, "compilationUnit");
+ParserRuleContext ctx = gp.parse(s, "compilationUnit", GenericParser.CaseSensitiveType.NONE);
 ```
 
 ## Parse tree generation
@@ -141,8 +141,7 @@ DefaultTreeListener dlist = new DefaultTreeListener();
 gp.setListener(dlist);
 gp.compile();
 
-ParserRuleContext ctx = gp.parse(s);
-
+ParserRuleContext ctx = gp.parse(s, "compilationUnit", GenericParser.CaseSensitiveType.NONE);
 // get access to the parse tree of inmemantlr
 ParseTree pt = dlist.getParseTree();
 ```
