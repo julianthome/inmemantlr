@@ -21,16 +21,17 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>9</java.version>
+        <java.version>10</java.version>
         <gpgplugin.version>1.6</gpgplugin.version>
-        <javadocplugin.version>3.0.1</javadocplugin.version>
+        <javadocplugin.version>3.0.0</javadocplugin.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.version>5.2.0</junit.version>
         <antlr.version>4.7.1</antlr.version>
         <commonsio.version>2.6</commonsio.version>
         <commonscli.version>1.4</commonscli.version>
-        <commonstext.version>1.3</commonstext.version>
-        <surefire.version>2.21.0</surefire.version>
+        <commonstext.version>1.4</commonstext.version>
+        <surefire.version>2.22.0</surefire.version>
+        <mvncompplugin.version>3.8.0</mvncompplugin.version>
     </properties>
 
     <licenses>
@@ -107,7 +108,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>${mvncompplugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -172,16 +173,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-    </repositories>
-
 </project>
