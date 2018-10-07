@@ -750,9 +750,9 @@ public class TestExternalGrammars {
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
 
-    @Test
-    public void testJavascript() {
-
+//    @Test
+//    public void testJavascript() {
+//
 //        if (!toCheck("javascript"))
 //            return;
 //
@@ -799,6 +799,6 @@ public class TestExternalGrammars {
 //        jParser.setListener(mdt);
 //
 //        verify(jParser, s.examples, s.nexamples, "program");
-    }
+//    }
 
 }
