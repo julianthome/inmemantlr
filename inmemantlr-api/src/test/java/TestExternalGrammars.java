@@ -66,6 +66,7 @@ public class TestExternalGrammars {
             "php",  // php is handled by an extra test case
             "stringtemplate",  // stringtemplate is handled by an extra case
             "python2", // seems to be broken
+            "python3", // seems to be broken
             "swift2", // handled by extra testcase
             "swift3", // handled by extra testcase
             "swift-fin",
