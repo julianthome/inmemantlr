@@ -32,7 +32,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 - Julian Thome, julian.thome@gmail.com, main author
 - [Alan Stewart](https://github.com/alankstewart) (code style improvements, performance improvements, Tool customization)
 - Radoslaw Cymer (bugfixes, code style improvements, typos in Javadoc)
-- [Nikolas Havrikov](https://github.com/havrikov) (code style, performance improvements)
+- [Nikolas Havrikov](https://github.com/havrikov) (code style, bugfixes, performance improvements)
 
 # TOC
 
