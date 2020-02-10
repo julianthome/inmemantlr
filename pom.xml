@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr</artifactId>
-    <version>1.6</version>
+    <version>1.7.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -59,7 +59,7 @@
         <url>https://github.com/julianthome/inmemantlr/tree/master</url>
     </scm>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -68,6 +68,14 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
             </url>
+        </repository>
+    </distributionManagement>-->
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/julianthome/inmemantlr</url>
         </repository>
     </distributionManagement>
 
