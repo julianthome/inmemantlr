@@ -1,20 +1,20 @@
 /**
  * Inmemantlr - In memory compiler for Antlr 4
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,7 +59,7 @@ public class TestExternalGrammars {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestExternalGrammars.class);
 
     private static String[] special = {
-            "antlr4", // antlr4 is handled by an extra test case
+            "antlr/antlr4", // antlr4 is handled by an extra test case
             "aspectj", // have to manually adapt Java grammar
             "csharp", // csharp is handled by an extra test case
             "objc", // objc is handled by an extra test case
@@ -67,8 +67,8 @@ public class TestExternalGrammars {
             "stringtemplate",  // stringtemplate is handled by an extra case
             "python2", // seems to be broken
             "python3", // seems to be broken
-            "swift2", // handled by extra testcase
-            "swift3", // handled by extra testcase
+            "swift/swift2", // handled by extra testcase
+            "swift/swift3", // handled by extra testcase
             "swift-fin",
             "z", // handled by extra testcase
             "tsql", // handled by extra testcase
@@ -82,11 +82,13 @@ public class TestExternalGrammars {
             "javascript", // skip
             "antlr3", // skip
             "python3alt", //skip
-            "python3-py",// skip"  - @TODO: investigate this one
-            "python3-cs",// skip"  - @TODO: investigate this one
-            "solidity" //skip - @TODO: investigate this one
+            "python3-py",// skip
+            "python3-cs",// skip
+            "solidity", //skip
+            "typescript", //skip
+            "powerbuilder", //skip
+            "golang" //skip
     };
-
 
 
     static File grammar = null;
@@ -138,9 +140,9 @@ public class TestExternalGrammars {
     private GenericParser getParserForSubject(Subject s, ToolCustomizer tc) {
 
 
-        File [] gs = s.g4.toArray(new File[0]);
+        File[] gs = s.g4.toArray(new File[0]);
 
-        LOGGER.debug("gs {}" ,gs.length);
+        LOGGER.debug("gs {}", gs.length);
 
         GenericParser gp = assertDoesNotThrow(() -> new GenericParser(tc, gs));
 
@@ -156,7 +158,7 @@ public class TestExternalGrammars {
 
     private void verify(GenericParser p, Set<File> ok, Set<File> error, String ep) {
         DefaultTreeListener dt = new DefaultTreeListener();
-        verify(p, ok, ep, CaseSensitiveType.NONE,true);
+        verify(p, ok, ep, CaseSensitiveType.NONE, true);
         verify(p, error, ep, CaseSensitiveType.NONE, false);
     }
 
@@ -167,15 +169,15 @@ public class TestExternalGrammars {
 
         boolean parses;
 
-        for(File e : toParse){
+        for (File e : toParse) {
             try {
                 LOGGER.info("parseFile {} with {} and ept {}", e.getName(), p
                         .getParserName(), ep);
                 ParserRuleContext ctx = (ep != null && !ep.isEmpty()) ? p
-                        .parse(e,ep, CaseSensitiveType.NONE) :
+                        .parse(e, ep, CaseSensitiveType.NONE) :
                         p.parse(e, t);
                 //Assert.Assertions.assertNotNull(ctx);
-                if(ctx == null)
+                if (ctx == null)
                     parses = false;
                 else
                     parses = true;
@@ -188,7 +190,7 @@ public class TestExternalGrammars {
             assertEquals(shouldParse, parses);
 
 
-            if(shouldParse) {
+            if (shouldParse) {
                 ParseTree parseTree = dt.getParseTree();
                 assertNotNull(parseTree);
                 LOGGER.debug(parseTree.toDot());
@@ -217,13 +219,13 @@ public class TestExternalGrammars {
             subject.name = f.getName();
 
 
-            File [] xmla = f.listFiles(pathname -> pathname
-                            .getName()
-                            .equals("pom.xml"));
+            File[] xmla = f.listFiles(pathname -> pathname
+                    .getName()
+                    .equals("pom.xml"));
 
             List<File> xmls = Arrays.asList(xmla);
 
-            if(xmls.size() == 1) {
+            if (xmls.size() == 1) {
                 Document doc = null;
                 try {
                     doc = dbf.newDocumentBuilder().parse(xmls.get(0));
@@ -237,7 +239,7 @@ public class TestExternalGrammars {
 
                 NodeList nl = doc.getElementsByTagName("entryPoint");
 
-                if(nl.getLength() == 1) {
+                if (nl.getLength() == 1) {
                     subject.entrypoint = nl.item(0).getTextContent();
                 }
 
@@ -267,7 +269,7 @@ public class TestExternalGrammars {
                     FilenameUtils.getExtension(pathname.getName()).equals("errors")
             );
 
-            if(errors != null) {
+            if (errors != null) {
                 for (File ef : errors) {
                     String content = FileUtils.loadFileContent(ef);
                     subject.errors.put(FilenameUtils.getBaseName(ef.getName()), content);
@@ -311,11 +313,11 @@ public class TestExternalGrammars {
     @Test
     public void testGeneration() {
         subjects.values().stream().filter(Subject::hasExamples).
-                    forEach(s -> testSubject(s,true));
+                forEach(s -> testSubject(s, true));
     }
 
     private boolean toCheck(String tcase) {
-        if(subjects.containsKey(tcase))
+        if (subjects.containsKey(tcase))
             return true;
 
         return false;
@@ -387,7 +389,7 @@ public class TestExternalGrammars {
         gp.setParserName("org.antlr.parser.st4.STParser");
         gp.setLexerName("org.antlr.parser.st4.STLexer");
 
-        s.examples = s.examples.stream().filter( f -> f.getName().contains
+        s.examples = s.examples.stream().filter(f -> f.getName().contains
                 ("example1.st")
         ).collect(Collectors.toSet());
 
@@ -439,7 +441,6 @@ public class TestExternalGrammars {
     }
 
 
-
     @Test
     public void testEcma() {
 
@@ -460,37 +461,6 @@ public class TestExternalGrammars {
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
-
-
-
-
-    @Test
-    public void testPHP() {
-
-
-        if (!toCheck("php"))
-            return;
-
-        Subject s = subjects.get("php");
-
-        s.g4.removeIf(f -> f.getName().equals("PHPLexer_CSharpSharwell.g4") ||
-                f.getName().equals("PHPLexer_Python.g4"));
-
-        GenericParser gp = assertDoesNotThrow(() -> new GenericParser(s.g4.toArray(new File[0])));
-
-        assertDoesNotThrow(gp::compile);
-
-
-        gp.setStreamProvider(new CasedStreamProvider(CaseSensitiveType.LOWER));
-
-        s.examples = s.examples.stream().filter( f -> !f.getName().contains
-                ("alternativeSyntax.php")
-        ).collect(Collectors.toSet());
-
-        verify(gp, s.examples, s.nexamples, s.entrypoint);
-    }
-
-
 
     @Test
     public void testZ() {
@@ -574,7 +544,7 @@ public class TestExternalGrammars {
 
         // skipt this test if the runtime environment is windows for the time
         // being -- csharp grammar is runtime dependent
-        if(System.getProperty("os.name").toLowerCase().startsWith("win"))
+        if (System.getProperty("os.name").toLowerCase().startsWith("win"))
             return;
 
         if (!toCheck("csharp"))
@@ -608,7 +578,6 @@ public class TestExternalGrammars {
 
         verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
-
 
 
     @Test
@@ -645,43 +614,6 @@ public class TestExternalGrammars {
         s.examples.removeIf(f -> f.getName().equals("full_width_chars.sql"));
 
         verify(mparser, s.examples, s.nexamples, s.entrypoint);
-    }
-
-    @Test
-    public void testPlsql() {
-
-        // antlr test case fails
-        if (!toCheck("plsql"))
-            return;
-
-//        Subject s = subjects.get("plsql");
-//
-//        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
-//                "PlSql" + "(Lexer|Parser).g4")).collect
-//                (Collectors.toSet());
-//
-//        Assertions.assertTrue(mfiles.size() > 0);
-//
-//        GenericParser mparser = null;
-//        try {
-//            mparser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
-//        } catch (FileNotFoundException e) {
-//            Assertions.assertTrue(false);
-//        }
-//
-//
-//        Assertions.assertNotNull(mparser);
-//
-//        DefaultTreeListener mdt = new DefaultTreeListener();
-//
-//        assertDoesNotThrow(mparser::compile);
-//
-//        mparser.setStreamProvider(new CasedStreamProvider(GenericParser
-//                .CaseSensitiveType.UPPER));
-//
-//        mparser.setListener(mdt);
-//
-//        verify(mparser, s.examples, s.nexamples, s.entrypoint);
     }
 
     @Test
@@ -752,56 +684,4 @@ public class TestExternalGrammars {
 
         verify(gp, s.examples, s.nexamples, s.entrypoint);
     }
-
-//    @Test
-//    public void testJavascript() {
-//
-//        if (!toCheck("javascript"))
-//            return;
-//
-//        Subject s = subjects.get("javascript");
-//
-//        Set<File> mfiles = s.g4.stream().filter(v -> v.getName().matches(
-//                "JavaScript" + "(Lexer|Parser).g4")).collect
-//                (Collectors.toSet());
-//
-//        Assertions.assertTrue(mfiles.size() > 0);
-//
-//        GenericParser jParser = null;
-//        try {
-//            jParser = new GenericParser(mfiles.toArray(new File[mfiles.size()]));
-//        } catch (FileNotFoundException e) {
-//            Assertions.assertTrue(false);
-//        }
-//
-//        jParser.setParserName("JavaScriptParser");
-//        jParser.setLexerName("JavaScriptLexer");
-//
-//
-//        File util1 = new File
-//                ("src/test/resources/grammars-v4/javascript/Java" +
-//                        "/JavaScriptBaseLexer.java");
-//        File util2 = new File
-//                ("src/test/resources/grammars-v4/javascript/Java" +
-//                        "/JavaScriptBaseParser.java");
-//
-//        try {
-//            jParser.addUtilityJavaFiles(util1, util2);
-//        } catch (FileNotFoundException e) {
-//            LOGGER.error(e.getMessage());
-//            Assertions.assertTrue(false);
-//        }
-//
-//
-//        Assertions.assertNotNull(jParser);
-//
-//        DefaultTreeListener mdt = new DefaultTreeListener();
-//
-//        assertDoesNotThrow(jParser::compile);
-//
-//        jParser.setListener(mdt);
-//
-//        verify(jParser, s.examples, s.nexamples, "program");
-//    }
-
 }

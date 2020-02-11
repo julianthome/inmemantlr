@@ -59,7 +59,7 @@
         <url>https://github.com/julianthome/inmemantlr/tree/master</url>
     </scm>
 
-    <!--<distributionManagement>
+    <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -69,15 +69,15 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
             </url>
         </repository>
-    </distributionManagement>-->
+    </distributionManagement>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/julianthome/inmemantlr</url>
         </repository>
-    </distributionManagement>
+    </distributionManagement>-->
 
     <build>
         <plugins>
