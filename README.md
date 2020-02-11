@@ -1,7 +1,7 @@
 # inmemantlr
 
 inmemantlr provides the functionality of [ANTLR v4](http://www.antlr.org/) 
-through a simple API. Usually ANTLR requires the use to perform the grammar generation and compilation 
+through a simple API. Usually ANTLR requires the user to perform the grammar generation and compilation 
 steps. Instead, inmemantlr does all of these steps automatically
 and in-memory while keeping all of the original ANTLR objects accessible through
 its `GenericParser` class which is serializable, and hence, can be reused at a
