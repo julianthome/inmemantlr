@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -25,11 +25,11 @@
         <gpgplugin.version>1.6</gpgplugin.version>
         <javadocplugin.version>3.0.1</javadocplugin.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <junit.version>5.2.0</junit.version>
-        <antlr.version>4.8</antlr.version>
-        <commonsio.version>2.6</commonsio.version>
+        <junit.version>5.7.0</junit.version>
+        <antlr.version>4.9</antlr.version>
+        <commonsio.version>2.7</commonsio.version>
         <commonscli.version>1.4</commonscli.version>
-        <commonstext.version>1.4</commonstext.version>
+        <commonstext.version>1.9</commonstext.version>
         <surefire.version>2.22.0</surefire.version>
         <mvncompplugin.version>3.8.0</mvncompplugin.version>
     </properties>

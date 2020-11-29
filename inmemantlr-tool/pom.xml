@@ -7,7 +7,7 @@
         <groupId>com.github.julianthome</groupId>
         <artifactId>inmemantlr</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.7.0</version>
+        <version>1.8.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
