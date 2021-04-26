@@ -88,10 +88,13 @@ public class DefaultTreeListener extends DefaultListener {
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
         if(includeTerminals) {
+            Token token = terminalNode.getSymbol();
             ParseTreeNode n = parseTree.newNode(nodeptr,"",
                     terminalNode.toString(),
-                    terminalNode.getSymbol().getStartIndex(),
-                    terminalNode.getSymbol().getStopIndex());
+                    token.getStartIndex(),
+                    token.getStopIndex(),
+                    token.getLine(),
+                    token.getCharPositionInLine());
             nodeptr.addChild(n);
         }
     }
@@ -108,7 +111,9 @@ public class DefaultTreeListener extends DefaultListener {
             Token e = ctx.getStop();
             ParseTreeNode n = parseTree.newNode(nodeptr, rule, ctx.getText(),
                     s != null ? s.getStartIndex() : 0,
-                    e != null ? e.getStopIndex() : 0);
+                    e != null ? e.getStopIndex() : 0,
+                    s != null ? s.getLine() : 0,
+                    s != null ? s.getCharPositionInLine() : 0);
             nodeptr.addChild(n);
             nodeptr = n;
         }

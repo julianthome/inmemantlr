@@ -41,7 +41,9 @@ public enum ParseTreeManipulator {
                 toinj.getRule(),
                 toinj.getLabel(),
                 toinj.getSidx(),
-                toinj.getEidx());
+                toinj.getEidx(),
+                toinj.getLine(),
+                toinj.getCharPositionInLine());
 
 
         for (ParseTreeNode c : toinj.getChildren()) {
@@ -76,7 +78,9 @@ public enum ParseTreeManipulator {
                 toinject.getRoot().getFirstChild().getRule(),
                 toinject.getRoot().getFirstChild().getLabel(),
                 toinject.getRoot().getFirstChild().getSidx(),
-                toinject.getRoot().getFirstChild().getEidx());
+                toinject.getRoot().getFirstChild().getEidx(),
+                toinject.getRoot().getFirstChild().getLine(),
+                toinject.getRoot().getFirstChild().getCharPositionInLine());
 
         //par.addChild(nn);
 

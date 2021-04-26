@@ -42,6 +42,9 @@ public class ParseTreeNode {
     private int sidx = 0;
     private int eidx = 0;
 
+    private int line = 0;
+    private int charPositionInLine = 0;
+
     private List<ParseTreeNode> children;
     private static int cnt = 0;
 
@@ -59,21 +62,25 @@ public class ParseTreeNode {
     /**
      * constructor
      *
-     * @param tree   tree to whom the node belongs to
-     * @param parent parent node
-     * @param nt     non terminal id
-     * @param sidx   start index
-     * @param eidx   end index
-     * @param label  label
+     * @param tree               tree to whom the node belongs to
+     * @param parent             parent node
+     * @param nt                 non terminal id
+     * @param sidx               start index
+     * @param eidx               end index
+     * @param label              label
+     * @param line               line
+     * @param charPositionInLine character position in line
      */
     protected ParseTreeNode(ParseTree tree, ParseTreeNode parent, String nt, String label, int
-            sidx, int eidx) {
+            sidx, int eidx, int line, int charPositionInLine) {
         this(tree);
         ntype = nt;
         this.label = label;
         this.parent = parent;
         this.sidx = sidx;
         this.eidx = eidx;
+        this.line = line;
+        this.charPositionInLine = charPositionInLine;
     }
 
     /**
@@ -89,6 +96,8 @@ public class ParseTreeNode {
         label = nod.label;
         this.eidx = nod.eidx;
         this.sidx = nod.sidx;
+        this.line = nod.line;
+        this.charPositionInLine = nod.charPositionInLine;
         for (ParseTreeNode c : nod.children) {
             ParseTreeNode cnod = new ParseTreeNode(tree, c);
             cnod.parent = this;
@@ -246,13 +255,28 @@ public class ParseTreeNode {
     }
 
     /**
-     * get ent index
+     * get end index
      * @return end index
      */
     public int getEidx() {
         return eidx;
     }
 
+    /**
+     * get line
+     * @return line
+     */
+    public int getLine() {
+        return line;
+    }
+
+    /**
+     * get character position in line
+     * @return character position in line
+     */
+    public int getCharPositionInLine() {
+        return charPositionInLine;
+    }
 
     /**
      * check whether node is terminal

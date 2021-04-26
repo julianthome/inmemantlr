@@ -53,7 +53,7 @@ public class ParseTree {
      * @param label value of root non-terminal node
      */
     public ParseTree(String nt, String label) {
-        root = newNode(null, nt, label,0,0);
+        root = newNode(null, nt, label,0,0,0,0);
     }
 
     /**
@@ -101,16 +101,19 @@ public class ParseTree {
     /**
      * create new ast node
      *
-     * @param parent parent node
-     * @param nt     name of node to be created
-     * @param label  value of node to be created
-     * @param sidx   start index
-     * @param eidx   end index
+     * @param parent              parent node
+     * @param nt                  name of node to be created
+     * @param label               value of node to be created
+     * @param sidx                start index
+     * @param eidx                end index
+     * @param line                line
+     * @param charPositionInLine  character position in line
      * @return newly created node
      */
     public ParseTreeNode newNode(ParseTreeNode parent, String nt, String label, int sidx,
-                                 int eidx) {
-        ParseTreeNode rn = new ParseTreeNode(this, parent, nt, label, sidx, eidx);
+                                 int eidx, int line, int charPositionInLine) {
+        ParseTreeNode rn = new ParseTreeNode(this, parent, nt, label, sidx, eidx,
+                                             line, charPositionInLine);
         nodes.add(rn);
         return rn;
     }
