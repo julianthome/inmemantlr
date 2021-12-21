@@ -11,8 +11,6 @@
     <modules>
         <!-- the inmemantlr.jar which is uploaded to maven central -->
         <module>inmemantlr-api</module>
-        <!-- the inmemantlr standalone tool -->
-        <module>inmemantlr-tool</module>
     </modules>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -24,15 +22,15 @@
         <java.version>8</java.version>
         <gpgplugin.version>1.6</gpgplugin.version>
         <javadocplugin.version>3.0.1</javadocplugin.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <junit.version>5.7.0</junit.version>
-        <antlr.version>4.9.2</antlr.version>
-        <commonsio.version>2.7</commonsio.version>
-        <commonscli.version>1.4</commonscli.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <junit.version>5.8.2</junit.version>
+        <antlr.version>4.9.3</antlr.version>
+        <commonsio.version>2.11.0</commonsio.version>
+        <commonscli.version>1.5.0</commonscli.version>
         <commonstext.version>1.9</commonstext.version>
-        <surefire.version>2.22.0</surefire.version>
+        <surefire.version>3.0.0-M3</surefire.version>
         <mvncompplugin.version>3.8.0</mvncompplugin.version>
-        <inmemantlr.version>1.9.1</inmemantlr.version>
+        <inmemantlr.version>1.9.2</inmemantlr.version>
     </properties>
 
     <licenses>
@@ -86,10 +84,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
-                <configuration>
-                    <!-- Travis build workaround -->
-                    <argLine>${argLine} -Xms1024m -Xmx2048m</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
