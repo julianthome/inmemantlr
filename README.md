@@ -34,6 +34,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
 - Radoslaw Cymer (bugfixes, code style improvements, typos in Javadoc)
 - [Nikolas Havrikov](https://github.com/havrikov) (code style, bugfixes, performance improvements)
 - [Calogero G. Zarba](https://github.com/calogero81) (feature improvements)
+- [dafei1288](https://github.com/dafei1288) (Maintainability)
 
 # TOC
 
