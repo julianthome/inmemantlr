@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.julianthome</groupId>
     <artifactId>inmemantlr</artifactId>
-    <version>1.9.0</version>
+    <version>1.9.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -21,7 +21,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>10</java.version>
+        <java.version>8</java.version>
         <gpgplugin.version>1.6</gpgplugin.version>
         <javadocplugin.version>3.0.1</javadocplugin.version>
         <slf4j.version>1.7.25</slf4j.version>
@@ -32,6 +32,7 @@
         <commonstext.version>1.9</commonstext.version>
         <surefire.version>2.22.0</surefire.version>
         <mvncompplugin.version>3.8.0</mvncompplugin.version>
+        <inmemantlr.version>1.9.1</inmemantlr.version>
     </properties>
 
     <licenses>
@@ -187,6 +188,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commonstext.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.julianthome</groupId>
+                <artifactId>inmemantlr-api</artifactId>
+                <version>${inmemantlr.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

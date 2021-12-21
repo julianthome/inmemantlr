@@ -87,7 +87,7 @@ public class TestParseTreeProcessor {
         ParseTree parseTree = dlist.getParseTree();
 
         // Process the tree bottom up
-        ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<>(parseTree) {
+        ParseTreeProcessor<String, String> processor = new ParseTreeProcessor<String, String>(parseTree) {
             int cnt = 0;
 
             @Override
