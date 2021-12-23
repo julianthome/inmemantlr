@@ -54,10 +54,7 @@ examples please have a look at [grammars-v4](#grammars-v4)).
   * [Parser serialization](#parser-serialization)
   * [grammars-v4](#grammars-v4)
 
-[Command-line Tool](#command-line-tool)
-
 [Licence](#licence)
-
 
 # Integration
 
@@ -398,39 +395,6 @@ git submodule init
 git submodule update
 mvn -Dtest=TestExternalGrammars test
 ```
-
-# Command-line Tool
-
-Besides the inmemantlr API which is desribed in more detail below, there is
-also an inmemantlr command-line tool which is well suited for the simple task
-of generating `.dot`, `.xml` or `.json` files based on parse trees that are
-derived from parsed text files.
-
-After creating the Maven package, the file `inmemantlr-tool-<version>.jar` can
-be found within the `inmemantlr-tool/target` directory. The standalone command
-line tool can be invoked with `java -jar inmemantlr-tool-<version>.jar` with
-the following options:
-
-```bash
-    --grmrfiles <grmrfiles>   comma-separated list of ANTLR files
- -h                           print this message
-    --infiles <infiles>       comma-separated list of files to parse
-    --outdir <outdir>         output directory in which the dot files will
-                              be created
-    --utilfiles <utilfiles>   comma-separated list of utility files to be
-                              added for compilation
-```
-
-If no output directory is specified, the generated dot content will be
-displayed on the console.
-
-The command `java -jar inmemantlr-tool-<version>.jar --grmrfiles Abnf.g4
---infiles iri.abnf,postal.abnf --outdir /tmp` will generate the files
-`/tmp/iri.dot` and `/tmp/postal.dot` from the generated parse trees. For
-automating the PDF generation and visualization of the dot files [this
-script](https://gist.github.com/julianthome/66a31203b9b25493fa2a43889f948212)
-might be helpful.
-
 
 # Licence
 
