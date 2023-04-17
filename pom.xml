@@ -27,7 +27,7 @@
         <antlr.version>4.9.3</antlr.version>
         <commonsio.version>2.11.0</commonsio.version>
         <commonscli.version>1.5.0</commonscli.version>
-        <commonstext.version>1.9</commonstext.version>
+        <commonstext.version>1.10.0</commonstext.version>
         <surefire.version>3.0.0-M3</surefire.version>
         <mvncompplugin.version>3.8.0</mvncompplugin.version>
         <inmemantlr.version>1.9.2</inmemantlr.version>
